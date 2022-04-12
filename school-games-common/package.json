@@ -1,0 +1,17 @@
+{
+  "name": "school-games-common",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc && npm pack"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "^4.6.3"
+  },
+  "files": [
+    "dist"
+  ]
+}

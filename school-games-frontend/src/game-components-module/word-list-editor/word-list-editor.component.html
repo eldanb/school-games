@@ -1,0 +1,16 @@
+
+<div class="add-item-bar">
+  <button mat-icon-button (click)="addWordClicked()">
+    <mat-icon>add</mat-icon>
+  </button>
+  <mat-form-field appearance="fill">
+    <mat-label>הוסף מילה</mat-label>
+    <input matInput (keyup.enter)="addWordClicked();" [(ngModel)]="addedWord">
+  </mat-form-field>
+</div>
+<app-editable-string-list
+  [stringList]="editedWordList"
+  (deleteString)="deleteItem($event)"
+  (renameString)="renameItem($event)">
+</app-editable-string-list>
+

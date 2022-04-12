@@ -1,0 +1,22 @@
+
+:host {
+  overflow-y: scroll;
+}
+
+mat-list-item {
+  display: flex;
+
+  div, input {
+    flex-grow: 1;
+    //text-align: right;
+    direction: rtl;
+  }
+
+  button {
+    visibility: hidden;
+  }
+
+  &:hover button {
+    visibility: visible;
+  }
+}

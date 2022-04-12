@@ -1,0 +1,18 @@
+<mat-list>
+  <mat-list-item *ngFor="let item of editedStrings; let i = index">
+    <button mat-icon-button (click)="doDeleteString(i)">
+      <mat-icon>delete</mat-icon>
+    </button>
+
+    <button mat-icon-button (click)="doEditString(i)">
+      <mat-icon>edit</mat-icon>
+    </button>
+
+    <div (click)="fireStringClick(i)" (dblclick)="fireStringDoubleClick(i)" *ngIf="!renaming(i)">
+      {{item}}
+    </div>
+
+    <input #renameField (change)="completeRenameString()" (blur)="completeRenameString()" [(ngModel)]="renamedName" *ngIf="renaming(i)">
+
+  </mat-list-item>
+</mat-list>

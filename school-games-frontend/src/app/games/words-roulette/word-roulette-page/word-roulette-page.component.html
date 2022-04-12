@@ -1,0 +1,43 @@
+<div class="mode-toggle">
+ שחק &nbsp; <mat-slide-toggle [(ngModel)]="editing"></mat-slide-toggle> &nbsp; ערוך
+</div>
+
+<div class="game-content-wrapper">
+  <div class="game-main-content">
+    <div class="edit-action-bar" [ngClass]="editingClass">
+      <button mat-raised-button color="primary" (click)="saveFavorites()">שמירה למועדפים</button>
+      <button mat-raised-button color="primary" (click)="loadFavorites()">טעינה ממועדפים</button>
+    </div>
+
+    <div class="roulettes-container">
+      <app-words-roulette-roulette
+        #roulette1
+        title="דמות"
+        [wordList]="wordList1"
+        [editing]="editing"
+        [enableSelectedWord]="enableSelectedWordsDisplay"
+        (done)="rouletteDone()">
+      </app-words-roulette-roulette>
+      <app-words-roulette-roulette
+        #roulette2
+        title="זמן"
+        [wordList]="wordList2"
+        [editing]="editing"
+        [enableSelectedWord]="enableSelectedWordsDisplay"
+        (done)="rouletteDone()">
+      </app-words-roulette-roulette>
+      <app-words-roulette-roulette
+        #roulette3
+        title="מקום"
+        [wordList]="wordList3"
+        [editing]="editing"
+        [enableSelectedWord]="enableSelectedWordsDisplay"
+        (done)="rouletteDone()">
+      </app-words-roulette-roulette>
+    </div>
+
+    <div class="spin-button-container">
+      <button class="spin-button" [ngClass]="editingClass" mat-raised-button color="primary" (click)="spinRoulette()">סובב</button>
+    </div>
+  </div>
+</div>

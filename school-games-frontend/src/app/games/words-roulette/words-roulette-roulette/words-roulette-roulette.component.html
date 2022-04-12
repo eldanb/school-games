@@ -1,0 +1,11 @@
+<div class="roulette-and-result-container" (click)="rouletteClicked()">
+  <h1>{{title}}</h1>
+  <app-word-list-editor [ngClass]="editingClass" [(editedWordList)]="wordList"></app-word-list-editor>
+  <app-roulette #roulette
+    [size]="300"
+    [words]="wordList"
+    (done)="fireRouletteDone()"
+    ></app-roulette>
+  <div class="word-spacer">&nbsp;</div>
+  <div *ngIf="showSelectedWord" class="selected-word">{{selectedWord}}</div>
+</div>

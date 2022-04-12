@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "school-games-frontend"
+		},
+		{
+			"path": "school-games-backend"
+		},
+		{
+			"path": "school-games-common"
+		}
+	]
+}

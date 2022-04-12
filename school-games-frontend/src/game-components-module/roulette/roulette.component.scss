@@ -1,0 +1,20 @@
+app-roulette {
+
+  svg .sector-even {
+    fill: lightcyan;
+  }
+
+  svg .sector-odd {
+    fill: lightgreen;
+    stroke-width: 1px;
+    stroke: lightgray;
+  }
+
+  svg .sector-oddball {
+    fill: lightyellow;
+    stroke-width: 1px;
+    stroke: lightgray;
+  }
+
+}
+

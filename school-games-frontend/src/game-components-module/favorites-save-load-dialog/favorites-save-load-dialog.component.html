@@ -1,0 +1,23 @@
+
+
+<div class="dialog-layout">
+  <mat-form-field appearance="fill">
+    <mat-label>שם:</mat-label>
+    <input [(ngModel)]="inputFavoriteName" matInput>
+  </mat-form-field>
+
+  <app-editable-string-list
+    [stringList]="favoriteNames"
+    (stringClick)="favoriteClicked($event)"
+    (stringDoubleClick)="favoriteDoubleClicked($event)"
+    (deleteString)="deleteFavorite($event)"
+    (renameString)="renameFavorite($event)"
+    >
+
+  </app-editable-string-list>
+
+  <div class="control-bar">
+    <button mat-raised-button [disabled]="!confirmAllowed()" (click)="confirmDialog()" color="primary">{{modeName}}</button>
+    <button mat-raised-button (click)="cancelDialog()">ביטול</button>
+  </div>
+</div>
