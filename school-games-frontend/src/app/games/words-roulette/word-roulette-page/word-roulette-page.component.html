@@ -5,33 +5,22 @@
 <div class="game-content-wrapper">
   <div class="game-main-content">
     <div class="edit-action-bar" [ngClass]="editingClass">
+      <button mat-raised-button color="primary" (click)="addWheel()">הוסף גלגל</button>
+      <div class="separator"></div>
       <button mat-raised-button color="primary" (click)="saveFavorites()">שמירה למועדפים</button>
       <button mat-raised-button color="primary" (click)="loadFavorites()">טעינה ממועדפים</button>
     </div>
 
     <div class="roulettes-container">
-      <app-words-roulette-roulette
+      <app-words-roulette-roulette #roulette *ngFor="let wheelDefinition of gameDefinition.wheelDefinitions"
         #roulette1
-        title="דמות"
-        [wordList]="wordList1"
+        [title]="wheelDefinition.wheelTitle"
+        [wordList]="wheelDefinition.wheelWordlist"
+        (wordListChange)="updateWordList(wheelDefinition, $event)"
         [editing]="editing"
         [enableSelectedWord]="enableSelectedWordsDisplay"
-        (done)="rouletteDone()">
-      </app-words-roulette-roulette>
-      <app-words-roulette-roulette
-        #roulette2
-        title="זמן"
-        [wordList]="wordList2"
-        [editing]="editing"
-        [enableSelectedWord]="enableSelectedWordsDisplay"
-        (done)="rouletteDone()">
-      </app-words-roulette-roulette>
-      <app-words-roulette-roulette
-        #roulette3
-        title="מקום"
-        [wordList]="wordList3"
-        [editing]="editing"
-        [enableSelectedWord]="enableSelectedWordsDisplay"
+        (wheelDelete)="deleteWheel(wheelDefinition)"
+        (wheelRename)="renameWheel(wheelDefinition, $event)"
         (done)="rouletteDone()">
       </app-words-roulette-roulette>
     </div>

@@ -1,5 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { RouletteComponent } from 'src/game-components-module/roulette/roulette.component';
 import { FavoritesSaveLoadService } from '../../../../game-components-module/favorites-save-load-dialog/favorites-save-load-dialog.component';
+import { WordRouletteGameDefinition, WordRouletteWheelDefinition } from '../word-roulette-game-settings';
 import { WordsRouletteRouletteComponent } from '../words-roulette-roulette/words-roulette-roulette.component';
 
 @Component({
@@ -9,21 +11,30 @@ import { WordsRouletteRouletteComponent } from '../words-roulette-roulette/words
 })
 export class WordRoulettePageComponent implements OnInit {
 
-  @ViewChild('roulette1')
-  roulette1: WordsRouletteRouletteComponent;
+  gameDefinition: WordRouletteGameDefinition = {
+    wheelDefinitions: [
+      {
+        wheelTitle: "דמות",
+        wheelWordlist: ['מילה', ' כיסא', 'פסנתר', 'בצל', 'פנס', 'רובה', 'מעדר', 'שנאי']
+      },
+      {
+        wheelTitle: "זמן",
+        wheelWordlist: ['בית-ספר', 'קניון', 'בית', 'מערה', 'נחל', 'מגרש', 'חדר', 'מסעדה']
 
-  @ViewChild('roulette2')
-  roulette2: WordsRouletteRouletteComponent;
-
-  @ViewChild('roulette3')
-  roulette3: WordsRouletteRouletteComponent;
-
-  wordList1: string[] = ['מילה', ' כיסא', 'פסנתר', 'בצל', 'פנס', 'רובה', 'מעדר', 'שנאי'];
-  wordList2: string[] = ['בית-ספר', 'קניון', 'בית', 'מערה', 'נחל', 'מגרש', 'חדר', 'מסעדה'];
-  wordList3: string[] = ['גבוה', 'נמוך', 'יציב', 'ארוך', 'חדש', 'משוכלל' ];
+      },
+      {
+        wheelTitle: "מקום",
+        wheelWordlist: ['גבוה', 'נמוך', 'יציב', 'ארוך', 'חדש', 'משוכלל' ]
+      }
+    ]
+  }
 
   public editing: boolean = false;
   public enableSelectedWordsDisplay: boolean = true;
+
+  @ViewChildren('roulette')
+  roulettes: QueryList<WordsRouletteRouletteComponent>;
+
 
   constructor(private favService: FavoritesSaveLoadService) { }
 
@@ -33,17 +44,12 @@ export class WordRoulettePageComponent implements OnInit {
 
   spinRoulette() {
     this.enableSelectedWordsDisplay = false;
-
-    this.roulette1.spinRoulette();
-    this.roulette2.spinRoulette();
-    this.roulette3.spinRoulette();
+    this.roulettes.forEach(roulette => roulette.spinRoulette());
   }
 
   rouletteDone() {
-    if(!this.roulette1.isSpinning &&
-       !this.roulette2.isSpinning &&
-       !this.roulette3.isSpinning) {
-         this.enableSelectedWordsDisplay = true;
+    if(!this.roulettes.find(roulette => roulette.isSpinning)) {
+      this.enableSelectedWordsDisplay = true;
     }
   }
 
@@ -55,16 +61,46 @@ export class WordRoulettePageComponent implements OnInit {
     await this.favService.saveFavorites(
       "words-roulette",
       {
-        wordList1: this.roulette1.wordList,
-        wordList2: this.roulette2.wordList,
-        wordList3: this.roulette3.wordList
+        gameDefinition:  this.gameDefinition
       });
   }
 
   async loadFavorites() {
     const fav = await this.favService.loadFavorites("words-roulette");
-    this.wordList1 = fav.wordList1 || [];
-    this.wordList2 = fav.wordList2 || [];
-    this.wordList3 = fav.wordList3 || [];
+    this.gameDefinition = fav.gameDefinition;
   }
+
+  updateWordList(wheelDefinition: WordRouletteWheelDefinition, wordList: string[]) {
+    this.updateGameDefinition((gameDef) => {
+      wheelDefinition.wheelWordlist = wordList;
+    })
+  }
+
+  deleteWheel(wheelDefinition: WordRouletteWheelDefinition) {
+    this.updateGameDefinition((gameDef) => {
+      const updatedWheels = gameDef.wheelDefinitions.filter(def => def != wheelDefinition);
+      gameDef.wheelDefinitions = updatedWheels;
+    })
+  }
+
+  renameWheel(wheelDefinition: WordRouletteWheelDefinition, newName: string) {
+    this.updateGameDefinition((gameDef) => {
+      wheelDefinition.wheelTitle = newName;
+    });
+  }
+
+  addWheel() {
+    this.updateGameDefinition((gameDef) => {
+      gameDef.wheelDefinitions.push({
+        wheelTitle: "כותרת",
+        wheelWordlist: [ "מילה 1", "מילה 2", "מילה 3"]
+      });
+    })
+  }
+
+  private updateGameDefinition(fn: (gameDefinition: WordRouletteGameDefinition) => void) {
+    fn(this.gameDefinition);
+    this.gameDefinition = Object.assign({}, this.gameDefinition);
+  }
+
 }

@@ -1,4 +1,9 @@
 app-roulette {
+  overflow: hidden;
+
+  svg {
+    position: absolute;
+  }
 
   svg .sector-even {
     fill: lightcyan;

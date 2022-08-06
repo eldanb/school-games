@@ -1,6 +1,10 @@
 .roulettes-container {
   display: flex;
   flex-direction: row;
+
+  app-words-roulette-roulette {
+    flex-grow: 1;
+  }
 }
 
 .mode-toggle {
@@ -26,6 +30,7 @@ div.spin-button-container {
   display: flex;
   flex-direction: column;
   min-height: 100%;
+  width: 90%;
 }
 
 .spin-button {
@@ -50,6 +55,10 @@ div.spin-button-container {
   justify-items: flex-end;
   padding-top: 4px;
   padding-bottom: 4px;
+
+  & .separator {
+    flex-grow: 1;
+  }
 
   button {
     margin-right: 16px;

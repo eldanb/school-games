@@ -1,4 +1,4 @@
-import { AfterViewChecked, AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, NgZone, OnChanges, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'app-roulette',
@@ -7,7 +7,6 @@ import { AfterViewChecked, AfterViewInit, Component, ElementRef, EventEmitter, I
   encapsulation: ViewEncapsulation.None
 })
 export class RouletteComponent implements OnDestroy, OnChanges, AfterViewChecked {
-  @Input()
   size: number = 30;
 
   @Input()
@@ -24,6 +23,9 @@ export class RouletteComponent implements OnDestroy, OnChanges, AfterViewChecked
 
   @ViewChild('rouletteSvg', { read: ElementRef, static: true })
   svgElement: ElementRef<SVGSVGElement>;
+
+  @ViewChild('rouletteContainer', { read: ElementRef, static: true })
+  containerElement: ElementRef<HTMLDivElement>;
 
   rotateTransform: SVGTransform;
 
@@ -42,12 +44,27 @@ export class RouletteComponent implements OnDestroy, OnChanges, AfterViewChecked
 
   selectedWord: string | null = null;
 
-  constructor() {
+  resizeObserver: ResizeObserver;
 
+  constructor(public host: ElementRef, public zone: NgZone, public changeDetector: ChangeDetectorRef) {
+
+  }
+
+  ngOnInit() {
+    this.resizeObserver = new ResizeObserver(entries => {
+      this.zone.run(() => {
+        this.size = entries[0].contentRect.width;
+        this.dirty = true;
+        this.changeDetector.markForCheck();
+      });
+    });
+
+    this.resizeObserver.observe(this.host.nativeElement);
   }
 
   ngOnDestroy() {
     this.stopSpinning();
+    this.resizeObserver.unobserve(this.host.nativeElement);
   }
 
   ngOnChanges() {

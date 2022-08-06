@@ -1,8 +1,27 @@
 <div class="roulette-and-result-container" (click)="rouletteClicked()">
-  <h1>{{title}}</h1>
-  <app-word-list-editor [ngClass]="editingClass" [(editedWordList)]="wordList"></app-word-list-editor>
+  <div class="wheel-title">
+    <span *ngIf="!editingTitle">{{title}}</span>
+
+    <input #renameField
+        (change)="completeRenameWheel()"
+        (blur)="completeRenameWheel()"
+        [(ngModel)]="renamedTitle"
+        *ngIf="editingTitle">
+
+    <button mat-icon-button *ngIf="editing" (click)="onDeleteWheelClicked()">
+      <mat-icon>delete</mat-icon>
+    </button>
+
+    <button mat-icon-button *ngIf="editing" (click)="onRenameWheelClicked()">
+      <mat-icon>edit</mat-icon>
+    </button>
+
+
+
+  </div>
+  <app-word-list-editor [ngClass]="editingClass" [editedWordList]="wordList" (editedWordListChange)="onEditWordListChange($event)">
+  </app-word-list-editor>
   <app-roulette #roulette
-    [size]="300"
     [words]="wordList"
     (done)="fireRouletteDone()"
     ></app-roulette>

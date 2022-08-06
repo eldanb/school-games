@@ -10,6 +10,15 @@ export class WordsRouletteRouletteComponent implements OnInit {
   @Input()
   wordList: string[]
 
+  @Output()
+  wordListChange: EventEmitter<string[]> = new EventEmitter();
+
+  @Output()
+  wheelDelete: EventEmitter<void> = new EventEmitter;
+
+  @Output()
+  wheelRename: EventEmitter<string> = new EventEmitter;
+
   @Input()
   enableSelectedWord: boolean;
 
@@ -23,7 +32,8 @@ export class WordsRouletteRouletteComponent implements OnInit {
   roulette: RouletteComponent;
 
   private editingState: boolean;
-
+  public editingTitle: boolean = false;
+  public renamedTitle: string;
   constructor() { }
 
   ngOnInit(): void {
@@ -66,5 +76,23 @@ export class WordsRouletteRouletteComponent implements OnInit {
 
   get showSelectedWord(): boolean {
     return this.enableSelectedWord && !this.editing && !this.roulette?.isSpinning;
+  }
+
+  onEditWordListChange(wordList: string[]) {
+    this.wordListChange.emit(wordList);
+  }
+
+  onDeleteWheelClicked() {
+    this.wheelDelete.emit();
+  }
+
+  onRenameWheelClicked() {
+    this.renamedTitle = this.title;
+    this.editingTitle = true;
+  }
+
+  completeRenameWheel() {
+    this.editingTitle = false;
+    this.wheelRename.emit(this.renamedTitle);
   }
 }
