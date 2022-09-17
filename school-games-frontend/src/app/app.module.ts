@@ -16,12 +16,16 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { WordsRouletteRouletteComponent } from './games/words-roulette/words-roulette-roulette/words-roulette-roulette.component';
 import { MatIconModule } from '@angular/material/icon';
+import { ConsoleMainViewComponent } from './main-console/console-main-view/console-main-view.component';
+import { TerminalMainPageComponent } from './terminal/terminal-main-page/terminal-main-page.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     WordRoulettePageComponent,
-    WordsRouletteRouletteComponent
+    WordsRouletteRouletteComponent,
+    ConsoleMainViewComponent,
+    TerminalMainPageComponent
   ],
   imports: [
     BrowserModule,

@@ -1,6 +1,5 @@
 import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { RouletteComponent } from 'src/game-components-module/roulette/roulette.component';
-import { FavoritesSaveLoadService } from '../../../../game-components-module/favorites-save-load-dialog/favorites-save-load-dialog.component';
+import { FavoritesSaveLoadService } from 'src/game-components-module/favorites-save-load-dialog/favorites-save-load.service';
 import { WordRouletteGameDefinition, WordRouletteWheelDefinition } from '../word-roulette-game-settings';
 import { WordsRouletteRouletteComponent } from '../words-roulette-roulette/words-roulette-roulette.component';
 

@@ -1,7 +1,7 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { firstValueFrom } from "rxjs";
-import { FavoriteDescriptor } from "school-games-common";
+import { FavoriteDescriptor, StartLessonRequestBody, StartLessonResponseBody } from "school-games-common";
 
 @Injectable()
 export class BackendHttpClient {
@@ -33,4 +33,14 @@ export class BackendHttpClient {
       this.httpClient.post<{}>(`/api/game-favorites/${game}/delete`, {id}));
   }
 
+  async startLesson(): Promise<StartLessonResponseBody> {
+    return firstValueFrom(
+      this.httpClient.post<StartLessonResponseBody>(`/api/lessons/start`, {})
+    );
+  }
+
+  async zipcTransact(request: string): Promise<string> {
+    const ret = await firstValueFrom(this.httpClient.post('/api/zipc', { request }));
+    return (ret as any).response;
+  }
 }

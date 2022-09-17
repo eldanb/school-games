@@ -1,0 +1,21 @@
+<app-lesson-status-view></app-lesson-status-view>
+
+<div class="mainMenuContainer">
+  <div class="menuItemsContainer">
+    <div class="menuItem" *ngFor="let gameDescriptor of gameDescriptors">
+      <a [routerLink]="'/c/g/' + gameDescriptor.id">{{gameDescriptor.name}}</a>
+    </div>
+
+  </div>
+
+  <div class="lessonJoinPane">
+    <h1>סרוק להצטרפות לשיעור</h1>
+
+    <img *ngIf="connectionQrCodeUrl" [src]="connectionQrCodeUrl"/>
+
+    <a *ngIf="connectionUrl" [href]="connectionUrl">
+      {{connectionUrl}}
+    </a>
+
+  </div>
+</div>
