@@ -18,6 +18,8 @@ import { WordsRouletteRouletteComponent } from './games/words-roulette/words-rou
 import { MatIconModule } from '@angular/material/icon';
 import { ConsoleMainViewComponent } from './main-console/console-main-view/console-main-view.component';
 import { TerminalMainPageComponent } from './terminal/terminal-main-page/terminal-main-page.component';
+import { EmptyTerminalGamePageComponent } from './games/empty-terminal-game-page/empty-terminal-game-page.component';
+import { TerminalGameComponentHostComponent } from './terminal/terminal-game-component-host/terminal-game-component-host.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +27,9 @@ import { TerminalMainPageComponent } from './terminal/terminal-main-page/termina
     WordRoulettePageComponent,
     WordsRouletteRouletteComponent,
     ConsoleMainViewComponent,
-    TerminalMainPageComponent
+    TerminalMainPageComponent,
+    EmptyTerminalGamePageComponent,
+    TerminalGameComponentHostComponent
   ],
   imports: [
     BrowserModule,

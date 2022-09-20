@@ -1,0 +1,17 @@
+.terminal-page {
+  direction: rtl;
+
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.terminal-header {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 0;
+}
+
+app-terminal-game-component-host {
+  height: 100%;
+}

@@ -1,10 +1,10 @@
 <app-lesson-terminal-provider [lessonMoniker]="lessonMoniker">
+  <div class="terminal-page">
+    <div class="terminal-header">
+      Welcome to lesson {{lessonMoniker}}
+    </div>
 
-  <p>terminal-main-page works!</p>
-
-
-  <div>
-    Welcome to lesson {{lessonMoniker}}
+    <app-terminal-game-component-host></app-terminal-game-component-host>
   </div>
 
 </app-lesson-terminal-provider>

@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import {
+  GameStartResult,
   LessonControllerInterface,
   LessonStatus,
   LessonTerminalServices,
@@ -7,13 +8,21 @@ import {
   Terminal,
   TerminalConnectionInfo,
   TerminalConnectionResult,
+  TerminalMessage,
+  WeakObjectMonikerResolver,
 } from 'school-games-common';
 import * as QRCode from 'qrcode';
 import { Logger } from '@nestjs/common';
+import { GameType } from 'school-games-common/dist/lesson-model/games-registry';
+import { GameState } from './GamesState';
+import { createLessonState } from './GameStatesRegistry';
 
 export class LessonControllerImpl implements LessonControllerInterface {
   private _terminalConnectionService: LessonTerminalServices;
   private _terminals: TerminalImpl[] = [];
+
+  private _gameState: GameState | null;
+  private _gameType: GameType | null;
 
   private heartbeatTimeout = 10000;
 
@@ -64,6 +73,39 @@ export class LessonControllerImpl implements LessonControllerInterface {
       );
     }
   }
+
+  broadcast(terminalMessage: TerminalMessage) {
+    this._terminals.forEach((t) => t.postMessage(terminalMessage));
+  }
+
+  async startGame(gameType: GameType): Promise<GameStartResult> {
+    Logger.debug(`Starting game ${gameType}`);
+
+    this._gameState = null;
+    this._gameType = null;
+
+    this._gameState = createLessonState(gameType, this);
+    this._gameType = gameType;
+
+    const ret = new GameStartResult();
+    ret.gameController = this._gameState.getConsoleServices();
+
+    this._terminals.forEach((t) => this._joinTerminalToGameState(t));
+
+    return ret;
+  }
+
+  private _joinTerminalToGameState(terminal: TerminalImpl) {
+    const terminalGameState = this._gameState.getTerminalServices(terminal);
+
+    terminal.postMessage({
+      type: 'start-game',
+      gameType: this._gameType,
+      gameStateMoniker: terminalGameState
+        ? WeakObjectMonikerResolver.registerObject(terminalGameState)
+        : null,
+    });
+  }
 }
 
 class LessonTerminalServicesImpl implements LessonTerminalServices {
@@ -82,6 +124,7 @@ class LessonTerminalServicesImpl implements LessonTerminalServices {
 class TerminalImpl implements Terminal {
   private _logger = new Logger('TerminalImpl');
   private _lastHeartbeat: number;
+  private _pendingMessages: TerminalMessage[] = [];
 
   constructor(
     private _parent: LessonControllerImpl,
@@ -90,11 +133,19 @@ class TerminalImpl implements Terminal {
     this._lastHeartbeat = Date.now();
   }
 
-  async heartbeat(): Promise<void> {
+  async heartbeat(): Promise<TerminalMessage[]> {
     this._lastHeartbeat = Date.now();
+
+    const ret = this._pendingMessages;
+    this._pendingMessages = [];
+    return ret;
   }
 
   get lastHeartbeat(): number {
     return this._lastHeartbeat;
+  }
+
+  postMessage(message: TerminalMessage): void {
+    this._pendingMessages.push(message);
   }
 }

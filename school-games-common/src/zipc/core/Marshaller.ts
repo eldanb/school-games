@@ -13,6 +13,10 @@ export abstract class Marshaller {
   public abstract unmarshal(value: object, ctxt: MarshallingContext): object;
 
   public static marshalWithMarshaller(value: any, marshaller: Marshaller, ctxt: MarshallingContext): any {
+    if(!value) {
+      return null;
+    }
+    
     const marshalled = marshaller.marshal(value, ctxt);
     marshalled['$m'] = (marshaller as any).__marshallerType;
     return marshalled;

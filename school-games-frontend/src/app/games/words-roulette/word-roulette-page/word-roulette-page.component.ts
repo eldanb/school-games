@@ -1,5 +1,6 @@
 import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FavoritesSaveLoadService } from 'src/game-components-module/favorites-save-load-dialog/favorites-save-load.service';
+import { LessonControllerProviderService } from 'src/game-components-module/lesson-controller-provider/lesson-controller-provider.service';
 import { WordRouletteGameDefinition, WordRouletteWheelDefinition } from '../word-roulette-game-settings';
 import { WordsRouletteRouletteComponent } from '../words-roulette-roulette/words-roulette-roulette.component';
 
@@ -35,11 +36,18 @@ export class WordRoulettePageComponent implements OnInit {
   roulettes: QueryList<WordsRouletteRouletteComponent>;
 
 
-  constructor(private favService: FavoritesSaveLoadService) { }
+  constructor(
+    private _favService: FavoritesSaveLoadService,
+    private _lessonControllerProviderService: LessonControllerProviderService) { }
 
   ngOnInit(): void {
+    this._startGame();
   }
 
+  private async _startGame() {
+    const lessonControlelr = await this._lessonControllerProviderService.getLessonController();
+    await lessonControlelr.startGame('word-roulette');
+  }
 
   spinRoulette() {
     this.enableSelectedWordsDisplay = false;
@@ -57,7 +65,7 @@ export class WordRoulettePageComponent implements OnInit {
   }
 
   async saveFavorites() {
-    await this.favService.saveFavorites(
+    await this._favService.saveFavorites(
       "words-roulette",
       {
         gameDefinition:  this.gameDefinition
@@ -65,7 +73,7 @@ export class WordRoulettePageComponent implements OnInit {
   }
 
   async loadFavorites() {
-    const fav = await this.favService.loadFavorites("words-roulette");
+    const fav = await this._favService.loadFavorites("words-roulette");
     this.gameDefinition = fav.gameDefinition;
   }
 
