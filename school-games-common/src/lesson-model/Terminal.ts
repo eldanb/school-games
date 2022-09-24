@@ -1,3 +1,4 @@
+import { SelfDescribingMessage } from "../zipc/core/SelfDescribingMessage";
 import { GameType } from "./games-registry";
 
 export interface TerminalConnectionInfo {
@@ -15,9 +16,6 @@ type TerminalMessagesMap = {
     gameStateMoniker?: string;
   }
 }
-
-type SelfDescribingKeysHelper<T extends keyof E, E> = T extends keyof E ? ({ type: T } & E[T]) : never;
-type SelfDescribingMessage<E> = SelfDescribingKeysHelper<keyof E, E>;
 
 export type TerminalMessage = SelfDescribingMessage<TerminalMessagesMap>;
 

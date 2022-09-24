@@ -26,7 +26,7 @@ export class ZipcServer {
       const marshalledResults = Marshaller.marshal(result, this._mc);
 
       ret = {
-        success: marshalledResults
+        success: marshalledResults ?? null
       };
     } catch(e) {
       ret = {

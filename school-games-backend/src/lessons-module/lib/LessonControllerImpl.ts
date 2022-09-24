@@ -2,6 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import {
   GameStartResult,
   LessonControllerInterface,
+  LessonControllerMessage,
   LessonStatus,
   LessonTerminalServices,
   LiveObjectMonikerResolver,
@@ -24,10 +25,17 @@ export class LessonControllerImpl implements LessonControllerInterface {
   private _gameState: GameState | null;
   private _gameType: GameType | null;
 
+  private _pendingMessages: AsyncQueue<LessonControllerMessage> =
+    new AsyncQueue();
+
   private heartbeatTimeout = 10000;
 
   constructor(private _configService: ConfigService) {
     this._terminalConnectionService = new LessonTerminalServicesImpl(this);
+  }
+
+  async hearbeat(): Promise<LessonControllerMessage[]> {
+    return await this._pendingMessages.dequeueAll(3000);
   }
 
   async getLessonStatus(): Promise<LessonStatus> {
@@ -124,7 +132,8 @@ class LessonTerminalServicesImpl implements LessonTerminalServices {
 class TerminalImpl implements Terminal {
   private _logger = new Logger('TerminalImpl');
   private _lastHeartbeat: number;
-  private _pendingMessages: TerminalMessage[] = [];
+
+  private _pendingMessages: AsyncQueue<TerminalMessage> = new AsyncQueue();
 
   constructor(
     private _parent: LessonControllerImpl,
@@ -133,12 +142,10 @@ class TerminalImpl implements Terminal {
     this._lastHeartbeat = Date.now();
   }
 
-  async heartbeat(): Promise<TerminalMessage[]> {
+  async heartbeat(): Promise<TerminalMessage[] | null> {
     this._lastHeartbeat = Date.now();
 
-    const ret = this._pendingMessages;
-    this._pendingMessages = [];
-    return ret;
+    return (await this._pendingMessages.dequeueAll(3000)) || [];
   }
 
   get lastHeartbeat(): number {
@@ -146,6 +153,60 @@ class TerminalImpl implements Terminal {
   }
 
   postMessage(message: TerminalMessage): void {
+    this._pendingMessages.postMessage(message);
+  }
+}
+
+class AsyncQueue<MessageType> {
+  private _pendingMessages: MessageType[] = [];
+
+  private _queueReady: Promise<void> | null = null;
+  private _queueReadySignal: () => void | null;
+
+  async dequeueAll(timeout: number): Promise<MessageType[] | null> {
+    const timeoutError = {};
+    let timeoutHandle: any;
+
+    const timeoutPromise = new Promise((accept, reject) => {
+      timeoutHandle = setTimeout(() => reject(timeoutError), timeout);
+    });
+
+    try {
+      while (!this._pendingMessages.length) {
+        if (this._queueReady == null) {
+          this._queueReady = new Promise((accept, reject) => {
+            this._queueReadySignal = accept;
+          });
+        }
+
+        try {
+          await Promise.race([this._queueReady, timeoutPromise]);
+        } catch (e) {
+          if (e == timeoutError) {
+            return null;
+          } else {
+            throw e;
+          }
+        }
+      }
+
+      const ret = this._pendingMessages;
+      this._pendingMessages = [];
+      return ret;
+    } finally {
+      clearTimeout(timeoutHandle);
+    }
+  }
+
+  postMessage(message: MessageType): void {
     this._pendingMessages.push(message);
+
+    if (this._queueReadySignal) {
+      const sigFn = this._queueReadySignal;
+      this._queueReady = null;
+      this._queueReadySignal = null;
+
+      sigFn();
+    }
   }
 }
