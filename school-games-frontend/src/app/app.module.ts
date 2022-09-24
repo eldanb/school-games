@@ -20,6 +20,9 @@ import { ConsoleMainViewComponent } from './main-console/console-main-view/conso
 import { TerminalMainPageComponent } from './terminal/terminal-main-page/terminal-main-page.component';
 import { EmptyTerminalGamePageComponent } from './games/empty-terminal-game-page/empty-terminal-game-page.component';
 import { TerminalGameComponentHostComponent } from './terminal/terminal-game-component-host/terminal-game-component-host.component';
+import { WordRouletteTerminalPageComponent } from './games/words-roulette/word-roulette-terminal-page/word-roulette-terminal-page.component';
+import { ConsoleUiFrameworkComponent } from './main-console/console-ui-framework/console-ui-framework.component';
+import { LessonJoinQrcodeDialogComponent } from '../game-components-module/lesson-join-qrcode-dialog/lesson-join-qrcode-dialog.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +32,10 @@ import { TerminalGameComponentHostComponent } from './terminal/terminal-game-com
     ConsoleMainViewComponent,
     TerminalMainPageComponent,
     EmptyTerminalGamePageComponent,
-    TerminalGameComponentHostComponent
+    TerminalGameComponentHostComponent,
+    WordRouletteTerminalPageComponent,
+    ConsoleUiFrameworkComponent,
+    LessonJoinQrcodeDialogComponent
   ],
   imports: [
     BrowserModule,

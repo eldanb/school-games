@@ -14,6 +14,14 @@ export class ConsoleMainViewComponent implements OnInit {
     {
       name: 'רולטת מילים',
       id: 'word-roulette'
+    },
+    {
+      name: 'בלאקג׳ק משפטים',
+      id: 'word-roulette'
+    },
+    {
+      name: 'פוקר תהיות',
+      id: 'word-roulette'
     }
   ]
   constructor(private _lessonControllerProvider: LessonControllerProviderService) {
@@ -27,8 +35,6 @@ export class ConsoleMainViewComponent implements OnInit {
   private async loadConnectionQr(): Promise<void> {
     const lessonController = await this._lessonControllerProvider.getLessonController();
     this.connectionQrCodeUrl = await lessonController.getConnectionQrCodeUrl();
-    if(environment.debugFlags?.joinUrl) {
-      this.connectionUrl = await lessonController.getConnectionUrl();
-    }
+    this.connectionUrl = await lessonController.getConnectionUrl();
   }
 }

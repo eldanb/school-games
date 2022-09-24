@@ -1,5 +1,5 @@
 import { Terminal } from 'school-games-common';
-import { GameState } from './GamesState';
+import { GameState } from '../GamesState';
 
 export class EmptyGameState extends GameState {
   getConsoleServices(): object {

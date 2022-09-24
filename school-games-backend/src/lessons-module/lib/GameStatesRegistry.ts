@@ -1,9 +1,9 @@
 import { GameType } from 'school-games-common/dist/lesson-model/games-registry';
 import { LessonControllerImpl } from './LessonControllerImpl';
-import { GameState } from './GamesState';
-import { EmptyGameState } from './EmptyGameState';
 import { Logger } from '@nestjs/common';
 import { inspect } from 'util';
+import { RouletteGameState } from './game-states/RouletteGameState';
+import { GameState } from './GamesState';
 
 type GameStateConstructor = new (
   lessonController: LessonControllerImpl,
@@ -12,7 +12,7 @@ type GameStateConstructor = new (
 export const GameStatesRegistry: {
   [gameType in GameType]: GameStateConstructor;
 } = {
-  'word-roulette': EmptyGameState,
+  'word-roulette': RouletteGameState,
 };
 
 export function createLessonState(

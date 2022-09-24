@@ -1,7 +1,3 @@
-<div class="mode-toggle">
- שחק &nbsp; <mat-slide-toggle [(ngModel)]="editing"></mat-slide-toggle> &nbsp; ערוך
-</div>
-
 <div class="game-content-wrapper">
   <div class="game-main-content">
     <div class="edit-action-bar" [ngClass]="editingClass">
@@ -30,3 +26,10 @@
     </div>
   </div>
 </div>
+
+<ng-template #statusBarExtensionControls>
+  <div class="mode-toggle">
+    שחק &nbsp; <mat-slide-toggle [(ngModel)]="editing"></mat-slide-toggle> &nbsp; ערוך
+   </div>
+</ng-template>
+

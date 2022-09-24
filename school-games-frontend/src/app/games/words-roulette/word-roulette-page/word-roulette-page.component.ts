@@ -1,4 +1,7 @@
-import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Template } from '@angular/compiler/src/render3/r3_ast';
+import { AfterViewInit, Component, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
+import { WordRouletteConsoleInterface } from 'school-games-common';
+import { ConsoleUiFrameworkIntegrationSupportService } from 'src/app/main-console/console-ui-framework/console-ui-framework.component';
 import { FavoritesSaveLoadService } from 'src/game-components-module/favorites-save-load-dialog/favorites-save-load.service';
 import { LessonControllerProviderService } from 'src/game-components-module/lesson-controller-provider/lesson-controller-provider.service';
 import { WordRouletteGameDefinition, WordRouletteWheelDefinition } from '../word-roulette-game-settings';
@@ -9,7 +12,9 @@ import { WordsRouletteRouletteComponent } from '../words-roulette-roulette/words
   templateUrl: './word-roulette-page.component.html',
   styleUrls: ['./word-roulette-page.component.scss']
 })
-export class WordRoulettePageComponent implements OnInit {
+export class WordRoulettePageComponent implements OnInit, AfterViewInit {
+  @ViewChild("statusBarExtensionControls", { read: TemplateRef })
+  _statusBarExtensionControls: TemplateRef<any>;
 
   gameDefinition: WordRouletteGameDefinition = {
     wheelDefinitions: [
@@ -32,21 +37,29 @@ export class WordRoulettePageComponent implements OnInit {
   public editing: boolean = false;
   public enableSelectedWordsDisplay: boolean = true;
 
+  private _rouletteConsoleController: WordRouletteConsoleInterface | null = null;
+
   @ViewChildren('roulette')
   roulettes: QueryList<WordsRouletteRouletteComponent>;
 
 
   constructor(
     private _favService: FavoritesSaveLoadService,
-    private _lessonControllerProviderService: LessonControllerProviderService) { }
+    private _lessonControllerProviderService: LessonControllerProviderService,
+    private _consoleUiServce: ConsoleUiFrameworkIntegrationSupportService) { }
 
   ngOnInit(): void {
     this._startGame();
   }
 
+  ngAfterViewInit(): void {
+      this._consoleUiServce.statusBarExtensionControlsContainer.subscribe((cr) => cr?.createEmbeddedView(this._statusBarExtensionControls))
+  }
+
   private async _startGame() {
     const lessonControlelr = await this._lessonControllerProviderService.getLessonController();
-    await lessonControlelr.startGame('word-roulette');
+    const result = await lessonControlelr.startGame('word-roulette');
+    this._rouletteConsoleController = result.gameController as WordRouletteConsoleInterface;
   }
 
   spinRoulette() {
@@ -57,6 +70,12 @@ export class WordRoulettePageComponent implements OnInit {
   rouletteDone() {
     if(!this.roulettes.find(roulette => roulette.isSpinning)) {
       this.enableSelectedWordsDisplay = true;
+      if(this._rouletteConsoleController) {
+        this._rouletteConsoleController.setRouletteResults(this.roulettes.map((roulette) => ({
+          wheelDisplayName: roulette.title,
+          wheelWord: roulette.selectedWord
+        })))
+      }
     }
   }
 

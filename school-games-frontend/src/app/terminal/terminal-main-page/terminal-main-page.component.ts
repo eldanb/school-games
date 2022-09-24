@@ -1,8 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { TerminalMessage } from 'school-games-common';
-import { LessonTerminalProviderService } from 'src/game-components-module/lesson-terminal-provider/lesson-terminal-provider.service';
 
 @Component({
   templateUrl: './terminal-main-page.component.html',
@@ -11,7 +8,7 @@ import { LessonTerminalProviderService } from 'src/game-components-module/lesson
 export class TerminalMainPageComponent implements OnInit {
 
   lessonMoniker: string;
-
+  lessonConnected: boolean;
 
   constructor(private _route: ActivatedRoute) {
   }
@@ -25,6 +22,9 @@ export class TerminalMainPageComponent implements OnInit {
     this.lessonMoniker = lessonMoniker;
   }
 
+  connectionStateChanged(state: boolean) {
+    this.lessonConnected = state;
+  }
 
 
 

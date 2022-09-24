@@ -1,5 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { LessonControllerProviderService } from '../lesson-controller-provider/lesson-controller-provider.service';
+import { LessonJoinQrcodeDialogComponent, LessonJoinQrcodeDialogData } from '../lesson-join-qrcode-dialog/lesson-join-qrcode-dialog.component';
 
 @Component({
   selector: 'app-lesson-status-view',
@@ -8,12 +10,14 @@ import { LessonControllerProviderService } from '../lesson-controller-provider/l
 })
 export class LessonStatusViewComponent implements OnInit, OnDestroy {
   private _refreshTimer: any;
+
+  showStatusPopup: boolean = false;
   terminalCount: number = 0;
 
-  constructor(private _lessonControllerProvider: LessonControllerProviderService) {
+  constructor(private _lessonControllerProvider: LessonControllerProviderService,
+              private _matDialog: MatDialog) {
 
   }
-
 
   ngOnDestroy(): void {
     if(this._refreshTimer) {
@@ -30,6 +34,22 @@ export class LessonStatusViewComponent implements OnInit, OnDestroy {
     const lessonController = await this._lessonControllerProvider.getLessonController();
     const lessonStatus = await lessonController.getLessonStatus();
     this.terminalCount = lessonStatus.terminalInfo.length;
+  }
+
+  handleIconClicked() {
+    this.showStatusPopup = !this.showStatusPopup;
+  }
+
+  public async showLessonQrCode() {
+    const lessonController = await this._lessonControllerProvider.getLessonController();
+
+    this._matDialog.open<LessonJoinQrcodeDialogComponent, LessonJoinQrcodeDialogData>(
+      LessonJoinQrcodeDialogComponent,
+      {
+        data: {
+          qrCodeUrl: await lessonController.getConnectionQrCodeUrl()
+        }
+      });
   }
 
 }

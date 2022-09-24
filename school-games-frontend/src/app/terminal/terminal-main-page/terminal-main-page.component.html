@@ -1,7 +1,17 @@
-<app-lesson-terminal-provider [lessonMoniker]="lessonMoniker">
+<app-lesson-terminal-provider
+  [lessonMoniker]="lessonMoniker"
+  (connectionStateChange)="connectionStateChanged($event)">
+
   <div class="terminal-page">
-    <div class="terminal-header">
-      Welcome to lesson {{lessonMoniker}}
+
+    <div class="status-bar">
+      <div *ngIf="lessonConnected">
+        מחובר לשיעור
+      </div>
+      <div *ngIf="!lessonConnected">
+        לא מחובר לשיעור
+      </div>
+
     </div>
 
     <app-terminal-game-component-host></app-terminal-game-component-host>

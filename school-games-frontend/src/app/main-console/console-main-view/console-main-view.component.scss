@@ -1,4 +1,4 @@
-.mainMenuContainer {
+.main-menu-container {
   display: flex;
   height: 100%;
   width: 100%;
@@ -13,39 +13,64 @@
     text-align: center;
   }
 
-  .menuItemsContainer  {
+  .menu-items-container  {
     flex-grow: 1;
-    height: 100%;
 
     display: flex;
     flex-direction: column;
     gap: 2rem;
     padding: 2rem;
+    align-items: center;
 
-    .menuItem {
+    .menu-item {
       display: flex;
       align-items: center;
       justify-content: center;
 
-      height: 6rem;
+      transition-duration: 200ms;
+      transition-property: box-shadow background-image;
 
-      border: solid 1px #d0d0d0;
+      font-size: 20px;
+      height: 6rem;
+      max-width: 40vw;
+      width: 100%;
+
+      background-image: linear-gradient(-32deg, #eeeeeea0, #d4c6f1a0, #d4c6f1a0);
       border-radius: 1rem;
-      box-shadow: 2px 4px 16px 0px #00000020;
+
+      text-decoration: none;
+
+      &:hover {
+        box-shadow: 2px 4px 16px 0px #00000020;
+        background-image: linear-gradient(-32deg, #eeeeeedf, #d4c6f1df, #d4c6f1df);
+      }
+
+      .label {
+        opacity: 1;
+        color: #75419f;
+      }
     }
   }
 
-  .lessonJoinPane {
+  .lesson-join-pane {
     display: flex;
     flex-direction: column;
 
     flex-grow: 1;
     padding: 2rem;
     margin: auto 2rem;
-    border: solid 1px #d0d0d0;
+    background: white;
     border-radius: 2rem;
-    box-shadow: 2px 4px 16px 0px #00000020;
+    box-shadow: 2px 4px 11px 0px #00000010;
+
 
     max-width: 33vw;
+
+    a {
+      display: block;
+      img {
+        width: 100%;
+      }
+    }
   }
 }

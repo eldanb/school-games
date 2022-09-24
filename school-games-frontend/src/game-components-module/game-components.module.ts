@@ -49,6 +49,7 @@ import { LessonStatusViewComponent } from './lesson-status-view/lesson-status-vi
     WordListEditorComponent,
     EditableStringListComponent,
     LessonTerminalProviderComponent,
+    LessonControllerProviderComponent,
     LessonStatusViewComponent,
   ]
 })

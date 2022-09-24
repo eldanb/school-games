@@ -8,3 +8,43 @@
   align-items: center;
   gap: 0.25rem;
 }
+
+.popup-opened {
+  background: #ffffff80;
+}
+
+.lesson-status-popup {
+  display: flex;
+  flex-direction: column;
+
+  position: absolute;
+  top: 32px;
+
+  direction: rtl;
+
+  z-index: 100;
+  min-width: 256px;
+  min-height: 384px;
+
+  padding: 1rem;
+
+  background: #ffffffe8;
+  border-radius: 1rem;
+  box-shadow: 2px 4px 16px 0px #00000020;
+
+  animation: fadein 350ms;
+
+  h2 {
+    margin-top: 0;
+  }
+
+  .spacer {
+    flex-grow: 1;
+  }
+}
+
+
+@keyframes fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

@@ -5,7 +5,6 @@
 export const environment = {
   production: false,
   debugFlags: {
-    joinUrl: true
   }
 };
 

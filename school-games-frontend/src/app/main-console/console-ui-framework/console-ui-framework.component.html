@@ -1,0 +1,10 @@
+<app-lesson-controller-provider>
+  <div class="status-bar">
+    <a routerLink="/c/menu" routerLinkActive="active-glow">
+      <mat-icon>home</mat-icon>
+    </a>
+    <app-lesson-status-view></app-lesson-status-view>
+    <div #statusBarExtensionControlsHost></div>
+  </div>
+  <router-outlet (activate)="onActivateComponent($event)" (deactivate)="onDeactivateComponent($event)"></router-outlet>
+</app-lesson-controller-provider>

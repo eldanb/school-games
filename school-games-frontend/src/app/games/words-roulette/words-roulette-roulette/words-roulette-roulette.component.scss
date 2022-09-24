@@ -51,7 +51,7 @@
 @keyframes selectedWordAnimation {
   from {
     position: absolute;
-    top: 0%;
+    bottom: 100%;
     font-size: 3px;
     transform: rotate(0);
     opacity: 0.2;
@@ -59,7 +59,7 @@
 
   to {
     position: absolute;
-    top: 430px;
+    bottom: -30px;
     opacity: 1;
     font-size: 48px;
     transform: rotate(720deg);
@@ -75,7 +75,7 @@
   position: absolute;
   text-align: center;
   width: 100%;
-  top: 430px;
+  bottom: -30px;
   opacity: 1;
   font-size: 48px;
   transform: rotate(720deg);
