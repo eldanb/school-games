@@ -21,7 +21,10 @@ export class RouletteGameState
     return this;
   }
 
-  getTerminalServices(terminal: Terminal): WordRouletteTerminalInterface {
+  getTerminalServices(
+    terminalId: string,
+    terminal: Terminal,
+  ): WordRouletteTerminalInterface {
     const ret = new WordRouletteTerminalServices(this);
     this._terminalServices.push(ret);
     return ret;

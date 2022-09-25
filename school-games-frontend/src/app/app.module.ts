@@ -23,6 +23,8 @@ import { TerminalGameComponentHostComponent } from './terminal/terminal-game-com
 import { WordRouletteTerminalPageComponent } from './games/words-roulette/word-roulette-terminal-page/word-roulette-terminal-page.component';
 import { ConsoleUiFrameworkComponent } from './main-console/console-ui-framework/console-ui-framework.component';
 import { LessonJoinQrcodeDialogComponent } from '../game-components-module/lesson-join-qrcode-dialog/lesson-join-qrcode-dialog.component';
+import { WordPopTerminalPageComponent } from './games/word-pop/word-pop-terminal-page/word-pop-terminal-page.component';
+import { WordPopConsolePageComponent } from './games/word-pop/word-pop-console-page/word-pop-console-page.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +37,9 @@ import { LessonJoinQrcodeDialogComponent } from '../game-components-module/lesso
     TerminalGameComponentHostComponent,
     WordRouletteTerminalPageComponent,
     ConsoleUiFrameworkComponent,
-    LessonJoinQrcodeDialogComponent
+    LessonJoinQrcodeDialogComponent,
+    WordPopTerminalPageComponent,
+    WordPopConsolePageComponent
   ],
   imports: [
     BrowserModule,

@@ -6,5 +6,5 @@ export abstract class GameState {
 
   abstract getConsoleServices(): object;
 
-  abstract getTerminalServices(terminal: Terminal): object;
+  abstract getTerminalServices(terminalId: string, terminal: Terminal): object;
 }

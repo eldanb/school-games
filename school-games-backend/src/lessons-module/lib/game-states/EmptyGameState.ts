@@ -6,7 +6,7 @@ export class EmptyGameState extends GameState {
     return null;
   }
 
-  getTerminalServices(terminal: Terminal): object {
+  getTerminalServices(terminalId: string, terminal: Terminal): object {
     return null;
   }
 }

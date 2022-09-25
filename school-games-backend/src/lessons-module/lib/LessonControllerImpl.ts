@@ -108,7 +108,10 @@ export class LessonControllerImpl implements LessonControllerInterface {
   }
 
   private _joinTerminalToGameState(terminal: TerminalImpl) {
-    const terminalGameState = this._gameState.getTerminalServices(terminal);
+    const terminalGameState = this._gameState.getTerminalServices(
+      terminal.id,
+      terminal,
+    );
 
     terminal.postMessage({
       type: 'start-game',

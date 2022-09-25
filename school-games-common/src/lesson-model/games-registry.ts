@@ -1,6 +1,9 @@
 export type GamesRegistry = {
   'word-roulette': {
     
+  },
+  'word-pop': {
+    
   }
 }
 

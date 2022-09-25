@@ -16,12 +16,8 @@ export class ConsoleMainViewComponent implements OnInit {
       id: 'word-roulette'
     },
     {
-      name: 'בלאקג׳ק משפטים',
-      id: 'word-roulette'
-    },
-    {
-      name: 'פוקר תהיות',
-      id: 'word-roulette'
+      name: 'בלוני מילים',
+      id: 'word-pop'
     }
   ]
   constructor(private _lessonControllerProvider: LessonControllerProviderService) {

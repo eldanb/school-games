@@ -1,0 +1,14 @@
+<p>word-pop-console-page works!</p>
+<button (click)="startGame()">התחל משחק</button>
+
+<div *ngIf="gameStatus">
+  <h1>Game Status</h1>
+  <table>
+    <tr><td>Terminal</td><td>Good pops</td><td>Bad pops</td></tr>
+    <tr *ngFor="let tid of terminalIds">
+      <td>{{tid}}</td>
+      <td>{{gameStatus.terminalStatus[tid].goodPops}}</td>
+      <td>{{gameStatus.terminalStatus[tid].badPops}}</td>
+    </tr>
+  </table>
+</div>
