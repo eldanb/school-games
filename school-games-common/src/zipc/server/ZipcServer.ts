@@ -1,11 +1,12 @@
 import { Marshaller, MarshallingContext } from "../core/Marshaller";
 import { ZipcRequest, ZipcResponse } from "../core/protocol";
 import { MonikerResolver } from "./MonikerResolver";
+import { ZipcCallContext } from "./ZipcCallContext";
 
 export class ZipcServer {
   private _mc = new MarshallingContext();
 
-  async handleRequest(request: string): Promise<string> {
+  async handleRequest(request: string, callContext: ZipcCallContext): Promise<string> {
     let ret: ZipcResponse;
 
     try {
@@ -21,6 +22,7 @@ export class ZipcServer {
                       `Supported services: ${Object.keys(resolvedObject).join(', ')}`);
       }
 
+      this._mc.client = callContext.peerClient;
       const unmarshalledArgs = requestData.args.map(arg => Marshaller.unmarshal(arg, this._mc));
       const result = await service.apply(resolvedObject, unmarshalledArgs);
       const marshalledResults = Marshaller.marshal(result, this._mc);

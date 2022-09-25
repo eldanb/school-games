@@ -1,12 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { RouletteWheelState, WordRouletteTerminalInterface } from 'school-games-common';
+import { GameListenerRegistration, RouletteWheelState, WordRouletteTerminalGameListener, WordRouletteTerminalInterface } from 'school-games-common';
 import { LessonTerminalProviderService } from 'src/game-components-module/lesson-terminal-provider/lesson-terminal-provider.service';
 
 @Component({
   templateUrl: './word-roulette-terminal-page.component.html',
   styleUrls: ['./word-roulette-terminal-page.component.scss']
 })
-export class WordRouletteTerminalPageComponent implements OnInit, OnDestroy {
+export class WordRouletteTerminalPageComponent implements OnInit, OnDestroy, WordRouletteTerminalGameListener {
   public rouletteResults: RouletteWheelState[] = [];
 
   private _wordRouletteTerminal: WordRouletteTerminalInterface;
@@ -23,10 +23,13 @@ export class WordRouletteTerminalPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this._wordRouletteTerminal = this._lessonTerminalProviderService.currentGameServices as WordRouletteTerminalInterface;
-    this._refreshTimer = setInterval(() => this.refreshRouletteState(), 1000);
+
+    const gameListenerRegistration = new GameListenerRegistration();
+    gameListenerRegistration.listener = this;
+    this._wordRouletteTerminal.registerTerminalGameListener(gameListenerRegistration);
   }
 
-  async refreshRouletteState(): Promise<void> {
-    this.rouletteResults = await this._wordRouletteTerminal.getRouletteResults() || [];
+  async notifyRollResults(results: RouletteWheelState[]): Promise<void> {
+    this.rouletteResults = results;
   }
 }

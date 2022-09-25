@@ -1,9 +1,11 @@
+const MONIKER_PARSE_RE = /^([a-zA-Z_-]+):(.*)$/;
 export abstract class MonikerResolver {
   abstract resolve(moniker: string): Promise<object | null>;
 
 
   static resolveMoniker(moniker: string): Promise<object | null> {
-    const monikerTypeString = moniker.split(':')[0];
+    const monikerTypeString = MONIKER_PARSE_RE.exec(moniker)[1];
+    
     const resolver = MONIKER_RESOLVER_BY_MONIKER_TYPE[monikerTypeString];
     if(!resolver) {
       throw new Error(`Invalid moniker type ${monikerTypeString}`);      

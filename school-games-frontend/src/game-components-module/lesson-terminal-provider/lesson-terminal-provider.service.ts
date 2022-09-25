@@ -1,21 +1,22 @@
 import { EventEmitter, Injectable } from "@angular/core";
-import { LessonTerminalServices, Terminal, TerminalMessage } from "school-games-common";
+import { LessonTerminalServices, MonikerWithEndpointResolver, Terminal, TerminalMessage, ZipcServer } from "school-games-common";
 import { GameType } from "school-games-common/dist/lesson-model/games-registry";
+import { ZipcCallContext } from "school-games-common/dist/zipc/server/ZipcCallContext";
 import { ZipcClientService } from "../zipc-client-service/zipc-client.service";
 
-
+const zipcServer = new ZipcServer();
 @Injectable()
 export class LessonTerminalProviderService {
   private _asyncLoadedTerminal: Promise<Terminal>;
-  private _heartbeatTimer: any;
-  private _heartbeatInterval = 3000;
+
+  private _keepPolling: boolean = true;
 
   private _currentGameType: GameType | null;
   private _currentGameServices: object | null;
 
   private _terminalMessageEvent: EventEmitter<TerminalMessage> = new EventEmitter();
 
-  constructor(private _zipcClient: ZipcClientService) {
+  constructor(private _zipcClientService: ZipcClientService) {
   }
 
   get onTerminalMessage() {
@@ -39,30 +40,39 @@ export class LessonTerminalProviderService {
   }
 
   private async initTerminalAsync(lessonManagerMoniker: string): Promise<Terminal> {
-    const terminalServices = await this._zipcClient.zipcClient.bindMoniker<LessonTerminalServices>(lessonManagerMoniker);
+    const terminalServices = await this._zipcClientService.zipcClient.bindMoniker<LessonTerminalServices>(lessonManagerMoniker);
     const bindResult = await terminalServices.connectTerminal({});
 
-    this._heartbeatTimer = setInterval(async () => {
-      const terminalMessages = await bindResult.terminal.heartbeat();
-      for(let index = 0; index < terminalMessages.length; index++) {
-        await this._handleEvent(terminalMessages[index]);
+    (async () => {
+      while(this._keepPolling) {
+        const terminalMessages = await bindResult.terminal.heartbeat();
+        for(let index = 0; index < terminalMessages.length; index++) {
+          await this._handleEvent(terminalMessages[index]);
+        }
       }
-    }, this._heartbeatInterval)
+    })();
+
+    MonikerWithEndpointResolver.setLocalEndpointId(bindResult.terminalId);
 
     return bindResult.terminal;
   }
 
   private async _handleEvent(terminalMessage: TerminalMessage) {
     switch(terminalMessage.type) {
+      case 'zipc-dispatch':
+        zipcServer.handleRequest(terminalMessage.zipcMessage, new ZipcCallContext('terminal', {}, this._zipcClientService.zipcClient));
+        break;
+
       case 'start-game':
         this._currentGameType = terminalMessage.gameType;
         this._currentGameServices =
           terminalMessage.gameStateMoniker &&
-          this._zipcClient.zipcClient.bindMoniker(terminalMessage.gameStateMoniker) || null;
+          this._zipcClientService.zipcClient.bindMoniker(terminalMessage.gameStateMoniker) || null;
+        break;
+
+
     }
 
     this._terminalMessageEvent.emit(terminalMessage);
   }
-
-
 }

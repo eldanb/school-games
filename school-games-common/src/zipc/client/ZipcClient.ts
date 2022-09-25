@@ -15,6 +15,7 @@ export class ZipcClient {
 
   bindMoniker<T>(moniker: string): T {
     let proxy = this._proxyMap.get(moniker);
+
     if(!proxy) {
       proxy = new Proxy({}, {
         get: (target, property, receiver) => {
@@ -47,7 +48,7 @@ export class ZipcClient {
         }
       };
   
-      const response = JSON.parse(await this._transport.transact(JSON.stringify(request))) as ZipcResponse;
+      const response = JSON.parse(await this._transport.transact(moniker, JSON.stringify(request))) as ZipcResponse;
 
       if('error' in response) {
         throw new Error(response.error.message);

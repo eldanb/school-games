@@ -14,6 +14,10 @@ type TerminalMessagesMap = {
   'start-game': {
     gameType: GameType;
     gameStateMoniker?: string;
+  },
+
+  'zipc-dispatch': {
+    zipcMessage: string;
   }
 }
 

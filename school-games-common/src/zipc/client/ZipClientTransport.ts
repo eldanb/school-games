@@ -1,3 +1,3 @@
 export interface ZipClientTransport {
-  transact(request: string): Promise<string>;
+  transact(moniker: string, request: string): Promise<string>;
 }

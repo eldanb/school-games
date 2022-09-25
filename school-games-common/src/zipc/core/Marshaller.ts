@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { ZipcClient } from '../client/ZipcClient';
+import { MonikerWithEndpointResolver } from '../server/MonikerWithEndpointIdResolver';
 import { WeakObjectMonikerResolver } from '../server/WeakObjectMonikerResolver';
 
 // TODO separate marshallers from unmarshallers?
@@ -128,11 +129,11 @@ export function UseMarshallerType(marshallerType: string): (target: any, propert
   }  
 }
 
-@MarshallerType('weakRef')
+@MarshallerType('weakRefWithEndpoint')
 export class WeakRefMarshaller extends Marshaller {
   public marshal(value: object): object {
     return { 
-      ref: WeakObjectMonikerResolver.registerObject(value)
+      ref: MonikerWithEndpointResolver.addEndpointToMoniker(WeakObjectMonikerResolver.registerObject(value))
     };
   }
 

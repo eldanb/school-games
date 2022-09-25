@@ -11,12 +11,15 @@ import {
   TerminalConnectionResult,
   TerminalMessage,
   WeakObjectMonikerResolver,
+  ZipClientTransport,
 } from 'school-games-common';
 import * as QRCode from 'qrcode';
 import { Logger } from '@nestjs/common';
 import { GameType } from 'school-games-common/dist/lesson-model/games-registry';
 import { GameState } from './GamesState';
 import { createLessonState } from './GameStatesRegistry';
+import { randomUUID } from 'crypto';
+import { EndpointMultiplexingZipcTransport } from 'src/zipc-module/ZipcApiController';
 
 export class LessonControllerImpl implements LessonControllerInterface {
   private _terminalConnectionService: LessonTerminalServices;
@@ -64,11 +67,12 @@ export class LessonControllerImpl implements LessonControllerInterface {
   }
 
   async connectTerminal(
+    terminalId: string,
     terminalConnectionInfo: TerminalConnectionInfo,
   ): Promise<Terminal> {
     this._pruneTerminals();
 
-    const terminal = new TerminalImpl(this, terminalConnectionInfo);
+    const terminal = new TerminalImpl(this, terminalId, terminalConnectionInfo);
     this._terminals.push(terminal);
     return terminal;
   }
@@ -123,8 +127,13 @@ class LessonTerminalServicesImpl implements LessonTerminalServices {
     terminalConnectionInfo: TerminalConnectionInfo,
   ): Promise<TerminalConnectionResult> {
     const result = new TerminalConnectionResult();
-    result.terminal = await this._owner.connectTerminal(terminalConnectionInfo);
 
+    const terminalId = randomUUID();
+    result.terminal = await this._owner.connectTerminal(
+      terminalId,
+      terminalConnectionInfo,
+    );
+    result.terminalId = terminalId;
     return result;
   }
 }
@@ -132,14 +141,20 @@ class LessonTerminalServicesImpl implements LessonTerminalServices {
 class TerminalImpl implements Terminal {
   private _logger = new Logger('TerminalImpl');
   private _lastHeartbeat: number;
-
+  private _transport: ZipClientTransport;
   private _pendingMessages: AsyncQueue<TerminalMessage> = new AsyncQueue();
 
   constructor(
     private _parent: LessonControllerImpl,
+    private _id: string,
     connectionInfo: TerminalConnectionInfo,
   ) {
     this._lastHeartbeat = Date.now();
+    this._transport = new TerminalZipcClientTransport(this);
+    EndpointMultiplexingZipcTransport.registerEndpoint(
+      this._id,
+      this._transport,
+    );
   }
 
   async heartbeat(): Promise<TerminalMessage[] | null> {
@@ -148,12 +163,25 @@ class TerminalImpl implements Terminal {
     return (await this._pendingMessages.dequeueAll(3000)) || [];
   }
 
+  get id(): string {
+    return this._id;
+  }
+
   get lastHeartbeat(): number {
     return this._lastHeartbeat;
   }
 
   postMessage(message: TerminalMessage): void {
     this._pendingMessages.postMessage(message);
+  }
+}
+
+class TerminalZipcClientTransport implements ZipClientTransport {
+  constructor(private _terminal: TerminalImpl) {}
+
+  async transact(moniker: string, request: string): Promise<string> {
+    this._terminal.postMessage({ type: 'zipc-dispatch', zipcMessage: request });
+    return '{"success": null}';
   }
 }
 

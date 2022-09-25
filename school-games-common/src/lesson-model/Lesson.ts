@@ -12,7 +12,7 @@ export type LessonStatus = {
 }
 
 export class GameStartResult {
-  @UseMarshallerType('weakRef')
+  @UseMarshallerType('weakRefWithEndpoint')
   gameController: object;
 }
 
@@ -40,7 +40,9 @@ export interface LessonControllerInterface {
 }
 
 export class TerminalConnectionResult {
-  @UseMarshallerType('weakRef')
+  terminalId: string;
+
+  @UseMarshallerType('weakRefWithEndpoint')
   terminal: Terminal;
 }
 
