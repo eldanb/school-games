@@ -25,6 +25,7 @@ import { ConsoleUiFrameworkComponent } from './main-console/console-ui-framework
 import { LessonJoinQrcodeDialogComponent } from '../game-components-module/lesson-join-qrcode-dialog/lesson-join-qrcode-dialog.component';
 import { WordPopTerminalPageComponent } from './games/word-pop/word-pop-terminal-page/word-pop-terminal-page.component';
 import { WordPopConsolePageComponent } from './games/word-pop/word-pop-console-page/word-pop-console-page.component';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { WordPopConsolePageComponent } from './games/word-pop/word-pop-console-p
     MatIconModule,
     MatButtonModule,
     MatSlideToggleModule,
+    MatInputModule,
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,

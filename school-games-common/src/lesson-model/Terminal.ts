@@ -2,7 +2,7 @@ import { SelfDescribingMessage } from "../zipc/core/SelfDescribingMessage";
 import { GameType } from "./games-registry";
 
 export interface TerminalConnectionInfo {
-
+  username: string;
 }
 
 type TerminalMessagesMap = {

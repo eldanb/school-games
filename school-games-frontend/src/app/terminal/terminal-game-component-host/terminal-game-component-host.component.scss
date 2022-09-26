@@ -1,7 +1,10 @@
 :host {
-  display: flex;
   flex-grow: 1;
-  align-content: center;
-  align-items: center;
-  justify-content: center;
+
+  display: flex;
+  flex-direction: column;
+
+  align-content: stretch;
+  align-items: stretch;
+  justify-content: stretch;
 }

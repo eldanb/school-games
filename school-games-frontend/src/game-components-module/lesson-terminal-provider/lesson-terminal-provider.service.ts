@@ -31,17 +31,17 @@ export class LessonTerminalProviderService {
     return this._currentGameServices;
   }
 
-  initTerminal(lessonManagerMoniker: string) {
-    this._asyncLoadedTerminal = this.initTerminalAsync(lessonManagerMoniker);
+  initTerminal(lessonManagerMoniker: string, username: string) {
+    this._asyncLoadedTerminal = this.initTerminalAsync(lessonManagerMoniker, username);
   }
 
   getTerminalInterface(): Promise<Terminal> {
     return this._asyncLoadedTerminal;
   }
 
-  private async initTerminalAsync(lessonManagerMoniker: string): Promise<Terminal> {
+  private async initTerminalAsync(lessonManagerMoniker: string, username: string): Promise<Terminal> {
     const terminalServices = await this._zipcClientService.zipcClient.bindMoniker<LessonTerminalServices>(lessonManagerMoniker);
-    const bindResult = await terminalServices.connectTerminal({});
+    const bindResult = await terminalServices.connectTerminal({username});
 
     (async () => {
       while(this._keepPolling) {

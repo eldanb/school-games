@@ -17,7 +17,7 @@ export type PoppedWordGameStatus = {
 }
 
 export interface WordPopConsoleInterface {
-  startGame(commonPoppedWords: PoppedWord[], gameLengthInSeconds: number | null): Promise<void>;
+  startGame(question: string, commonPoppedWords: PoppedWord[], gameLengthInSeconds: number | null): Promise<void>;
   getGameStatus(): Promise<PoppedWordGameStatus>;
 }
 
@@ -32,6 +32,7 @@ export interface WordPopTerminalServices {
 }
 
 export type PoppedWordGameboard = {
+  question: string;
   endTime: number | null; 
   baloons: {
     word: string;

@@ -2,8 +2,12 @@
   direction: rtl;
 
   height: 100%;
+  width: 100%;
+
   display: flex;
   flex-direction: column;
+
+  align-items: center;
 }
 
 .terminal-header {
@@ -14,4 +18,29 @@
 
 app-terminal-game-component-host {
   height: 100%;
+  width: 100%;
+
+  flex-grow: 1;
+}
+
+.connection-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  max-width: 30rem;
+  margin: 1.5rem;
+
+  h1 {
+    width: 100%;
+  }
+
+  mat-form-field {
+    width: 100%;
+    margin-top: 3rem;
+  }
+
+  button {
+    margin-top: 3rem;
+  }
 }

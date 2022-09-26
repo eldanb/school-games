@@ -9,14 +9,13 @@ export class TerminalMainPageComponent implements OnInit {
 
   lessonMoniker: string;
   lessonConnected: boolean;
+  username: string;
 
   constructor(private _route: ActivatedRoute) {
   }
 
   ngOnInit(): void {
-    this.connectToLesson(this._route.snapshot.queryParams['mk']);
   }
-
 
   private connectToLesson(lessonMoniker: string) {
     this.lessonMoniker = lessonMoniker;
@@ -27,5 +26,7 @@ export class TerminalMainPageComponent implements OnInit {
   }
 
 
-
+  handleConnectClicked() {
+    this.connectToLesson(this._route.snapshot.queryParams['mk']);
+  }
 }

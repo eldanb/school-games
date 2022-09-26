@@ -6,7 +6,7 @@
   <table>
     <tr><td>Terminal</td><td>Good pops</td><td>Bad pops</td></tr>
     <tr *ngFor="let tid of terminalIds">
-      <td>{{tid}}</td>
+      <td>{{terminalInfoForTid(tid)?.username}}</td>
       <td>{{gameStatus.terminalStatus[tid].goodPops}}</td>
       <td>{{gameStatus.terminalStatus[tid].badPops}}</td>
     </tr>

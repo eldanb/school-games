@@ -1,5 +1,6 @@
 <app-lesson-terminal-provider
   [lessonMoniker]="lessonMoniker"
+  [username]="username"
   (connectionStateChange)="connectionStateChanged($event)">
 
   <div class="terminal-page">
@@ -11,10 +12,24 @@
       <div *ngIf="!lessonConnected">
         לא מחובר לשיעור
       </div>
-
     </div>
 
-    <app-terminal-game-component-host></app-terminal-game-component-host>
+    <app-terminal-game-component-host *ngIf="lessonConnected"></app-terminal-game-component-host>
+
+    <div class="connection-form" *ngIf="!lessonConnected">
+      <h1>היי!</h1>
+      <p>
+        כדי להתחבר לשיעור, אנחנו רק צריכים לדעת את השם שלך. אנא הזן אותו למטה, ולחץ על ״התחבר״.
+      </p>
+
+      <mat-form-field appearance="fill" class="form-field-rtl">
+        <mat-label>שם</mat-label>
+        <input matInput [(ngModel)]="username" value="">
+      </mat-form-field>
+
+      <button mat-raised-button (click)="handleConnectClicked()">התחבר</button>
+
+    </div>
   </div>
 
 </app-lesson-terminal-provider>

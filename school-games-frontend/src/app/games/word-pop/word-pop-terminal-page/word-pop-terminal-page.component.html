@@ -1,4 +1,5 @@
-<div *ngIf="gameboard" style="width: 75vw; height: 75vh">
+<div *ngIf="gameboard" class="game-on">
+  <h1>{{gameboard?.question}}</h1>
   <svg viewBox="-50 -50 500 550">
     <style type="text/css">
       .baloon-container {

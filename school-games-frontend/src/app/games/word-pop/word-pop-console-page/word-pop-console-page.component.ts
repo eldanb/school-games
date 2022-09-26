@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { PoppedWordGameStatus, WordPopConsoleInterface } from 'school-games-common';
+import { LessonStatusTerminalInfo, PoppedWordGameStatus, TerminalConnectionInfo, WordPopConsoleInterface } from 'school-games-common';
 import { LessonControllerProviderService } from 'src/game-components-module/lesson-controller-provider/lesson-controller-provider.service';
 
 @Component({
@@ -11,6 +11,7 @@ export class WordPopConsolePageComponent implements OnInit, OnDestroy {
   private _refreshInterval: any = null;
 
   gameStatus: PoppedWordGameStatus;
+  terminals: LessonStatusTerminalInfo[];
 
   constructor(private _lessonControllerService: LessonControllerProviderService) { }
 
@@ -37,11 +38,19 @@ export class WordPopConsolePageComponent implements OnInit, OnDestroy {
   }
 
   private async refreshStatus() {
+    const terminalController = await this._lessonControllerService.getLessonController();
+    this.terminals = (await terminalController.getLessonStatus()).terminalInfo;
     this.gameStatus = await this._wordpopGameController.getGameStatus();
   }
 
+  public terminalInfoForTid(tid: string): LessonStatusTerminalInfo | null {
+    return this.terminals.find((t) => t.terminalId == tid) || null;
+  }
+
   public async startGame() {
-    await this._wordpopGameController.startGame([
+    await this._wordpopGameController.startGame(
+      "who did number two!?",
+      [
       {
         word: "שמר",
         valid: true

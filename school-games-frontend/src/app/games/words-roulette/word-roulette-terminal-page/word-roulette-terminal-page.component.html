@@ -1,7 +1,9 @@
-<h1>רולטת מילים</h1>
-<div class="roulette-results">
-  <div *ngFor="let wheelItem of rouletteResults">
-    <div class="wheel-title">{{wheelItem.wheelDisplayName}}</div>
-    <div class="selected-word">{{wheelItem.wheelWord}}</div>
+<div class="card">
+  <h1>רולטת מילים</h1>
+  <div class="roulette-results">
+    <div *ngFor="let wheelItem of rouletteResults">
+      <div class="wheel-title">{{wheelItem.wheelDisplayName}}</div>
+      <div class="selected-word">{{wheelItem.wheelWord}}</div>
+    </div>
   </div>
 </div>

@@ -45,7 +45,10 @@ export class LessonControllerImpl implements LessonControllerInterface {
     this._pruneTerminals();
 
     return {
-      terminalInfo: this._terminals.map((terminal) => ({})),
+      terminalInfo: this._terminals.map((terminal) => ({
+        terminalId: terminal.id,
+        username: terminal.username,
+      })),
     };
   }
 
@@ -146,6 +149,7 @@ class TerminalImpl implements Terminal {
   private _lastHeartbeat: number;
   private _transport: ZipClientTransport;
   private _pendingMessages: AsyncQueue<TerminalMessage> = new AsyncQueue();
+  private _username: string;
 
   constructor(
     private _parent: LessonControllerImpl,
@@ -154,6 +158,7 @@ class TerminalImpl implements Terminal {
   ) {
     this._lastHeartbeat = Date.now();
     this._transport = new TerminalZipcClientTransport(this);
+    this._username = connectionInfo.username;
     EndpointMultiplexingZipcTransport.registerEndpoint(
       this._id,
       this._transport,
@@ -168,6 +173,10 @@ class TerminalImpl implements Terminal {
 
   get id(): string {
     return this._id;
+  }
+
+  get username(): string {
+    return this._username;
   }
 
   get lastHeartbeat(): number {

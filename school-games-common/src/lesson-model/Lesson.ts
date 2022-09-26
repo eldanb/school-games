@@ -5,6 +5,8 @@ import { Terminal, TerminalConnectionInfo } from "./Terminal";
 
 
 export type LessonStatusTerminalInfo = {  
+  terminalId: string;
+  username: string;
 }
 
 export type LessonStatus = {
