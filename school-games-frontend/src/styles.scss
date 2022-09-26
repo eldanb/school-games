@@ -43,6 +43,13 @@ body * {
   align-items: center;
 }
 
+.form-table {
+  td {
+    vertical-align: top;
+    padding-bottom: 0.5rem;
+  }
+}
+
 .form-field-rtl {
   text-align: right !important;
   direction: rtl;

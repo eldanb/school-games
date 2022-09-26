@@ -1,10 +1,14 @@
 <div class="icon-labeled-field" (click)="handleIconClicked()" [ngClass]="{'popup-opened': showStatusPopup}">
   <mat-icon>face</mat-icon>
-  <div>{{terminalCount}}</div>
+  <div>{{lessonStatus.terminalInfo.length}}</div>
 </div>
 
 <div class="lesson-status-popup" *ngIf="showStatusPopup">
   <h2>משתתפים בשיעור</h2>
+  <div class="participant-line" *ngFor="let terminalInfo of lessonStatus.terminalInfo">
+    <div>{{terminalInfo.username}}</div>
+    <mat-icon (click)="sendChatMessage(terminalInfo.terminalId)">chat</mat-icon>
+  </div>
   <div class="spacer"></div>
   <button mat-button (click)="showLessonQrCode()">קוד הצטרפות</button>
 </div>

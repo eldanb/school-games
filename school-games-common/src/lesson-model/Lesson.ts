@@ -37,6 +37,7 @@ export interface LessonControllerInterface {
   getLessonStatus(): Promise<LessonStatus>;
 
   startGame(gameType: GameType): Promise<GameStartResult>;
+  sendMessage(terminalId: string, message: string): Promise<void>;
 
   hearbeat(): Promise<LessonControllerMessage[]>;
 }

@@ -1,4 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { TerminalMessage } from 'school-games-common';
 import { LessonTerminalProviderService } from './lesson-terminal-provider.service';
 
 @Component({
@@ -6,10 +8,11 @@ import { LessonTerminalProviderService } from './lesson-terminal-provider.servic
   templateUrl: './lesson-terminal-provider.component.html',
   providers: [LessonTerminalProviderService]
 })
-export class LessonTerminalProviderComponent implements OnInit {
+export class LessonTerminalProviderComponent implements OnInit, OnDestroy {
 
   private _lessonMoniker: string | null;
   private _username: string | null;
+  private _terminalEventSubscription: Subscription| null;
 
   @Input()
   get lessonMoniker(): string | null {
@@ -34,10 +37,21 @@ export class LessonTerminalProviderComponent implements OnInit {
   @Output()
   connectionStateChange: EventEmitter<boolean> = new EventEmitter();
 
+  @Output()
+  terminalMessage: EventEmitter<TerminalMessage> = new EventEmitter();
+
   constructor(private _lessonTerminalProviderService: LessonTerminalProviderService) {
   }
 
   ngOnInit(): void {
+    this._terminalEventSubscription = this._lessonTerminalProviderService.onTerminalMessage.subscribe((event) =>
+      this.terminalMessage.emit(event));
+  }
+
+  ngOnDestroy(): void {
+    if(this._terminalEventSubscription) {
+      this._terminalEventSubscription.unsubscribe();
+    }
   }
 
   _connectIfNeeded() {

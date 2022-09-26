@@ -1,0 +1,17 @@
+<h1>שליחת הודעה</h1>
+
+<table class="form-table" style="width: 100%">
+  <tr><td>אל:</td><td>{{recipientName}}</td></tr>
+  <tr><td>הודעה:</td><td>
+    <mat-form-field appearance="fill" class="form-field-rtl" style="width: 100%">
+      <textarea matInput [(ngModel)]="message"></textarea>
+    </mat-form-field>
+  </td>
+</tr>
+</table>
+
+<div class="spacing"></div>
+
+<div class="horizontal-stack">
+  <button mat-raised-button (click)="sendClicked()">שלח</button>
+</div>

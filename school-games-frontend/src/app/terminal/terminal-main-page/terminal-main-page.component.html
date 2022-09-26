@@ -1,7 +1,9 @@
 <app-lesson-terminal-provider
   [lessonMoniker]="lessonMoniker"
   [username]="username"
-  (connectionStateChange)="connectionStateChanged($event)">
+  (connectionStateChange)="connectionStateChanged($event)"
+  (terminalMessage)="handleTerminalMessage($event)"
+  >
 
   <div class="terminal-page">
 

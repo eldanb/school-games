@@ -37,6 +37,22 @@ export class LessonControllerImpl implements LessonControllerInterface {
     this._terminalConnectionService = new LessonTerminalServicesImpl(this);
   }
 
+  async sendMessage(terminalId: string, message: string): Promise<void> {
+    const termImpl = this._terminals.find(
+      (termImpl) => termImpl.id === terminalId,
+    );
+
+    if (!termImpl) {
+      throw new Error(`Terminal ${terminalId} not found`);
+    }
+
+    termImpl.postMessage({
+      type: 'chat-notification',
+      from: 'console',
+      text: message,
+    });
+  }
+
   async hearbeat(): Promise<LessonControllerMessage[]> {
     return await this._pendingMessages.dequeueAll(3000);
   }

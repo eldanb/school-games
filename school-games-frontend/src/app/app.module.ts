@@ -26,6 +26,7 @@ import { LessonJoinQrcodeDialogComponent } from '../game-components-module/lesso
 import { WordPopTerminalPageComponent } from './games/word-pop/word-pop-terminal-page/word-pop-terminal-page.component';
 import { WordPopConsolePageComponent } from './games/word-pop/word-pop-console-page/word-pop-console-page.component';
 import { MatInputModule } from '@angular/material/input';
+import { SendChatMessageDialogComponent } from './send-chat-message-dialog/send-chat-message-dialog.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { MatInputModule } from '@angular/material/input';
     ConsoleUiFrameworkComponent,
     LessonJoinQrcodeDialogComponent,
     WordPopTerminalPageComponent,
-    WordPopConsolePageComponent
+    WordPopConsolePageComponent,
+    SendChatMessageDialogComponent
   ],
   imports: [
     BrowserModule,

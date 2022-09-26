@@ -69,8 +69,6 @@ export class LessonTerminalProviderService {
           terminalMessage.gameStateMoniker &&
           this._zipcClientService.zipcClient.bindMoniker(terminalMessage.gameStateMoniker) || null;
         break;
-
-
     }
 
     this._terminalMessageEvent.emit(terminalMessage);

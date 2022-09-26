@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { TerminalMessage } from 'school-games-common';
 
 @Component({
   templateUrl: './terminal-main-page.component.html',
@@ -28,5 +29,11 @@ export class TerminalMainPageComponent implements OnInit {
 
   handleConnectClicked() {
     this.connectToLesson(this._route.snapshot.queryParams['mk']);
+  }
+
+  handleTerminalMessage(terminalMessage: TerminalMessage) {
+    if(terminalMessage.type === "chat-notification") {
+      alert(terminalMessage.text);
+    }
   }
 }

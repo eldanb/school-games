@@ -1,0 +1,12 @@
+:host {
+  height: 100%;
+  direction: rtl;
+
+  display: flex;
+  flex-direction: column;
+
+}
+
+.spacing {
+  flex-grow: 1
+}

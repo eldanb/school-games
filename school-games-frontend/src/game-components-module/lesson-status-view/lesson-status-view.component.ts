@@ -1,5 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { LessonStatus } from 'school-games-common';
+import { SendChatMessageDialogComponent, SendChatMessageDialogData } from 'src/app/send-chat-message-dialog/send-chat-message-dialog.component';
 import { LessonControllerProviderService } from '../lesson-controller-provider/lesson-controller-provider.service';
 import { LessonJoinQrcodeDialogComponent, LessonJoinQrcodeDialogData } from '../lesson-join-qrcode-dialog/lesson-join-qrcode-dialog.component';
 
@@ -13,6 +15,7 @@ export class LessonStatusViewComponent implements OnInit, OnDestroy {
 
   showStatusPopup: boolean = false;
   terminalCount: number = 0;
+  lessonStatus: LessonStatus;
 
   constructor(private _lessonControllerProvider: LessonControllerProviderService,
               private _matDialog: MatDialog) {
@@ -32,8 +35,7 @@ export class LessonStatusViewComponent implements OnInit, OnDestroy {
 
   private async _refreshStatus(): Promise<void> {
     const lessonController = await this._lessonControllerProvider.getLessonController();
-    const lessonStatus = await lessonController.getLessonStatus();
-    this.terminalCount = lessonStatus.terminalInfo.length;
+    this.lessonStatus = await lessonController.getLessonStatus();
   }
 
   handleIconClicked() {
@@ -52,4 +54,20 @@ export class LessonStatusViewComponent implements OnInit, OnDestroy {
       });
   }
 
+  public sendChatMessage(terminalId: string) {
+    const terminalInfo = this.lessonStatus.terminalInfo.find((ti) => ti.terminalId == terminalId);
+    if(!terminalInfo) {
+      return;
+    }
+
+    this._matDialog.open<SendChatMessageDialogComponent, SendChatMessageDialogData>(SendChatMessageDialogComponent, {
+      width: '45vw',
+      height: '45vw',
+      data: {
+        recipientName: terminalInfo.username,
+        targetTerminal: terminalInfo.terminalId,
+        lessonControllerProviderService: this._lessonControllerProvider
+      }
+    });
+  }
 }
