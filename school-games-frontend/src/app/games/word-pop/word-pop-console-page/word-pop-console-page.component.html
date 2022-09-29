@@ -1,14 +1,60 @@
-<p>word-pop-console-page works!</p>
-<button (click)="startGame()">התחל משחק</button>
 
-<div *ngIf="gameStatus">
-  <h1>Game Status</h1>
-  <table>
-    <tr><td>Terminal</td><td>Good pops</td><td>Bad pops</td></tr>
-    <tr *ngFor="let tid of terminalIds">
-      <td>{{terminalInfoForTid(tid)?.username}}</td>
-      <td>{{gameStatus.terminalStatus[tid].goodPops}}</td>
-      <td>{{gameStatus.terminalStatus[tid].badPops}}</td>
-    </tr>
-  </table>
+<div
+  *ngIf="gameStatus.gameState === 'not-started'"
+  class="vertical-stack"
+  >
+  <h1>הכנה למשחק</h1>
+  <button mat-raised-button
+    color="primary"
+    (click)="startGame()">
+    התחל משחק
+  </button>
 </div>
+
+
+<div
+  class="vertical-stack full-width"
+  *ngIf="gameStatus.gameState !== 'not-started'">
+<mat-tab-group>
+  <mat-tab label="המילים במשחק">
+    <div class="vertical-stack game-words-panel">
+      <h1>{{sampleBoard.question}}</h1>
+      <app-poppable-baloons [baloons]="sampleBoard.baloons"></app-poppable-baloons>
+    </div>
+  </mat-tab>
+  <mat-tab label="לוח תוצאות">
+    <div
+    class="vertical-stack">
+      <h1>לוח תוצאות</h1>
+      <table class="score-board">
+        <thead>
+          <tr>
+            <td>משתתפ/ת</td>
+            <td class="col-right">נכון</td>
+            <td class="col-wrong">לא נכון</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let tid of terminalIds"
+            [ngClass]="{completed: gameStatus.terminalStatus[tid].playerCompleted}"
+              >
+            <td class="col-term">{{terminalInfoForTid(tid)?.username}}</td>
+            <td class="col-right">{{gameStatus.terminalStatus[tid].goodPops}}</td>
+            <td class="col-wrong">{{gameStatus.terminalStatus[tid].badPops}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </mat-tab>
+</mat-tab-group>
+
+
+<button mat-raised-button
+  *ngIf="gameStatus.gameState === 'all-done'"
+  color="primary"
+  (click)="startGame()">
+  התחל משחק נוסף
+</button>
+</div>
+

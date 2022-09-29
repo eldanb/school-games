@@ -53,7 +53,7 @@ export class WordPopGameState
     question: string,
     commonPoppedWords: PoppedWord[],
     gameLengthInSeconds: number | null,
-  ): Promise<void> {
+  ): Promise<PoppedWordGameboard> {
     this._commonPoppedWords = commonPoppedWords;
     this._endTime = gameLengthInSeconds
       ? new Date().getTime() + gameLengthInSeconds
@@ -99,6 +99,8 @@ export class WordPopGameState
         ts.startBoard(generatedBoard),
       ),
     );
+
+    return generatedBoard;
   }
 
   isValidWord(wordToPop: string) {
@@ -111,6 +113,11 @@ export class WordPopGameState
     const ret: PoppedWordGameStatus = {
       endTime: this._endTime,
       terminalStatus: {},
+      gameState: !this._commonPoppedWords
+        ? 'not-started'
+        : Object.values(this._terminalServices).find((ts) => !ts.isCompleted())
+        ? 'playing'
+        : 'all-done',
     };
 
     Object.entries(this._terminalServices).forEach(([k, v]) => {
@@ -118,6 +125,7 @@ export class WordPopGameState
         totalWords: v.totalWords,
         goodPops: v.goodPops,
         badPops: v.badPops,
+        playerCompleted: v.isCompleted(),
       };
     });
 
@@ -128,23 +136,25 @@ export class WordPopGameState
 class WordPopTerminalServicesImpl implements WordPopTerminalServices {
   private _listener: WordPopTerminalListenerRegistration | null = null;
   private _gameboard: PoppedWordGameboard | null = null;
+  private _completed: boolean;
 
   constructor(private _gs: WordPopGameState, private _terminalId: string) {}
 
   async popWord(wordToPop: string): Promise<boolean> {
-    const ret = this._gs.isValidWord(wordToPop);
+    const poppedWordValid = this._gs.isValidWord(wordToPop);
     const updatedBaloon = this._gameboard.baloons.find(
       (b) => b.word === wordToPop,
     );
+
     if (updatedBaloon) {
-      updatedBaloon.status = ret ? 'popped' : 'wrong';
+      updatedBaloon.status = !poppedWordValid ? 'popped' : 'wrong';
     }
 
     if (this._listener) {
       this._listener.listener.updateGameboard(this._gameboard);
     }
 
-    return ret;
+    return poppedWordValid;
   }
 
   async setWordPopListener(
@@ -155,10 +165,19 @@ class WordPopTerminalServicesImpl implements WordPopTerminalServices {
 
   async startBoard(gb: PoppedWordGameboard) {
     this._gameboard = JSON.parse(JSON.stringify(gb));
+    this._completed = false;
 
     if (this._listener) {
       await this._listener.listener.updateGameboard(this._gameboard);
     }
+  }
+
+  async setCompleted() {
+    this._completed = true;
+  }
+
+  isCompleted() {
+    return this._completed;
   }
 
   get totalWords(): number {

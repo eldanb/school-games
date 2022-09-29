@@ -1,0 +1,60 @@
+.game-words-panel {
+  height: 45vw;
+
+  app-poppable-baloons {
+    flex-grow: 1;
+  }
+}
+
+.score-board {
+  margin: 6rem;
+  border-spacing: 0 15px;
+
+  thead tr {
+    font-size: 1.5rem;
+
+    td.col-right {
+      text-align: center;
+    }
+
+    td.col-wrong {
+      text-align: center;
+    }
+
+  }
+  tbody {
+    tr {
+      font-size: 1.25rem;
+      height: 3rem;
+      background: #ffffffc0;
+
+
+      td.col-term {
+        width: 30vw;
+      }
+
+      td.col-right {
+        width: 8vw;
+        color: green;
+        text-align: center;
+      }
+
+      td.col-wrong {
+        width: 8vw;
+        color: red;
+        text-align: center;
+      }
+
+      &.completed {
+        td.col-term {
+          font-weight: bold;
+          color: blue;
+        }
+      }
+    }
+  }
+}
+
+mat-tab-group {
+  width: 100%;
+}

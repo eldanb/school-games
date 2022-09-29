@@ -9,15 +9,18 @@ export type PoppedWordTerminalStatus = {
   totalWords: number;
   goodPops: number;
   badPops: number;
+  playerCompleted: boolean;
 }
 
 export type PoppedWordGameStatus = {
+  gameState: "not-started" | "playing" | "all-done";
+
   endTime: number | null;
   terminalStatus: { [terminalId: string]: PoppedWordTerminalStatus };
 }
 
 export interface WordPopConsoleInterface {
-  startGame(question: string, commonPoppedWords: PoppedWord[], gameLengthInSeconds: number | null): Promise<void>;
+  startGame(question: string, commonPoppedWords: PoppedWord[], gameLengthInSeconds: number | null): Promise<PoppedWordGameboard>;
   getGameStatus(): Promise<PoppedWordGameStatus>;
 }
 
@@ -29,6 +32,7 @@ export class WordPopTerminalListenerRegistration {
 export interface WordPopTerminalServices {
   popWord(wordToPop: string): Promise<boolean>;
   setWordPopListener(wordPopListener: WordPopTerminalListenerRegistration): Promise<void>;
+  setCompleted(): Promise<void>;
 }
 
 export type PoppedWordGameboard = {

@@ -16,4 +16,11 @@
   align-items: center;
   justify-items: stretch;
 
+  .finish-button {
+    margin: 3rem 0;
+  }
+
+  &.completed app-poppable-baloon {
+    opacity: 0.3;
+  }
 }

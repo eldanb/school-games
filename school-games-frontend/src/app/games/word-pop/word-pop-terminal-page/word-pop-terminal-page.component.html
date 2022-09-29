@@ -1,43 +1,15 @@
-<div *ngIf="gameboard" class="game-on">
+<div *ngIf="gameboard" class="game-on" [ngClass]="{ completed: completed }">
   <h1>{{gameboard?.question}}</h1>
-  <svg viewBox="-50 -50 500 550">
-    <style type="text/css">
-      .baloon-container {
-        opacity: 1;
-      }
 
-      .baloon-container.popped {
-        animation: fadeout forwards linear 0.5s;
-      }
+  <app-poppable-baloons [baloons]="gameboard.baloons" (pop)="handlePop($event)">
 
-      .st0 {
-        fill-rule:evenodd;
-        clip-rule:evenodd;
-      }
+  </app-poppable-baloons>
 
-      @keyframes fadeout {
-        100% {
-          opacity: 0.1;
-        }
-      }
-    </style>
-
-    <g *ngFor="let w of gameboard.baloons"
-        (click)="handlePop(w.word)"
-        [attr.transform]="'translate(' + w.position.x + ' ' + w.position.y +')'">
-
-      <g class="baloon-container" [ngClass]="{ popped: w.status == 'popped'}">
-        <g>
-          <path
-            [attr.fill]="w.color"
-            class="st0"
-            d="M30.68,0c16.92,0,30.6,16.34,30.6,36.51c0,18.62-11.67,39.94-26.77,42.22l2.94,5.1 c1.85,3.21,0.81,4.09-2.36,4.09h-1.93c6.04,15.27,6.56,18.68,0.65,33.95c0,0.54-0.46,1-1,1h-2.97c-0.54,0-1-0.46-1-1 c5.99-15.27,5.32-18.68-0.65-33.95h-3.32c-2.4,0.04-2.24-2.28-1.24-3.9l3.28-5.29C11.74,76.52,0,55.17,0,36.51 C0,16.34,13.71,0,30.6,0H30.68L30.68,0z M36.19,12.16c-0.85-0.46-1.17-1.52-0.71-2.37c0.46-0.85,1.52-1.17,2.37-0.71 c2.93,1.58,5.86,3.92,8.42,6.57c2.64,2.73,4.89,5.8,6.32,8.7c0.43,0.87,0.07,1.91-0.79,2.34c-0.87,0.43-1.91,0.07-2.34-0.79 c-1.28-2.58-3.31-5.34-5.71-7.83C41.44,15.67,38.8,13.56,36.19,12.16L36.19,12.16z"/>
-        </g>
-
-        <text text-anchor="middle" x="30" y="40" fill="white">{{w.word}}</text>
-      </g>
-    </g>
-  </svg>
+  <button
+    mat-raised-button
+    (click)="handleDoneClicked()"
+    [disabled]="completed"
+    class="finish-button">סיימתי!</button>
 <!--
 <div *ngFor="let w of gameboard.baloons" (click)="handlePop(w.word)">
   {{w.word}} -- {{w.status}} -- {{w.position.zz}}

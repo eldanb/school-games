@@ -1,8 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { LessonControllerProviderComponent } from 'src/game-components-module/lesson-controller-provider/lesson-controller-provider.component';
-import { WordPopConsolePageComponent } from './games/word-pop/word-pop-console-page/word-pop-console-page.component';
-import { WordRoulettePageComponent } from './games/words-roulette/word-roulette-page/word-roulette-page.component';
+import { ConsoleGamePageHostComponent } from './main-console/console-game-page-host/console-game-page-host.component';
 import { ConsoleMainViewComponent } from './main-console/console-main-view/console-main-view.component';
 import { ConsoleUiFrameworkComponent } from './main-console/console-ui-framework/console-ui-framework.component';
 import { TerminalMainPageComponent } from './terminal/terminal-main-page/terminal-main-page.component';
@@ -28,12 +26,8 @@ const routes: Routes = [
           component: ConsoleMainViewComponent
         },
         {
-          path: 'g/word-roulette',
-          component: WordRoulettePageComponent
-        },
-        {
-          path: 'g/word-pop',
-          component: WordPopConsolePageComponent
+          path: 'g/:gameId',
+          component: ConsoleGamePageHostComponent
         }
     ],
   }

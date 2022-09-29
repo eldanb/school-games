@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GameListenerRegistration, RouletteWheelState, WordRouletteTerminalGameListener, WordRouletteTerminalInterface } from 'school-games-common';
+import { TerminalUiFrameworkIntegrationSupportService } from 'src/app/terminal/terminal-main-page/terminal-main-page.component';
 import { LessonTerminalProviderService } from 'src/game-components-module/lesson-terminal-provider/lesson-terminal-provider.service';
 
 @Component({
@@ -12,7 +13,9 @@ export class WordRouletteTerminalPageComponent implements OnInit, OnDestroy, Wor
   private _wordRouletteTerminal: WordRouletteTerminalInterface;
   private _refreshTimer: any = null;
 
-  constructor(private _lessonTerminalProviderService: LessonTerminalProviderService) { }
+  constructor(
+    private _lessonTerminalProviderService: LessonTerminalProviderService
+    ) { }
 
   ngOnDestroy(): void {
     if(this._refreshTimer) {

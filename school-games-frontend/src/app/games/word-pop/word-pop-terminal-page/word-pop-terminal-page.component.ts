@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { PoppedWordGameboard, WordPopTerminalListener, WordPopTerminalListenerRegistration, WordPopTerminalServices } from 'school-games-common';
+import { TerminalUiFrameworkIntegrationSupportService } from 'src/app/terminal/terminal-main-page/terminal-main-page.component';
 import { LessonTerminalProviderService } from 'src/game-components-module/lesson-terminal-provider/lesson-terminal-provider.service';
+import { Baloon } from 'src/game-components-module/poppable-baloons/poppable-baloons.component';
 
 @Component({
   templateUrl: './word-pop-terminal-page.component.html',
@@ -10,8 +12,10 @@ export class WordPopTerminalPageComponent implements OnInit, WordPopTerminalList
   private _gameServices: WordPopTerminalServices;
   private _gameboard: PoppedWordGameboard;
 
-  constructor(private _lessonTerminalProviderService: LessonTerminalProviderService) {
+  completed: boolean;
 
+  constructor(
+    private _lessonTerminalProviderService: LessonTerminalProviderService) {
   }
 
   async updateGameboard(gameboard: PoppedWordGameboard): Promise<void> {
@@ -32,6 +36,13 @@ export class WordPopTerminalPageComponent implements OnInit, WordPopTerminalList
 
   }
 
+  async handleDoneClicked() {
+    if(!this.completed) {
+      this._gameServices.setCompleted();
+      this.completed = true;
+    }
+  }
+
   setPrompt(prompt: string): Promise<void> {
     throw new Error('Method not implemented.');
   }
@@ -44,8 +55,10 @@ export class WordPopTerminalPageComponent implements OnInit, WordPopTerminalList
     this._gameServices.setWordPopListener(registration);
   }
 
-  handlePop(word: string) {
-    this._gameServices.popWord(word);
+  handlePop(baloon: Baloon) {
+    if(!this.completed) {
+      this._gameServices.popWord(baloon.word);
+    }
   }
 
   get gameboard(): PoppedWordGameboard {

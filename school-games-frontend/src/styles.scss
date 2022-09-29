@@ -21,6 +21,8 @@ body * {
   padding: 1px 0.75rem;
   background: #ffffff40;
 
+  box-sizing: border-box;
+
   a {
     display: flex;
     align-items: center;
@@ -34,6 +36,10 @@ body * {
       text-shadow: 0 0 8px #983b96;
     }
   }
+
+  .spacer {
+    flex-grow: 1;
+  }
 }
 
 .horizontal-stack {
@@ -41,6 +47,17 @@ body * {
   flex-direction: row;
   gap: 0.75rem;
   align-items: center;
+}
+
+.vertical-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+
+  &.full-width {
+    width: 100%;
+  }
 }
 
 .form-table {
@@ -55,6 +72,9 @@ body * {
   direction: rtl;
 }
 
+.rtl-snackbar {
+  direction: rtl !important;
+}
 
 @font-face {
   font-family: 'varela-round';

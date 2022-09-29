@@ -53,7 +53,7 @@ export class WordRoulettePageComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-      this._consoleUiServce.statusBarExtensionControlsContainer.subscribe((cr) => cr?.createEmbeddedView(this._statusBarExtensionControls))
+    this._consoleUiServce.statusBarExtensionControlsContainer.subscribe((cr) => cr?.createEmbeddedView(this._statusBarExtensionControls))
   }
 
   private async _startGame() {
