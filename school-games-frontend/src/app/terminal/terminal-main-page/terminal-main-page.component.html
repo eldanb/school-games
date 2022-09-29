@@ -8,6 +8,16 @@
   <div class="terminal-page">
 
     <div class="status-bar">
+      <div>{{pageTitle}}</div>
+      <div class="spacer"></div>
+      <div *ngIf="lessonConnected && username">
+        {{username}}
+      </div>
+
+      <div *ngIf="lessonConnected && username">
+        |
+      </div>
+
       <div *ngIf="lessonConnected">
         מחובר לשיעור
       </div>

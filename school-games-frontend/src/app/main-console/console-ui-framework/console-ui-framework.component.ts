@@ -1,12 +1,28 @@
-import { AfterViewInit, Component, ComponentRef, OnInit, Self, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, Component, ComponentRef, Injectable, OnInit, Self, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 
 
+
+@Injectable()
 export class ConsoleUiFrameworkIntegrationSupportService {
+  private _component: ConsoleUiFrameworkComponent;
+
+  connectConsoleUiFrameworkComponent(component: ConsoleUiFrameworkComponent) {
+    this._component = component;
+  }
+
   statusBarExtensionControlsContainer: Subject<ViewContainerRef | null>
     = new BehaviorSubject<ViewContainerRef | null>(null);
+
+  get pageTitle(): string {
+    return this._component.pageTitle;
+  }
+
+  set pageTitle(v: string) {
+    this._component.pageTitle = v;
+  }
 }
 
 
@@ -17,10 +33,13 @@ export class ConsoleUiFrameworkIntegrationSupportService {
 })
 export class ConsoleUiFrameworkComponent implements AfterViewInit {
 
+  public pageTitle: string;
+
   @ViewChild('statusBarExtensionControlsHost', {read: ViewContainerRef})
   statusBarExtensionControlsHost: ViewContainerRef;
 
   constructor(@Self() private _frameworkSupportService: ConsoleUiFrameworkIntegrationSupportService) {
+    this._frameworkSupportService.connectConsoleUiFrameworkComponent(this);
   }
 
 
@@ -35,6 +54,7 @@ export class ConsoleUiFrameworkComponent implements AfterViewInit {
 
   public onDeactivateComponent(cr: any) {
     this.statusBarExtensionControlsHost.clear();
+    this.pageTitle = "";
   }
 }
 

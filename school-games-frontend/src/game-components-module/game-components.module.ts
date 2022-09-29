@@ -17,6 +17,7 @@ import { RouterModule } from '@angular/router';
 import { ZipcClientService } from './zipc-client-service/zipc-client.service';
 import { LessonTerminalProviderComponent } from './lesson-terminal-provider/lesson-terminal-provider.component';
 import { LessonStatusViewComponent } from './lesson-status-view/lesson-status-view.component';
+import { PoppableBaloonsComponent } from './poppable-baloons/poppable-baloons.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { LessonStatusViewComponent } from './lesson-status-view/lesson-status-vi
     LessonControllerProviderComponent,
     LessonTerminalProviderComponent,
     LessonStatusViewComponent,
+    PoppableBaloonsComponent,
   ],
   providers: [
     FavoritesSaveLoadService,
@@ -51,6 +53,7 @@ import { LessonStatusViewComponent } from './lesson-status-view/lesson-status-vi
     LessonTerminalProviderComponent,
     LessonControllerProviderComponent,
     LessonStatusViewComponent,
+    PoppableBaloonsComponent
   ]
 })
 export class GameComponentsModule { }

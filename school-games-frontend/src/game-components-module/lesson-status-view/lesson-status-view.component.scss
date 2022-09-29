@@ -1,12 +1,15 @@
 :host {
   display: flex;
   align-items: center;
+
+  direction: ltr;
 }
 
 .icon-labeled-field {
   display: flex;
   align-items: center;
   gap: 0.25rem;
+
 }
 
 .popup-opened {

@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs';
 import { TerminalMessage } from 'school-games-common';
 import { TerminalGamesRegistry } from 'src/app/games/TerminalGamesRegistry';
 import { LessonTerminalProviderService } from 'src/game-components-module/lesson-terminal-provider/lesson-terminal-provider.service';
+import { TerminalUiFrameworkIntegrationSupportService } from '../terminal-main-page/terminal-main-page.component';
 
 @Component({
   selector: 'app-terminal-game-component-host',
@@ -15,7 +16,8 @@ export class TerminalGameComponentHostComponent implements OnInit, OnDestroy {
   @ViewChild('componentHost', { read: ViewContainerRef })
   private _vcr: ViewContainerRef;
 
-  constructor(private _lessonTerminalProviderService: LessonTerminalProviderService) { }
+  constructor(private _lessonTerminalProviderService: LessonTerminalProviderService,
+    private _uiFramework: TerminalUiFrameworkIntegrationSupportService) { }
 
 
   private _handleTerminalMessage(message: TerminalMessage): void {
@@ -33,7 +35,10 @@ export class TerminalGameComponentHostComponent implements OnInit, OnDestroy {
     }
 
     const gameDescriptor = TerminalGamesRegistry[gt];
+
     this._vcr.createComponent(gameDescriptor.rootComponent);
+    this._uiFramework.pageTitle = gameDescriptor.gameTitle;
+
   }
 
   ngOnInit(): void {
