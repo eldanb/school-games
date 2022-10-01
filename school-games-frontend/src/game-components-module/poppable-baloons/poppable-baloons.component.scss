@@ -1,8 +1,11 @@
 :host {
   height: 100%;
+  overflow: hidden;
+  display: flex;
 
   svg {
     height: 100%;
+    margin: auto;
 
   }
 }
