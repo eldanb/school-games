@@ -8,8 +8,10 @@
   <div class="edit-action-bar" [ngClass]="{editing: editing}">
     <button mat-raised-button color="primary" (click)="handleAddQuestion()">הוסף שאלה</button>
     <div class="separator"></div>
-    <button mat-raised-button color="primary" >שמירה למועדפים</button>
-    <button mat-raised-button color="primary" >טעינה ממועדפים</button>
+    <app-favorites-management-buttons
+        gameName="word-pop"
+        [(gameDefinition)]="gameDefinition">
+      </app-favorites-management-buttons>
   </div>
 
   <div class="game-title" *ngIf="!editing">

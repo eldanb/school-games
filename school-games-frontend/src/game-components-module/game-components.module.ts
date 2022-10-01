@@ -18,6 +18,7 @@ import { ZipcClientService } from './zipc-client-service/zipc-client.service';
 import { LessonTerminalProviderComponent } from './lesson-terminal-provider/lesson-terminal-provider.component';
 import { LessonStatusViewComponent } from './lesson-status-view/lesson-status-view.component';
 import { PoppableBaloonsComponent } from './poppable-baloons/poppable-baloons.component';
+import { FavoritesManagementButtonsComponent } from './favorites-management-buttons/favorites-management-buttons.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { PoppableBaloonsComponent } from './poppable-baloons/poppable-baloons.co
     LessonTerminalProviderComponent,
     LessonStatusViewComponent,
     PoppableBaloonsComponent,
+    FavoritesManagementButtonsComponent,
   ],
   providers: [
     FavoritesSaveLoadService,
@@ -53,7 +55,8 @@ import { PoppableBaloonsComponent } from './poppable-baloons/poppable-baloons.co
     LessonTerminalProviderComponent,
     LessonControllerProviderComponent,
     LessonStatusViewComponent,
-    PoppableBaloonsComponent
+    PoppableBaloonsComponent,
+    FavoritesManagementButtonsComponent
   ]
 })
 export class GameComponentsModule { }

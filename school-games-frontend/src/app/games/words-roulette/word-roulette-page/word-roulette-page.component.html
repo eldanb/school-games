@@ -3,8 +3,10 @@
     <div class="edit-action-bar" [ngClass]="editingClass">
       <button mat-raised-button color="primary" (click)="addWheel()">הוסף גלגל</button>
       <div class="separator"></div>
-      <button mat-raised-button color="primary" (click)="saveFavorites()">שמירה למועדפים</button>
-      <button mat-raised-button color="primary" (click)="loadFavorites()">טעינה ממועדפים</button>
+      <app-favorites-management-buttons
+        gameName="words-roulette"
+        [(gameDefinition)]="gameDefinition">
+      </app-favorites-management-buttons>
     </div>
 
     <div class="roulettes-container">

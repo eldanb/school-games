@@ -38,9 +38,20 @@ export class WordPopConsolePageComponent implements OnInit, OnDestroy, AfterView
       invalidWords: [ "ww2" ],
     },
   ];
+
+  get gameDefinition() {
+    return {
+      gameTitle: this.gameTitle,
+      gameQuestionDefs: this.gameQuestionDefs
+    }
+  }
+
+  set gameDefinition(v: any) {
+    this.gameTitle = v.gameTitle;
+    this.gameQuestionDefs = v.gameQuestionDefs;
+  }
+
   editedQuestion: WordPopQuestionDefinition | null;
-
-
 
   editing: boolean = false;
 

@@ -83,19 +83,6 @@ export class WordRoulettePageComponent implements OnInit, AfterViewInit {
     return this.editing ? ["editing"] : [];
   }
 
-  async saveFavorites() {
-    await this._favService.saveFavorites(
-      "words-roulette",
-      {
-        gameDefinition:  this.gameDefinition
-      });
-  }
-
-  async loadFavorites() {
-    const fav = await this._favService.loadFavorites("words-roulette");
-    this.gameDefinition = fav.gameDefinition;
-  }
-
   updateWordList(wheelDefinition: WordRouletteWheelDefinition, wordList: string[]) {
     this.updateGameDefinition((gameDef) => {
       wheelDefinition.wheelWordlist = wordList;
