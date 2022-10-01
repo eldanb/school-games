@@ -1,9 +1,9 @@
 import {
-  PoppedWord,
   PoppedWordGameboard,
   PoppedWordGameStatus,
   Terminal,
   WordPopConsoleInterface,
+  WordPopQuestionDefinition,
   WordPopTerminalListenerRegistration,
   WordPopTerminalServices,
 } from 'school-games-common';
@@ -27,9 +27,9 @@ export class WordPopGameState
   implements WordPopConsoleInterface
 {
   private _terminalServices: Record<string, WordPopTerminalServicesImpl> = {};
-  private _commonPoppedWords: PoppedWord[];
+
+  private _currentQuestion: WordPopQuestionDefinition | null;
   private _endTime: number | null;
-  private _question: string;
 
   getConsoleServices(): WordPopConsoleInterface {
     return this;
@@ -49,16 +49,14 @@ export class WordPopGameState
     return this._terminalServices[terminalId];
   }
 
-  async startGame(
-    question: string,
-    commonPoppedWords: PoppedWord[],
-    gameLengthInSeconds: number | null,
+  async startQuestion(
+    questionDefinition: WordPopQuestionDefinition,
+    gameLengthInSeconds: number,
   ): Promise<PoppedWordGameboard> {
-    this._commonPoppedWords = commonPoppedWords;
+    this._currentQuestion = questionDefinition;
     this._endTime = gameLengthInSeconds
       ? new Date().getTime() + gameLengthInSeconds
       : null;
-    this._question = question;
 
     const positions = [];
     for (let i = 0; i < gridSizeX * gridSizeX; i++) {
@@ -66,33 +64,35 @@ export class WordPopGameState
     }
 
     const generatedBoard: PoppedWordGameboard = {
-      question: this._question,
+      question: this._currentQuestion.question,
       endTime: this._endTime,
       baloons: [],
     };
 
-    commonPoppedWords.forEach((poppedWord) => {
-      const posIndex = Math.round(Math.random() * (positions.length - 1));
-      const pos = positions[posIndex];
-      positions.splice(posIndex, 1);
+    this._currentQuestion.validWords
+      .concat(this._currentQuestion.invalidWords)
+      .forEach((word) => {
+        const posIndex = Math.round(Math.random() * (positions.length - 1));
+        const pos = positions[posIndex];
+        positions.splice(posIndex, 1);
 
-      const jx = ((Math.random() - 0.5) * jitterX) / 2;
-      const jy = ((Math.random() - 0.5) * jitterY) / 2;
+        const jx = ((Math.random() - 0.5) * jitterX) / 2;
+        const jy = ((Math.random() - 0.5) * jitterY) / 2;
 
-      const color =
-        baloonColors[Math.round(Math.random() * (baloonColors.length - 1))];
+        const color =
+          baloonColors[Math.round(Math.random() * (baloonColors.length - 1))];
 
-      generatedBoard.baloons.push({
-        word: poppedWord.word,
-        status: 'normal',
-        color: color,
-        position: {
-          x: (pos % gridSizeX) * jitterX + jx + jitterX / 2,
-          y: Math.floor(pos / gridSizeX) * jitterY + jy + jitterY / 2,
-          zz: `pos ${pos} jx ${jx} jy ${jy}`,
-        },
+        generatedBoard.baloons.push({
+          word: word,
+          status: 'normal',
+          color: color,
+          position: {
+            x: (pos % gridSizeX) * jitterX + jx + jitterX / 2,
+            y: Math.floor(pos / gridSizeX) * jitterY + jy + jitterY / 2,
+            zz: `pos ${pos} jx ${jx} jy ${jy}`,
+          },
+        });
       });
-    });
 
     await Promise.all(
       Object.values(this._terminalServices).map((ts) =>
@@ -103,17 +103,15 @@ export class WordPopGameState
     return generatedBoard;
   }
 
-  isValidWord(wordToPop: string) {
-    return (
-      this._commonPoppedWords.find((w) => w.word === wordToPop)?.valid ?? false
-    );
+  isValidWord(word: string) {
+    return this._currentQuestion.validWords.indexOf(word) >= 0;
   }
 
   async getGameStatus(): Promise<PoppedWordGameStatus> {
     const ret: PoppedWordGameStatus = {
       endTime: this._endTime,
       terminalStatus: {},
-      gameState: !this._commonPoppedWords
+      gameState: !this._currentQuestion
         ? 'not-started'
         : Object.values(this._terminalServices).find((ts) => !ts.isCompleted())
         ? 'playing'
@@ -138,6 +136,9 @@ class WordPopTerminalServicesImpl implements WordPopTerminalServices {
   private _gameboard: PoppedWordGameboard | null = null;
   private _completed: boolean;
 
+  private _goodPops = 0;
+  private _badPops = 0;
+
   constructor(private _gs: WordPopGameState, private _terminalId: string) {}
 
   async popWord(wordToPop: string): Promise<boolean> {
@@ -147,7 +148,13 @@ class WordPopTerminalServicesImpl implements WordPopTerminalServices {
     );
 
     if (updatedBaloon) {
-      updatedBaloon.status = !poppedWordValid ? 'popped' : 'wrong';
+      if (poppedWordValid) {
+        updatedBaloon.status = 'wrong';
+        this._badPops++;
+      } else {
+        updatedBaloon.status = 'popped';
+        this._goodPops++;
+      }
     }
 
     if (this._listener) {
@@ -183,10 +190,12 @@ class WordPopTerminalServicesImpl implements WordPopTerminalServices {
   get totalWords(): number {
     return this._gameboard?.baloons.length;
   }
+
   get goodPops(): number {
-    return this._gameboard?.baloons.filter((b) => b.status === 'popped').length;
+    return this._goodPops;
   }
+
   get badPops(): number {
-    return this._gameboard?.baloons.filter((b) => b.status === 'wrong').length;
+    return this._badPops;
   }
 }

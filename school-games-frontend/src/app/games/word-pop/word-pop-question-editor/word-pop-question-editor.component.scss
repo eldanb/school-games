@@ -1,0 +1,49 @@
+@import '../../../../styles.scss';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  position: relative;
+
+  padding: 3rem;
+
+  background: #ffffff50;
+  border-radius: 2.5rem;
+
+  &:hover .question-action-buttons {
+    @extend .display;
+  }
+}
+
+.question-action-buttons {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+}
+
+app-word-list-editor {
+  height: 16rem;
+}
+
+.question-editbox {
+  flex-grow: 1;
+}
+
+.serial-number {
+  font-size: 32px;
+  width: 4rem;
+}
+
+.question-word-lists-container  {
+  align-items: flex-start;
+
+  &.display {
+    height: 384px;
+  }
+}
+
+.question-word-list {
+  flex-grow: 1;
+}

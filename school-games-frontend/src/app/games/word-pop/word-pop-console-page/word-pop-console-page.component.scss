@@ -1,8 +1,64 @@
-.game-words-panel {
-  height: 45vw;
+:host {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 64px);
 
-  app-poppable-baloons {
+  div.vertical-stack {
+    flex-grow: 1
+  }
+}
+
+.edit-action-bar {
+  width: 100%;
+}
+
+.game-title {
+  font-size: 18px;
+  width: 100%;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+mat-tab-group {
+  width: 75vw;
+  flex-grow: 1;
+}
+
+.question-list-container.expand-down-on-display {
+  width: 100%;
+
+  overflow-y: scroll;
+  flex-basis: 0;
+  flex-grow: 1;
+
+  max-height: 0;
+
+  box-sizing: border-box;
+  padding: 2rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+
+  &.display {
+    max-height: 100vh;
+  }
+}
+
+
+.game-words-panel {
+  height: 100%;
+  width: 100%;
+
+  .baloon-display {
     flex-grow: 1;
+  }
+
+  .baloon-display-heading {
+    display: flex;
+    flex-direction: row;
+
+    font-size: 1.25rem;
   }
 }
 
@@ -22,6 +78,7 @@
     }
 
   }
+
   tbody {
     tr {
       font-size: 1.25rem;
@@ -55,6 +112,3 @@
   }
 }
 
-mat-tab-group {
-  width: 100%;
-}

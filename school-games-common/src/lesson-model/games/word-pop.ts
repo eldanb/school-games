@@ -1,8 +1,9 @@
 import { UseMarshallerType } from "../../zipc/core/Marshaller";
 
-export type PoppedWord = {
-  word: string;
-  valid: boolean;
+export type WordPopQuestionDefinition = {
+  question: string;
+  validWords: string[];
+  invalidWords: string[];
 }
 
 export type PoppedWordTerminalStatus = {
@@ -20,7 +21,7 @@ export type PoppedWordGameStatus = {
 }
 
 export interface WordPopConsoleInterface {
-  startGame(question: string, commonPoppedWords: PoppedWord[], gameLengthInSeconds: number | null): Promise<PoppedWordGameboard>;
+  startQuestion(questionDefinition: WordPopQuestionDefinition, gameLengthInSeconds: number | null): Promise<PoppedWordGameboard>;
   getGameStatus(): Promise<PoppedWordGameStatus>;
 }
 

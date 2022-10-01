@@ -28,6 +28,7 @@ import { WordPopConsolePageComponent } from './games/word-pop/word-pop-console-p
 import { MatInputModule } from '@angular/material/input';
 import { SendChatMessageDialogComponent } from './send-chat-message-dialog/send-chat-message-dialog.component';
 import { ConsoleGamePageHostComponent } from './main-console/console-game-page-host/console-game-page-host.component';
+import { WordPopQuestionEditorComponent } from './games/word-pop/word-pop-question-editor/word-pop-question-editor.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { ConsoleGamePageHostComponent } from './main-console/console-game-page-h
     WordPopTerminalPageComponent,
     WordPopConsolePageComponent,
     SendChatMessageDialogComponent,
-    ConsoleGamePageHostComponent
+    ConsoleGamePageHostComponent,
+    WordPopQuestionEditorComponent
   ],
   imports: [
     BrowserModule,

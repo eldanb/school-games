@@ -1,57 +1,52 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { LessonStatusTerminalInfo, PoppedWordGameboard, PoppedWordGameStatus, TerminalConnectionInfo, WordPopConsoleInterface } from 'school-games-common';
+import { AfterViewInit, Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { LessonStatusTerminalInfo, PoppedWordGameboard, PoppedWordGameStatus, WordPopConsoleInterface } from 'school-games-common';
 import { ConsoleUiFrameworkIntegrationSupportService } from 'src/app/main-console/console-ui-framework/console-ui-framework.component';
 import { LessonControllerProviderService } from 'src/game-components-module/lesson-controller-provider/lesson-controller-provider.service';
+import { WordPopQuestionDefinition } from '../word-pop-question-editor/word-pop-question-editor.component';
 
 @Component({
   templateUrl: './word-pop-console-page.component.html',
   styleUrls: ['./word-pop-console-page.component.scss']
 })
-export class WordPopConsolePageComponent implements OnInit, OnDestroy {
+export class WordPopConsolePageComponent implements OnInit, OnDestroy, AfterViewInit {
   private _wordpopGameController: WordPopConsoleInterface;
   private _refreshInterval: any = null;
 
-  _wordList = [
+  @ViewChild("statusBarExtensionControls", { read: TemplateRef })
+  _statusBarExtensionControls: TemplateRef<any>;
+
+  gameTitle: string = "שורשים";
+  gameQuestionDefs: WordPopQuestionDefinition[] = [
     {
-      word: "שמר",
-      valid: true
+      question: "מילים מהשורש ש.מ.ר",
+      validWords: [
+        "שמר",
+        "אשמור",
+        "ישמור",
+        "תשמורנה",
+        "שמרו",
+      ],
+      invalidWords: [
+        "שמרים",
+        "חלב",
+        "חביצה",
+      ],
     },
     {
-      word: "אשמור",
-      valid: true
-    },
-    {
-      word: "ישמור",
-      valid: true
-    },
-    {
-      word: "שמרים",
-      valid: false
-    },
-    {
-      word: "חלב",
-      valid: false
-    },
-    {
-      word: "תשמורנה",
-      valid: true
-    },
-    {
-      word: "שמרו",
-      valid: true
-    },
-    {
-      word: "חביצה",
-      valid: false
+      question: "q2",
+      validWords: [ "w2" ],
+      invalidWords: [ "ww2" ],
     },
   ];
+  editedQuestion: WordPopQuestionDefinition | null;
 
 
   gameStatus: PoppedWordGameStatus;
-  terminals: LessonStatusTerminalInfo[];
   sampleBoard: PoppedWordGameboard;
+  terminals: LessonStatusTerminalInfo[];
 
-
+  editing: boolean = false;
+  runningQuestion: WordPopQuestionDefinition;
 
   constructor(
     private _lessonControllerService: LessonControllerProviderService,
@@ -67,6 +62,10 @@ export class WordPopConsolePageComponent implements OnInit, OnDestroy {
       clearInterval(this._refreshInterval);
       this._refreshInterval = null;
     }
+  }
+
+  ngAfterViewInit(): void {
+    this._consoleUiFramework.statusBarExtensionControlsContainer.subscribe((cr) => cr?.createEmbeddedView(this._statusBarExtensionControls))
   }
 
   get terminalIds() {
@@ -100,7 +99,7 @@ export class WordPopConsolePageComponent implements OnInit, OnDestroy {
     let numCorrect = 0;
     let numWrong = 0;
     this.sampleBoard.baloons.forEach(baloon => {
-      if(this._wordList.find((w) => w.word == baloon.word)?.valid) {
+      if(this.runningQuestion.validWords.indexOf(baloon.word)>=0) {
         baloon.position.x = 10 + (numCorrect % 2) * 40;
         baloon.position.y = 10 + numCorrect * 80;
         numCorrect++;
@@ -118,8 +117,29 @@ export class WordPopConsolePageComponent implements OnInit, OnDestroy {
   }
 
   public async startGame() {
-    this.sampleBoard = await this._wordpopGameController.startGame(
-      "who did number two!?",
-      this._wordList, 120);
+
+    this.runningQuestion = this.gameQuestionDefs[0];
+
+    this.sampleBoard = await this._wordpopGameController.startQuestion(
+      this.runningQuestion,
+      120);
+  }
+
+  handleClickOnQuestionListContainer(event: Event): void {
+    if(event.eventPhase == Event.AT_TARGET) {
+      this.editedQuestion = null;
+    }
+  }
+
+  handleDeleteQuestion(questionIndex: number) {
+    this.gameQuestionDefs.splice(questionIndex, 1);
+  }
+
+  handleAddQuestion() {
+    this.gameQuestionDefs.push({
+      question: "",
+      invalidWords: [],
+      validWords: []
+    })
   }
 }

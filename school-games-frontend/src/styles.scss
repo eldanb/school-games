@@ -4,6 +4,8 @@ html, body { height: 100%; }
 body {
   margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;
   background: linear-gradient(160deg, #e0e0ff, transparent, transparent);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   font-family: 'varela-round';
 }
 
@@ -36,9 +38,40 @@ body * {
       text-shadow: 0 0 8px #983b96;
     }
   }
+}
 
-  .spacer {
-    flex-grow: 1;
+.flex-spacer {
+  flex-grow: 1;
+}
+
+.fade-in-placeholder {
+  opacity: 0;
+
+  &.display {
+    transition: opacity linear 0.5s;
+    opacity: 1;
+  }
+}
+
+.fade-in-on-appearance {
+  animation-name: fade-in;
+  animation-duration: 2s;
+  transition-timing-function: linear;
+
+  @keyframes fade-in {
+    0% { opacity: 0; max-width: 0;}
+    100% { opacity: 1; max-width: 100vh; }
+  }
+}
+
+.expand-down-on-display {
+  transition: height 0.5s, max-height 0.5s, opacity 0.5s linear;
+  opacity: 0;
+  height: 0;
+
+  &.display {
+    opacity: 1;
+    height: 256px;
   }
 }
 
@@ -75,6 +108,44 @@ body * {
 .rtl-snackbar {
   direction: rtl !important;
 }
+
+mat-tab-group.full-height {
+  .mat-tab-body-wrapper {
+    flex-grow: 1;
+  }
+}
+
+.edit-action-bar {
+  @extend .expand-down-on-display;
+
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  justify-items: flex-end;
+  padding: 4px 16px;
+
+  gap: 16px;
+  box-sizing: border-box;
+
+  & .separator {
+    flex-grow: 1;
+  }
+
+  &.editing {
+    @extend .display;
+
+    height: 48px;
+  }
+}
+
+.mode-toggle {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 6px;
+}
+
 
 @font-face {
   font-family: 'varela-round';

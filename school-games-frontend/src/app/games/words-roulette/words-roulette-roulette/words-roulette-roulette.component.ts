@@ -54,7 +54,7 @@ export class WordsRouletteRouletteComponent implements OnInit {
   }
 
   get editingClass() {
-    return this.editing ? ["editing"] : [];
+    return this.editing ? ["display"] : [];
   }
 
   @Input()

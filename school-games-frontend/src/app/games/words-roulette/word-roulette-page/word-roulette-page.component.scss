@@ -7,13 +7,6 @@
   }
 }
 
-.mode-toggle {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 6px;
-}
-
 div.spin-button-container {
   width: 100%;
   text-align: center;
@@ -42,31 +35,5 @@ div.spin-button-container {
 
 .spin-button.editing {
   opacity: 0;
-}
-
-.edit-action-bar {
-  transition: height 0.5s, opacity 0.5s linear;
-  opacity: 0;
-  height: 0;
-  overflow: hidden;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  justify-items: flex-end;
-  padding-top: 4px;
-  padding-bottom: 4px;
-
-  & .separator {
-    flex-grow: 1;
-  }
-
-  button {
-    margin-right: 16px;
-  }
-}
-
-.edit-action-bar.editing {
-  height: 36px;
-  opacity: 1;
 }
 

@@ -1,11 +1,47 @@
 
+
 <div
   *ngIf="gameStatus.gameState === 'not-started'"
   class="vertical-stack"
   >
-  <h1>הכנה למשחק</h1>
+
+  <div class="edit-action-bar" [ngClass]="{editing: editing}">
+    <button mat-raised-button color="primary" (click)="handleAddQuestion()">הוסף שאלה</button>
+    <div class="separator"></div>
+    <button mat-raised-button color="primary" >שמירה למועדפים</button>
+    <button mat-raised-button color="primary" >טעינה ממועדפים</button>
+  </div>
+
+  <div class="game-title" *ngIf="!editing">
+    {{gameTitle}} ({{gameQuestionDefs.length}} שאלות)
+  </div>
+
+
+  <mat-form-field *ngIf="editing" class="form-field-rtl game-title">
+    <mat-label>כותרת המשחק</mat-label>
+    <input matInput [(ngModel)]="gameTitle">
+  </mat-form-field>
+
+
+
+  <div class="question-list-container expand-down-on-display"
+      (click)="handleClickOnQuestionListContainer($event)"
+      [ngClass]="{display: editing}">
+    <app-word-pop-question-editor
+      *ngFor="let questionDefinition of gameQuestionDefs; let i = index"
+      [questionDefinition]="questionDefinition"
+
+      (focusOnQuestion)="editedQuestion=questionDefinition"
+      (deleteRequested)="handleDeleteQuestion(i)"
+      [editWords]="editedQuestion===questionDefinition"
+      [serialNumber]="i+1"
+      >
+    </app-word-pop-question-editor>
+  </div>
+
   <button mat-raised-button
     color="primary"
+    [disabled]="!terminals?.length"
     (click)="startGame()">
     התחל משחק
   </button>
@@ -15,46 +51,62 @@
 <div
   class="vertical-stack full-width"
   *ngIf="gameStatus.gameState !== 'not-started'">
-<mat-tab-group>
-  <mat-tab label="המילים במשחק">
-    <div class="vertical-stack game-words-panel">
-      <h1>{{sampleBoard.question}}</h1>
-      <app-poppable-baloons [baloons]="sampleBoard.baloons"></app-poppable-baloons>
-    </div>
-  </mat-tab>
-  <mat-tab label="לוח תוצאות">
-    <div
-    class="vertical-stack">
-      <h1>לוח תוצאות</h1>
-      <table class="score-board">
-        <thead>
-          <tr>
-            <td>משתתפ/ת</td>
-            <td class="col-right">נכון</td>
-            <td class="col-wrong">לא נכון</td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            *ngFor="let tid of terminalIds"
-            [ngClass]="{completed: gameStatus.terminalStatus[tid].playerCompleted}"
-              >
-            <td class="col-term">{{terminalInfoForTid(tid)?.username}}</td>
-            <td class="col-right">{{gameStatus.terminalStatus[tid].goodPops}}</td>
-            <td class="col-wrong">{{gameStatus.terminalStatus[tid].badPops}}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </mat-tab>
-</mat-tab-group>
+  <mat-tab-group class="full-height">
+    <mat-tab label="המילים במשחק">
+      <div class="vertical-stack game-words-panel">
+        <h1>{{sampleBoard.question}}</h1>
+        <div class="baloon-display">
+          <div
+            class="baloon-display-heading fade-in-placeholder"
+            [ngClass]="{'display': gameStatus.gameState === 'all-done'}">
+            <div>בלונים לפיצוץ</div>
+            <div class="flex-spacer"></div>
+            <div>בלונים לשמירה</div>
+          </div>
+          <app-poppable-baloons [baloons]="sampleBoard.baloons"></app-poppable-baloons>
+        </div>
+      </div>
+    </mat-tab>
+    <mat-tab label="לוח תוצאות">
+      <div
+      class="vertical-stack">
+        <h1>לוח תוצאות</h1>
+        <table class="score-board">
+          <thead>
+            <tr>
+              <td>משתתפ/ת</td>
+              <td class="col-right">נכון</td>
+              <td class="col-wrong">לא נכון</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let tid of terminalIds"
+              [ngClass]="{completed: gameStatus.terminalStatus[tid].playerCompleted}"
+                >
+              <td class="col-term">{{terminalInfoForTid(tid)?.username}}</td>
+              <td class="col-right">{{gameStatus.terminalStatus[tid].goodPops}}</td>
+              <td class="col-wrong">{{gameStatus.terminalStatus[tid].badPops}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 
-
-<button mat-raised-button
-  *ngIf="gameStatus.gameState === 'all-done'"
-  color="primary"
-  (click)="startGame()">
-  התחל משחק נוסף
-</button>
+  <button mat-raised-button
+    color="primary"
+    (click)="startGame()"
+    class="fade-in-placeholder"
+    [ngClass]="{'display': gameStatus.gameState === 'all-done'}">
+    עבור לשאלה הבאה
+  </button>
 </div>
+
+<ng-template #statusBarExtensionControls>
+  <div class="mode-toggle" *ngIf="gameStatus.gameState ==='not-started'">
+    ערוך &nbsp; <mat-slide-toggle [(ngModel)]="editing"></mat-slide-toggle> &nbsp; שחק
+   </div>
+</ng-template>
+
 

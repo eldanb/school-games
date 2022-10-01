@@ -19,10 +19,10 @@ export class WordPopTerminalPageComponent implements OnInit, WordPopTerminalList
   }
 
   async updateGameboard(gameboard: PoppedWordGameboard): Promise<void> {
-    if(this._gameboard == null) {
+    if(this._gameboard == null || this.completed) {
       this._gameboard = gameboard;
+      this.completed = false;
     } else {
-
       gameboard.baloons.forEach((newBaloon) => {
         const existingBaloon = this._gameboard.baloons.find(b => b.word == newBaloon.word);
 
@@ -33,7 +33,6 @@ export class WordPopTerminalPageComponent implements OnInit, WordPopTerminalList
         }
       });
     }
-
   }
 
   async handleDoneClicked() {

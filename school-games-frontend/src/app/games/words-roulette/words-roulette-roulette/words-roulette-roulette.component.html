@@ -8,16 +8,16 @@
         [(ngModel)]="renamedTitle"
         *ngIf="editingTitle">
 
-    <button mat-icon-button *ngIf="editing" (click)="onDeleteWheelClicked()">
+    <button mat-icon-button *ngIf="editing" (click)="onDeleteWheelClicked()" class="fade-in-on-appearance">
       <mat-icon>delete</mat-icon>
     </button>
 
-    <button mat-icon-button *ngIf="editing" (click)="onRenameWheelClicked()">
+    <button mat-icon-button *ngIf="editing" (click)="onRenameWheelClicked()" class="fade-in-on-appearance">
       <mat-icon>edit</mat-icon>
     </button>
 
   </div>
-  <app-word-list-editor [ngClass]="editingClass" [editedWordList]="wordList" (editedWordListChange)="onEditWordListChange($event)">
+  <app-word-list-editor class="expand-down-on-display" [ngClass]="editingClass" [editedWordList]="wordList" (editedWordListChange)="onEditWordListChange($event)">
   </app-word-list-editor>
   <app-roulette #roulette
     [words]="wordList"

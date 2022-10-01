@@ -13,38 +13,18 @@
   margin-top: 64px;
   margin-bottom: 64px;
 
-  app-word-list-editor {
-    transition: height 0.5s, opacity 0.5s linear;
-    opacity: 0;
-    height: 0;
-    margin-bottom: 24px;
-  }
-
-  app-word-list-editor.editing {
-    opacity: 1;
-    height: 256px;
-    margin-bottom: 24px;
-  }
-
   app-roulette {
     flex-grow: 1;
+  }
+
+  app-word-list-editor {
+    margin-bottom: 24px;
   }
 
   div.wheel-title {
     font-size: 32px;
     display: flex;
     justify-content: center;
-
-    & button {
-      animation-name: fade-in;
-      animation-duration: 2s;
-      transition-timing-function: linear;
-
-      @keyframes fade-in {
-        0% { opacity: 0; max-width: 0;}
-        100% { opacity: 1; max-width: 100vh; }
-      }
-    }
   }
 
 }

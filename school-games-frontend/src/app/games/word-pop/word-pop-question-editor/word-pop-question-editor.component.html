@@ -1,0 +1,27 @@
+
+<div class="horizontal-stack">
+  <div class="serial-number">
+    #{{serialNumber}}
+  </div>
+  <mat-form-field class="form-field-rtl question-editbox">
+    <mat-label>שאלה</mat-label>
+    <input matInput [(ngModel)]="questionDefinition.question" (focus)="focusOnQuestion.emit()">
+  </mat-form-field>
+  <div class="fade-in-placeholder question-action-buttons">
+    <button mat-icon-button (click)="handleDeleteClicked()"><mat-icon>delete</mat-icon></button>
+  </div>
+</div>
+
+<div class="horizontal-stack expand-down-on-display question-word-lists-container" [ngClass]="{display: editWords}">
+  <div class="vertical-stack question-word-list">
+    <h3>מלים נכונות</h3>
+    <app-word-list-editor [(editedWordList)]="questionDefinition.validWords">
+    </app-word-list-editor>
+  </div>
+
+  <div class="vertical-stack question-word-list">
+    <h3>מלים לא נכונות</h3>
+    <app-word-list-editor [(editedWordList)]="questionDefinition.invalidWords">
+    </app-word-list-editor>
+  </div>
+</div>
