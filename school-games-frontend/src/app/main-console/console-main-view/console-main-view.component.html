@@ -6,12 +6,14 @@
       </div>
     </a>
   </div>
-
   <div class="lesson-join-pane">
-    <h1>סרקו להצטרפות לשיעור</h1>
+    <div class="lesson-join-window" *ngIf="connectionQrCodeUrl">
+      <h1>סרקו להצטרפות לשיעור</h1>
 
-    <a *ngIf="connectionUrl" [href]="connectionUrl">
-      <img *ngIf="connectionQrCodeUrl" [src]="connectionQrCodeUrl"/>
-    </a>
+      <a *ngIf="connectionUrl" [href]="connectionUrl">
+        <img [src]="connectionQrCodeUrl"/>
+      </a>
+    </div>
   </div>
+
 </div>

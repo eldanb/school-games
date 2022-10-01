@@ -55,21 +55,25 @@
   .lesson-join-pane {
     display: flex;
     flex-direction: column;
-
     flex-grow: 1;
-    padding: 2rem;
-    margin: auto 2rem;
-    background: white;
-    border-radius: 2rem;
-    box-shadow: 2px 4px 11px 0px #00000010;
+    max-width: 40vw;
 
+    .lesson-join-window {
+      display: flex;
+      flex-direction: column;
 
-    max-width: 33vw;
+      padding: 2rem;
+      margin: auto 2rem;
 
-    a {
-      display: block;
-      img {
-        width: 100%;
+      background: white;
+      border-radius: 2rem;
+      box-shadow: 2px 4px 11px 0px #00000010;
+
+      a {
+        display: block;
+        img {
+          width: 100%;
+        }
       }
     }
   }
