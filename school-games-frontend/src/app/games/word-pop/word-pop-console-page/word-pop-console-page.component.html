@@ -45,6 +45,7 @@
     (click)="startGame()">
     התחל משחק
   </button>
+  <div *ngIf="!terminals?.length">משחק זה דורש לפחות משתתף אחד בשיעור.</div>
 </div>
 
 
@@ -94,13 +95,21 @@
     </mat-tab>
   </mat-tab-group>
 
-  <button mat-raised-button
-    color="primary"
-    (click)="startGame()"
+  <div
     class="fade-in-placeholder"
     [ngClass]="{'display': gameStatus.gameState === 'all-done'}">
-    עבור לשאלה הבאה
-  </button>
+
+    <button mat-raised-button
+      color="primary"
+      (click)="startQuestion()"
+      *ngIf="hasMoreQuestions">
+      עבור לשאלה הבאה
+    </button>
+
+    <div *ngIf="!hasMoreQuestions">
+      נגמרו השאלות למשחק זה.
+    </div>
+  </div>
 </div>
 
 <ng-template #statusBarExtensionControls>

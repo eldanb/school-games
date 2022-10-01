@@ -13,7 +13,7 @@ export class WordPopConsolePageComponent implements OnInit, OnDestroy, AfterView
   private _refreshInterval: any = null;
 
   @ViewChild("statusBarExtensionControls", { read: TemplateRef })
-  _statusBarExtensionControls: TemplateRef<any>;
+  private _statusBarExtensionControls: TemplateRef<any>;
 
   gameTitle: string = "שורשים";
   gameQuestionDefs: WordPopQuestionDefinition[] = [
@@ -41,12 +41,21 @@ export class WordPopConsolePageComponent implements OnInit, OnDestroy, AfterView
   editedQuestion: WordPopQuestionDefinition | null;
 
 
+
+  editing: boolean = false;
+
   gameStatus: PoppedWordGameStatus;
   sampleBoard: PoppedWordGameboard;
   terminals: LessonStatusTerminalInfo[];
 
-  editing: boolean = false;
-  runningQuestion: WordPopQuestionDefinition;
+  get hasMoreQuestions() {
+    return this._runningQuestionIndex < this.gameQuestionDefs.length-1;
+  }
+
+  private _runningQuestionIndex: number = -1;
+  private get _runningQuestion() {
+    return this._runningQuestionIndex>=0 ? this.gameQuestionDefs[this._runningQuestionIndex] : null;
+  }
 
   constructor(
     private _lessonControllerService: LessonControllerProviderService,
@@ -99,7 +108,7 @@ export class WordPopConsolePageComponent implements OnInit, OnDestroy, AfterView
     let numCorrect = 0;
     let numWrong = 0;
     this.sampleBoard.baloons.forEach(baloon => {
-      if(this.runningQuestion.validWords.indexOf(baloon.word)>=0) {
+      if(this._runningQuestion!.validWords.indexOf(baloon.word)>=0) {
         baloon.position.x = 10 + (numCorrect % 2) * 40;
         baloon.position.y = 10 + numCorrect * 80;
         numCorrect++;
@@ -117,12 +126,22 @@ export class WordPopConsolePageComponent implements OnInit, OnDestroy, AfterView
   }
 
   public async startGame() {
+    this._runningQuestionIndex = -1;
+    await this.startQuestion();
+  }
 
-    this.runningQuestion = this.gameQuestionDefs[0];
+  public async startQuestion() {
+    this._runningQuestionIndex++;
 
-    this.sampleBoard = await this._wordpopGameController.startQuestion(
-      this.runningQuestion,
-      120);
+    // Kludge: hide end-of-game indicators before
+    // starting the next question
+    this.gameStatus.gameState = 'playing';
+
+    if(this._runningQuestion) {
+      this.sampleBoard = await this._wordpopGameController.startQuestion(
+        this._runningQuestion,
+        120);
+    }
   }
 
   handleClickOnQuestionListContainer(event: Event): void {
