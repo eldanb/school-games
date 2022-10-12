@@ -21,10 +21,5 @@ export function createLessonState(
   gameType: GameType,
   owner: LessonControllerImpl,
 ): GameState {
-  Logger.debug(
-    `GSR ${inspect(GameStatesRegistry)} ${
-      GameStatesRegistry[gameType]
-    } for ${gameType}`,
-  );
   return new GameStatesRegistry[gameType](owner);
 }
