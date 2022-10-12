@@ -23,6 +23,6 @@
     [words]="wordList"
     (done)="fireRouletteDone()"
     ></app-roulette>
-  <div class="word-spacer">&nbsp;</div>
+  <div *ngIf="!editing" class="word-spacer">&nbsp;</div>
   <div *ngIf="showSelectedWord" class="selected-word">{{selectedWord}}</div>
 </div>

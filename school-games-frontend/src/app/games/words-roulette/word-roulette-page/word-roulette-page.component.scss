@@ -1,6 +1,7 @@
 .roulettes-container {
   display: flex;
   flex-direction: row;
+  flex-grow: 1;
 
   app-words-roulette-roulette {
     flex-grow: 1;
@@ -10,6 +11,7 @@
 div.spin-button-container {
   width: 100%;
   text-align: center;
+  margin-bottom: 1.5rem;
 }
 
 .game-content-wrapper {
@@ -22,7 +24,8 @@ div.spin-button-container {
 .game-main-content {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
+
+  flex-grow: 1;
   width: 90%;
 }
 

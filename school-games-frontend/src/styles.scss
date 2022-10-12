@@ -40,6 +40,11 @@ body * {
   }
 }
 
+.fill-screen {
+  width: 100%;
+  height: calc(100vh - 2rem);
+}
+
 .flex-spacer {
   flex-grow: 1;
 }

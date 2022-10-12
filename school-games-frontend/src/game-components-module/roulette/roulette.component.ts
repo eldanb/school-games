@@ -53,7 +53,7 @@ export class RouletteComponent implements OnDestroy, OnChanges, AfterViewChecked
   ngOnInit() {
     this.resizeObserver = new ResizeObserver(entries => {
       this.zone.run(() => {
-        this.size = entries[0].contentRect.width;
+        this.size = Math.min(entries[0].contentRect.width, entries[0].contentRect.height);
         this.dirty = true;
         this.changeDetector.markForCheck();
       });
