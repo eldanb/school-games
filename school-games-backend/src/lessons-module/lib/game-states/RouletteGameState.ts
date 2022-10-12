@@ -42,6 +42,12 @@ export class RouletteGameState
       }
     });
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  notifyDeletedTerminal(terminalId: string, terminal: Terminal): void {}
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  notifyNewTerminal(terminalId: string, terminal: Terminal): void {}
 }
 
 class WordRouletteTerminalServices implements WordRouletteTerminalInterface {

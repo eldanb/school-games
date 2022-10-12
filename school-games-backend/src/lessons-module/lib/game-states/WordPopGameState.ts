@@ -113,7 +113,7 @@ export class WordPopGameState
       terminalStatus: {},
       gameState: !this._currentQuestion
         ? 'not-started'
-        : Object.values(this._terminalServices).find((ts) => !ts.isCompleted())
+        : Object.values(this._terminalServices).find((ts) => ts.isPlaying())
         ? 'playing'
         : 'all-done',
     };
@@ -129,12 +129,21 @@ export class WordPopGameState
 
     return ret;
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  notifyDeletedTerminal(terminalId: string, terminal: Terminal): void {
+    delete this._terminalServices[terminalId];
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  notifyNewTerminal(terminalId: string, terminal: Terminal): void {}
 }
 
 class WordPopTerminalServicesImpl implements WordPopTerminalServices {
   private _listener: WordPopTerminalListenerRegistration | null = null;
   private _gameboard: PoppedWordGameboard | null = null;
   private _completed: boolean;
+  private _playing = false;
 
   private _goodPops = 0;
   private _badPops = 0;
@@ -172,6 +181,7 @@ class WordPopTerminalServicesImpl implements WordPopTerminalServices {
 
   async startBoard(gb: PoppedWordGameboard) {
     this._gameboard = JSON.parse(JSON.stringify(gb));
+    this._playing = true;
     this._completed = false;
 
     if (this._listener) {
@@ -180,11 +190,16 @@ class WordPopTerminalServicesImpl implements WordPopTerminalServices {
   }
 
   async setCompleted() {
+    this._playing = false;
     this._completed = true;
   }
 
   isCompleted() {
     return this._completed;
+  }
+
+  isPlaying() {
+    return this._playing;
   }
 
   get totalWords(): number {

@@ -93,15 +93,32 @@ export class LessonControllerImpl implements LessonControllerInterface {
 
     const terminal = new TerminalImpl(this, terminalId, terminalConnectionInfo);
     this._terminals.push(terminal);
+
+    if (this._gameState !== null) {
+      this._joinTerminalToGameState(terminal);
+      this._gameState.notifyNewTerminal(terminal.id, terminal);
+    }
+
     return terminal;
   }
 
   private _pruneTerminals() {
     const pruneTime = Date.now() - this.heartbeatTimeout;
-    if (this._terminals.findIndex((t) => t.lastHeartbeat < pruneTime) >= 0) {
-      this._terminals = this._terminals.filter(
-        (t) => t.lastHeartbeat >= pruneTime,
-      );
+    let terminalIndex: number;
+    while (
+      (terminalIndex = this._terminals.findIndex(
+        (t) => t.lastHeartbeat < pruneTime,
+      )) >= 0
+    ) {
+      const deletedTerminal = this._terminals[terminalIndex];
+      if (this._gameState !== null) {
+        this._gameState.notifyDeletedTerminal(
+          deletedTerminal.id,
+          deletedTerminal,
+        );
+      }
+
+      this._terminals.splice(terminalIndex, 1);
     }
   }
 
