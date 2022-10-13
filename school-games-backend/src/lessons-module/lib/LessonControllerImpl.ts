@@ -25,8 +25,8 @@ export class LessonControllerImpl implements LessonControllerInterface {
   private _terminalConnectionService: LessonTerminalServices;
   private _terminals: TerminalImpl[] = [];
 
-  private _gameState: GameState | null;
-  private _gameType: GameType | null;
+  private _gameState: GameState | null = null;
+  private _gameType: GameType | null = null;
 
   private _pendingMessages: AsyncQueue<LessonControllerMessage> =
     new AsyncQueue();
