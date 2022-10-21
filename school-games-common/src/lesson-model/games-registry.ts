@@ -4,6 +4,9 @@ export type GamesRegistry = {
   },
   'word-pop': {
     
+  },
+  'wiki-race': {
+    
   }
 }
 

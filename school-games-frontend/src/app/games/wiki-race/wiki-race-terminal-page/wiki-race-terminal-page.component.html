@@ -1,0 +1,29 @@
+<div class="nav" *ngIf="currentRound">
+  <div *ngFor="let pathComponent of terminalPath; index as pathComponentIndex">
+    <span *ngIf="pathComponentIndex != terminalPath.length-1">
+      <a (click)="backtrackToIndex(pathComponentIndex)">{{pathComponent.term}}</a>
+
+      &nbsp;
+      &#x203a;
+      &nbsp;
+
+    </span>
+  </div>
+
+  <span *ngIf="terminalPath.length">
+    {{terminalPath[terminalPath.length-1].term}}
+  </span>
+
+
+  <div *ngIf="terminalPath.length && terminalPath[terminalPath.length-1].term != currentRound?.endTerm">
+    &nbsp;
+    &#x203a;
+    &nbsp;
+    <span class="blink">?</span>
+    &nbsp;
+    &#x203a;
+    &nbsp;
+    {{currentRound.endTerm}}
+  </div>
+</div>
+<iframe #wikiFrame></iframe>

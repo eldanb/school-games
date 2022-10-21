@@ -29,6 +29,9 @@ import { MatInputModule } from '@angular/material/input';
 import { SendChatMessageDialogComponent } from './send-chat-message-dialog/send-chat-message-dialog.component';
 import { ConsoleGamePageHostComponent } from './main-console/console-game-page-host/console-game-page-host.component';
 import { WordPopQuestionEditorComponent } from './games/word-pop/word-pop-question-editor/word-pop-question-editor.component';
+import { WikiRaceConsolePageComponent } from './games/wiki-race/wiki-race-console-page/wiki-race-console-page.component';
+import { WikiRaceTerminalPageComponent } from './games/wiki-race/wiki-race-terminal-page/wiki-race-terminal-page.component';
+import { WikiRacePathGraphComponent } from './games/wiki-race/wiki-race-path-graph/wiki-race-path-graph.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +49,10 @@ import { WordPopQuestionEditorComponent } from './games/word-pop/word-pop-questi
     WordPopConsolePageComponent,
     SendChatMessageDialogComponent,
     ConsoleGamePageHostComponent,
-    WordPopQuestionEditorComponent
+    WordPopQuestionEditorComponent,
+    WikiRaceConsolePageComponent,
+    WikiRaceTerminalPageComponent,
+    WikiRacePathGraphComponent
   ],
   imports: [
     BrowserModule,

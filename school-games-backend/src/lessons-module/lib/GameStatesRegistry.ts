@@ -1,10 +1,9 @@
 import { GameType } from 'school-games-common/dist/lesson-model/games-registry';
-import { LessonControllerImpl } from './LessonControllerImpl';
-import { Logger } from '@nestjs/common';
-import { inspect } from 'util';
 import { RouletteGameState } from './game-states/RouletteGameState';
-import { GameState } from './GamesState';
+import { WikiRaceGameState } from './game-states/WikiRaceGameState';
 import { WordPopGameState } from './game-states/WordPopGameState';
+import { GameState } from './GamesState';
+import { LessonControllerImpl } from './LessonControllerImpl';
 
 type GameStateConstructor = new (
   lessonController: LessonControllerImpl,
@@ -15,6 +14,7 @@ export const GameStatesRegistry: {
 } = {
   'word-roulette': RouletteGameState,
   'word-pop': WordPopGameState,
+  'wiki-race': WikiRaceGameState,
 };
 
 export function createLessonState(

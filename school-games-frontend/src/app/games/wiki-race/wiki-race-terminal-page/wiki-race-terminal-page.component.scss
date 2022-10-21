@@ -1,0 +1,28 @@
+:host {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+iframe {
+  flex-grow: 1;
+  width: 100%;
+  border: none;
+}
+
+div.nav {
+  display: flex;
+  flex-flow: wrap;
+  box-shadow: #00000021 1px 1px 13px 0px;
+  padding: 0.25rem 1rem;
+
+  div {
+    flex-shrink: 0;
+  }
+
+
+  a:hover {
+    text-decoration: underline;
+  }
+}

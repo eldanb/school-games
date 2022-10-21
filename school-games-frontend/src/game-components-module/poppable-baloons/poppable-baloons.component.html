@@ -45,7 +45,7 @@
     class="baloon-container"
     [ngClass]="{ 'popped-wrong': w.status === 'wrong', 'popped-ok': w.status === 'popped'}"
     (click)="handlePop(w)"
-    [attr.transform]="'translate(' + w.position.x + ' ' + w.position.y +')'">
+    [ngStyle]="{ transform: 'translate(' + w.position.x + 'px, ' + w.position.y +'px)' }">
     <g class="baloon">
       <path
         [attr.fill]="w.color"

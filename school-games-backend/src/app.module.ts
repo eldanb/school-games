@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { FavoritesModule } from './favorites-module/favorites.module';
 import { FrontEndModule } from './frontend-module/frontend.module';
 import { LessonsModule } from './lessons-module/lessons.moduile';
+import { WikiProxyModule } from './wiki-proxy-module/wiki-proxy.module';
 import { ZipcModule } from './zipc-module/zipc.module';
 
 @Module({
@@ -13,6 +14,7 @@ import { ZipcModule } from './zipc-module/zipc.module';
     FrontEndModule,
     FavoritesModule,
     LessonsModule,
+    WikiProxyModule,
     ZipcModule.regsiter({
       ipcEndpoint: '/api/zipc',
     }),

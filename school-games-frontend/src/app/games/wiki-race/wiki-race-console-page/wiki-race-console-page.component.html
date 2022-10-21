@@ -1,0 +1,29 @@
+<div *ngIf="gameStatus" class="horizontal-stack fill-screen">
+  <div class="vertical-stack full-width">
+    <div>Timer</div>
+    <div class="vertical-stack">
+      <h1>תוצאות</h1>
+
+      <table class="score-board">
+        <thead>
+          <tr>
+            <td>משתתפ/ת</td>
+            <td class="col-right">מסלול נוכחי</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let rankedTerminal of rankedTerminals"
+            [ngClass]="{completed: rankedTerminal[1].currentScore > 100}"
+              >
+            <td class="col-term">{{terminalInfoForTid(rankedTerminal[0])?.username}}</td>
+            <td class="col-right">{{rankedTerminal[1].currentScore}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="graph-container">
+    <app-wiki-race-path-graph [terminals]="terminals" [gameStatus]="gameStatus"></app-wiki-race-path-graph>
+  </div>
+</div>

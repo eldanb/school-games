@@ -1,5 +1,5 @@
 
-
+<!-- game not started -->
 <div
   *ngIf="gameStatus.gameState === 'not-started'"
   class="vertical-stack"
@@ -50,7 +50,7 @@
   <div *ngIf="!terminals?.length">משחק זה דורש לפחות משתתף אחד בשיעור.</div>
 </div>
 
-
+<!-- game running -->
 <div
   class="vertical-stack full-width"
   *ngIf="gameStatus.gameState !== 'not-started'">

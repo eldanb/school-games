@@ -1,4 +1,5 @@
 import { GameType } from "school-games-common/dist/lesson-model/games-registry";
+import { WikiRaceConsolePageComponent } from "./wiki-race/wiki-race-console-page/wiki-race-console-page.component";
 import { WordPopConsolePageComponent } from "./word-pop/word-pop-console-page/word-pop-console-page.component";
 import { WordRoulettePageComponent } from "./words-roulette/word-roulette-page/word-roulette-page.component";
 
@@ -17,5 +18,9 @@ export const ConsoleGamesRegistry: {
   "word-pop": {
     rootComponent: WordPopConsolePageComponent,
     gameTitle: "בלוני מילים"
+  },
+  "wiki-race": {
+    rootComponent: WikiRaceConsolePageComponent,
+    gameTitle: "ויקיפדיה"
   }
 }

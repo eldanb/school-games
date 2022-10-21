@@ -13,6 +13,19 @@ body * {
   font-family: 'varela-round';
 }
 
+.blink {
+  animation: blink 0.5s ease infinite alternate;
+
+  @keyframes blink {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}
+
 .status-bar {
   display: flex;
   gap: 0.75rem;
@@ -151,6 +164,56 @@ mat-tab-group.full-height {
   padding: 6px;
 }
 
+.score-board {
+  margin: 6rem;
+  border-spacing: 0 15px;
+
+  thead tr {
+    font-size: 1.5rem;
+
+    td.col-right {
+      text-align: center;
+    }
+
+    td.col-wrong {
+      text-align: center;
+    }
+
+  }
+
+  tbody {
+    tr {
+      font-size: 1.25rem;
+      height: 3rem;
+      background: #ffffffc0;
+
+
+      td.col-term {
+        width: 30vw;
+      }
+
+      td.col-right {
+        width: 8vw;
+        color: green;
+        text-align: center;
+      }
+
+      td.col-wrong {
+        width: 8vw;
+        color: red;
+        text-align: center;
+      }
+
+      &.completed {
+        td.col-term {
+          font-weight: bold;
+          color: blue;
+        }
+      }
+    }
+  }
+}
+
 
 @font-face {
   font-family: 'varela-round';
@@ -189,3 +252,4 @@ mat-tab-group.full-height {
   font-weight: normal;
   font-style: italic;
 }
+
