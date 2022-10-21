@@ -111,6 +111,11 @@ export class LessonControllerImpl implements LessonControllerInterface {
       )) >= 0
     ) {
       const deletedTerminal = this._terminals[terminalIndex];
+      Logger.debug(
+        `Pruning terminal ${deletedTerminal.id}, last heartbeat at ${deletedTerminal.lastHeartbeat}`,
+        'terminal.heartbeat',
+      );
+
       if (this._gameState !== null) {
         this._gameState.notifyDeletedTerminal(
           deletedTerminal.id,
@@ -200,6 +205,10 @@ class TerminalImpl implements Terminal {
 
   async heartbeat(): Promise<TerminalMessage[] | null> {
     this._lastHeartbeat = Date.now();
+    Logger.debug(
+      `Terminal ${this._id} heartbeat at ${this._lastHeartbeat}`,
+      'terminal.heartbeat',
+    );
 
     return (await this._pendingMessages.dequeueAll(3000)) || [];
   }
