@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo Building common
-cd school-games-frontend
+cd school-games-common
 npm run build
 cd ..
 
@@ -11,7 +11,7 @@ npm run build
 cd ..
 
 echo Building backend
-cd school-games-frontend
+cd school-games-backend
 npm run build
 cd ..
 
