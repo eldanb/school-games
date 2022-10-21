@@ -18,6 +18,7 @@ export type WikiRaceRound = {
 
 export type WikiRaceGameStatus = {
   currentRound: WikiRaceRound;
+  roundStartTime: number;
   roundEndTime: number;
 
   terminalStatus: {
@@ -32,6 +33,8 @@ export class WikiRaceTerminalListenerRegistration {
 
 export interface WikiRaceConsoleServices {
   getGameStatus(): Promise<WikiRaceGameStatus>;
+  startRound(round: WikiRaceRound, startTime: number, endTime: number): Promise<void>;
+  
 }
 
 export interface WikiRaceTerminalServices {
@@ -41,6 +44,6 @@ export interface WikiRaceTerminalServices {
 }
 
 export interface WikiRaceTerminalListener {
-  startRound(round: WikiRaceRound, endTime: number): Promise<void>;
+  startRound(round: WikiRaceRound, startTime: number, endTime: number): Promise<void>;
   endRound(): Promise<void>;
 }

@@ -18,16 +18,11 @@ export class WikiRaceGameState
   private _terminalServices: Record<string, WikiRaceTerminalServicesImpl> = {};
 
   private _currentRound: WikiRaceRound | null;
+  private _startTime: number;
   private _endTime: number | null;
 
   constructor(_lessonController: LessonControllerImpl) {
     super(_lessonController);
-
-    // TOOD better start round
-    setTimeout(
-      () => this.startRound({ startTerm: 'שלום', endTerm: 'בננה' }, 5000),
-      3000,
-    );
   }
 
   getConsoleServices(): WikiRaceConsoleServices {
@@ -50,6 +45,7 @@ export class WikiRaceGameState
     return {
       currentRound: this._currentRound,
       roundEndTime: this._endTime,
+      roundStartTime: this._startTime,
       terminalStatus: terminalStatus,
     };
   }
@@ -70,15 +66,25 @@ export class WikiRaceGameState
 
   async startRound(
     roundDefinition: WikiRaceRound,
+    startTime: number,
     endTime: number,
   ): Promise<void> {
     this._currentRound = roundDefinition;
+    this._startTime = startTime;
     this._endTime = endTime;
 
     await Promise.all(
       Object.values(this._terminalServices).map((ts) =>
-        ts.startRound(roundDefinition, endTime),
+        ts.startRound(roundDefinition, startTime, endTime),
       ),
+    );
+  }
+
+  get gameRunning(): boolean {
+    const checkTime = new Date().getTime();
+    return (
+      checkTime >= this._startTime &&
+      (!this._endTime || checkTime <= this._endTime)
     );
   }
 
@@ -95,11 +101,15 @@ class WikiRaceTerminalServicesImpl implements WikiRaceTerminalServices {
   private _listener: WikiRaceTerminalListenerRegistration | null = null;
 
   private _roundDefinition: WikiRaceRound = null;
-  private _definitionHistory: WikiRaceTerminalPath;
+  private _definitionHistory: WikiRaceTerminalPath = [];
 
   constructor(private _gs: WikiRaceGameState, private _terminalId: string) {}
 
   async notifyBacktrack(toNavStep: number): Promise<WikiRaceTerminalPath> {
+    if (!this._gs.gameRunning) {
+      throw new Error('Game not running');
+    }
+
     if (toNavStep >= this._definitionHistory.length - 1) {
       throw new Error('Attempt to backtrack to invalid step.');
     }
@@ -117,6 +127,10 @@ class WikiRaceTerminalServicesImpl implements WikiRaceTerminalServices {
   }
 
   async notifyVisitToTerm(term: string): Promise<WikiRaceTerminalPath> {
+    if (this.definitionHistory.length > 0 && !this._gs.gameRunning) {
+      throw new Error('Game not running');
+    }
+
     this._definitionHistory.push({
       term: term,
       time: new Date().getTime(),
@@ -132,12 +146,12 @@ class WikiRaceTerminalServicesImpl implements WikiRaceTerminalServices {
     this._listener = listener;
   }
 
-  async startRound(round: WikiRaceRound, time: number) {
+  async startRound(round: WikiRaceRound, startTime: number, endTime: number) {
     this._roundDefinition = round;
     this._definitionHistory = [];
 
     if (this._listener?.listener) {
-      this._listener.listener.startRound(round, time);
+      this._listener.listener.startRound(round, startTime, endTime);
     }
   }
 }

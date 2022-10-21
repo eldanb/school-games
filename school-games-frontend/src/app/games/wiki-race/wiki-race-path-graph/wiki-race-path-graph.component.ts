@@ -39,7 +39,7 @@ type PathGraphTerminal = {
   currentPathNode: PathGraphNode | null;
 }
 
-const TERMINAL_COLORS = [ 'red', 'blue' ];
+const TERMINAL_COLORS = [ 'red', 'blue', 'magenta', 'cyan', 'yellow' ];
 
 
 @Component({
@@ -83,7 +83,7 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
   }
 
   private _updateGraph() {
-    if(!this._gameStatus || !this.terminals || !this._graphNodesParent.nativeElement) {
+    if(!this._gameStatus || !this.terminals || !this._graphNodesParent?.nativeElement) {
       return;
     }
 
@@ -281,7 +281,7 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
     node.marked = true;
 
     if(!node.ownerTerminal ||
-      !this.gameStatus?.terminalStatus[node.ownerTerminal.terminalId].termHistory.find(h => h.term === term)) {
+      !this.gameStatus?.terminalStatus[node.ownerTerminal.terminalId]?.termHistory.find(h => h.term === term)) {
       node.ownerTerminal = visitingTerminal;
       node.indexInOwnerTerminal = visitingTerminalStep;
     }

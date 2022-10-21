@@ -1,11 +1,11 @@
 <div class="icon-labeled-field" (click)="handleIconClicked()" [ngClass]="{'popup-opened': showStatusPopup}">
   <mat-icon>face</mat-icon>
-  <div>{{lessonStatus.terminalInfo.length}}</div>
+  <div>{{lessonStatus?.terminalInfo?.length ?? 0}}</div>
 </div>
 
 <div class="lesson-status-popup" *ngIf="showStatusPopup">
   <h2>משתתפים בשיעור</h2>
-  <div class="participant-line" *ngFor="let terminalInfo of lessonStatus.terminalInfo">
+  <div class="participant-line" *ngFor="let terminalInfo of (lessonStatus?.terminalInfo || [])">
     <div>{{terminalInfo.username}}</div>
     <mat-icon (click)="sendChatMessage(terminalInfo.terminalId)">chat</mat-icon>
   </div>

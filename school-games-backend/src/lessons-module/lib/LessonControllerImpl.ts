@@ -31,7 +31,7 @@ export class LessonControllerImpl implements LessonControllerInterface {
   private _pendingMessages: AsyncQueue<LessonControllerMessage> =
     new AsyncQueue();
 
-  private heartbeatTimeout = 10000;
+  private heartbeatTimeout = 30000;
 
   constructor(private _configService: ConfigService) {
     this._terminalConnectionService = new LessonTerminalServicesImpl(this);

@@ -14,23 +14,19 @@ export class WikiProxyController {
   constructor(private _httpService: HttpService) {}
 
   @Get('*')
-  handleProxyRequest(@Req() req: Request, @Res() res: Response) {
+  async handleProxyRequest(@Req() req: Request, @Res() res: Response) {
     const updatedUrl = req.url.replace(/^\/p/, '');
-    console.log(updatedUrl);
 
     if (updatedUrl.startsWith('/wiki/')) {
-      this.fetchWikiDefinitionPage(updatedUrl.substring(6), res);
+      await this.fetchWikiDefinitionPage(updatedUrl.substring(6), res);
     } else {
       https.get('https://he.wikipedia.org' + updatedUrl, (response) => {
-        console.log(response.statusCode);
         res.statusCode = response.statusCode;
 
         Object.entries(response.headers).forEach(([header, value]) => {
           res.setHeader(header, value);
-          console.log(`${header}: ${value}`);
         });
 
-        console.log(response.headers['content-type']);
         if (response.headers['content-type'].startsWith('text/html')) {
           this.fixupHtmlContent(response, res);
         } else if (response.headers['content-type'].startsWith('text/css')) {
@@ -59,13 +55,20 @@ export class WikiProxyController {
   }
 
   private async fetchWikiDefinitionPage(definition: string, target: Response) {
-    const response = await firstValueFrom(
-      this._httpService.get(
-        `https://he.wikipedia.org/w/api.php?action=parse&format=json&prop=text&disableeditsection=false&useskin=cologneblue&page=${definition}`,
+    const [textResponse, headingResponse] = await Promise.all([
+      firstValueFrom(
+        this._httpService.get(
+          `https://he.wikipedia.org/w/api.php?action=parse&format=json&prop=text&disableeditsection=true&useskin=minerva&page=${definition}`,
+        ),
       ),
-    );
+      firstValueFrom(
+        this._httpService.get(
+          `https://he.wikipedia.org/w/api.php?action=parse&format=json&prop=headhtml&disableeditsection=true&useskin=minerva&page=${definition}`,
+        ),
+      ),
+    ]);
 
-    const defHtml = response.data?.parse?.text['*'];
+    const defHtml = textResponse.data?.parse?.text['*'];
     if (!defHtml) {
       throw new Error(`Cannot load definition for ${definition}`);
     }
@@ -76,24 +79,15 @@ export class WikiProxyController {
       definition: decodeURI(definition),
     });
 
-    const wikiFixup = `
-        <html>
-          <head>
-            <script>
-              window.parent.postMessage(${navMessage});
-            </script>        
-
-            <style>
-              body { 
-                direction: rtl;
-              }
-            </style>
-          </head>
-          <body>
-            ${fixedupHtml}
-          </body>
-        </html>
-    `;
+    const wikiFixup =
+      headingResponse.data?.parse?.headhtml['*'].replaceAll('/w/', '/p/w/') +
+      `<script>
+          window.parent.postMessage(${navMessage});
+       </script>` +
+      `<div style="height: 100%; width: 100%; overflow: scroll; box-sizing: border-box; padding: 0 1rem;">` +
+      fixedupHtml +
+      `</div>` +
+      '</body></html>';
 
     target.setHeader('content-type', 'text/html; charset=UTF-8');
     target.write(wikiFixup);
@@ -107,7 +101,6 @@ export class WikiProxyController {
 
     const transformElements = (elements: any[]) => {
       elements.forEach((element) => {
-        console.log(element.type);
         if (element.type === 'tag') {
           switch (element.name) {
             case 'link':
@@ -137,9 +130,6 @@ export class WikiProxyController {
       });
     };
 
-    console.log('PC');
-
-    console.log(domHandler.dom);
     transformElements(domHandler.dom);
     return render(domHandler.dom);
   }
@@ -150,7 +140,6 @@ export class WikiProxyController {
   ): Promise<void> {
     const incomingHtml = await this.readIncomingMessage(response);
 
-    console.log('GOT CONTENT: ' + incomingHtml);
     res.write(this.fixupHtmlPageLinks(incomingHtml));
     res.end();
   }
@@ -161,11 +150,8 @@ export class WikiProxyController {
   ): Promise<void> {
     let incomingCss = await this.readIncomingMessage(response);
 
-    console.log('GOT CSS CONTENT: ' + incomingCss);
-
     incomingCss = incomingCss.replace(/url\(([^\)]+)\)/g, (substring, link) => {
       const ret = `url(${this.transformLink(link)})`;
-      console.log(`replacing ${substring} with ${ret}`);
       return ret;
     });
 

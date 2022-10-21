@@ -7,6 +7,8 @@ import { LessonControllerProviderService } from 'src/game-components-module/less
   styleUrls: ['./wiki-race-console-page.component.scss']
 })
 export class WikiRaceConsolePageComponent implements OnInit {
+  public selectedStartTerm: string = "נדנדה";
+  public selectedEndTerm: string = "סרפד";
 
   private _wikiRaceConsoleController: WikiRaceConsoleServices;
   private _refreshTimer: any;
@@ -17,9 +19,9 @@ export class WikiRaceConsolePageComponent implements OnInit {
   constructor(private _lessonControllerProviderService: LessonControllerProviderService) { }
 
   ngOnInit(): void {
-
     this._startGame();
     this._refreshTimer = setInterval(() => this.refreshGameStatus(), 1000);
+    this.refreshGameStatus();
   }
 
   ngOnDestroy(): void {
@@ -43,10 +45,7 @@ export class WikiRaceConsolePageComponent implements OnInit {
     this.terminals = (await terminalController.getLessonStatus()).terminalInfo;
 
     this.gameStatus = await this._wikiRaceConsoleController.getGameStatus();
-
-
   }
-
 
   private async _startGame() {
     const lessonControlelr = await this._lessonControllerProviderService.getLessonController();
@@ -54,30 +53,10 @@ export class WikiRaceConsolePageComponent implements OnInit {
     this._wikiRaceConsoleController = result.gameController as WikiRaceConsoleServices;
   }
 
-/*
-  private _updateGraphSimulation() {
-    console.log("UPDARING");
-
-    this._gameForceSimulation.nodes().forEach((node) => {
-      if(!node.renderedNode) {
-        node.renderedNode = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        node.renderedNode.setAttribute('class', 'path-node')
-        node.renderedNode.innerHTML = '<circle cx="0" cy="0" r="5"/>';
-        this._graphNodesParent.nativeElement.appendChild(node.renderedNode);
-      }
-
-      node.renderedNode.setAttribute("transform", `translate(${node.x} ${node.y})`)
-    });
-
-    this._linksArray.forEach((link) => {
-      if(!link.renderedNode) {
-        link.renderedNode = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        link.renderedNode.setAttribute('class', 'path-link');
-        link.renderedNode.setAttribute('stroke', 'red')
-        this._graphNodesParent.nativeElement.appendChild(link.renderedNode);
-      }
-
-      link.renderedNode.setAttribute("d", `M ${(link.source as PathGraphNode).x} ${(link.source as PathGraphNode).y} L ${(link.target as PathGraphNode).x} ${(link.target as PathGraphNode).y}`);
-    });
-  }*/
+  public async startRound() {
+    await this._wikiRaceConsoleController.startRound({
+      startTerm: this.selectedStartTerm,
+      endTerm: this.selectedEndTerm
+    }, new Date().getTime() + 5000, new Date().getTime() + 555000)
+  }
 }

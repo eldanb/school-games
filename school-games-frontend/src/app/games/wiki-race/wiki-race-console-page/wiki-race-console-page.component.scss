@@ -7,3 +7,15 @@
   width: 100%;
   height: 100%;
 }
+
+.terms-input {
+  width: 100%;
+  justify-items: stretch;
+
+  margin-top: 5rem;
+  margin-bottom: 5rem;
+
+  div {
+    flex-grow: 1;
+  }
+}

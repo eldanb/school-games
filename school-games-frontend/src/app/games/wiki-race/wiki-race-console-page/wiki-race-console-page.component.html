@@ -1,4 +1,29 @@
-<div *ngIf="gameStatus" class="horizontal-stack fill-screen">
+<div *ngIf="!gameStatus?.currentRound" class="vertical-stack fill-screen">
+  <div class="horizontal-stack terms-input">
+    <div class="vertical-stack">
+      <h1>ערך מוצא</h1>
+      <mat-form-field class="form-field-rtl">
+        <input matInput placeholder="הכנס ערך ויקיפדיה" [(ngModel)]="selectedStartTerm">
+      </mat-form-field>
+    </div>
+
+    <div class="vertical-stack">
+      <h1>ערך יעד</h1>
+      <mat-form-field class="form-field-rtl">
+        <input matInput placeholder="הכנס ערך ויקיפדיה" [(ngModel)]="selectedEndTerm">
+      </mat-form-field>
+    </div>
+  </div>
+
+  <button mat-raised-button
+      color="primary"
+      (click)="startRound()">
+      התחל משחק
+  </button>
+
+</div>
+
+<div *ngIf="gameStatus?.currentRound" class="horizontal-stack fill-screen">
   <div class="vertical-stack full-width">
     <div>Timer</div>
     <div class="vertical-stack">
