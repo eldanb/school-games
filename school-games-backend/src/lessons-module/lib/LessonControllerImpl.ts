@@ -31,10 +31,12 @@ export class LessonControllerImpl implements LessonControllerInterface {
   private _pendingMessages: AsyncQueue<LessonControllerMessage> =
     new AsyncQueue();
 
-  private heartbeatTimeout = 30000;
+  private heartbeatTimeout: number;
 
   constructor(private _configService: ConfigService) {
     this._terminalConnectionService = new LessonTerminalServicesImpl(this);
+    this.heartbeatTimeout =
+      this._configService.get('TERMINAL_HEARTBEAT_TIMEOUT_SEC', 120) * 1000;
   }
 
   async sendMessage(terminalId: string, message: string): Promise<void> {

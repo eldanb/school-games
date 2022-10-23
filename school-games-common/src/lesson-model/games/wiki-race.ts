@@ -8,7 +8,8 @@ export type WikiRaceTerminalPath = {
 
 export type WikiRaceTerminalStatus = {
   termHistory: WikiRaceTerminalPath;
-  currentScore: number;  
+  currentScore: number;
+  reachedEndTerm: boolean;
 }
 
 export type WikiRaceRound = {
@@ -20,6 +21,7 @@ export type WikiRaceGameStatus = {
   currentRound: WikiRaceRound;
   roundStartTime: number;
   roundEndTime: number;
+  roundRunning: boolean;
 
   terminalStatus: {
     [terminalId: string]: WikiRaceTerminalStatus;

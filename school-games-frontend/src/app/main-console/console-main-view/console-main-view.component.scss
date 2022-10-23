@@ -1,3 +1,5 @@
+@import '../../../styles.scss';
+
 .main-menu-container {
   display: flex;
 
@@ -57,15 +59,12 @@
     max-width: 40vw;
 
     .lesson-join-window {
+      @extend .bordered-card;
+
       display: flex;
       flex-direction: column;
 
-      padding: 2rem;
       margin: auto 2rem;
-
-      background: white;
-      border-radius: 2rem;
-      box-shadow: 2px 4px 11px 0px #00000010;
 
       a {
         display: block;

@@ -13,6 +13,7 @@ export class WikiRaceTerminalPageComponent implements OnInit, OnDestroy, WikiRac
   @ViewChild('wikiFrame')
   private _wikiFrame: ElementRef<HTMLIFrameElement>;
 
+  startTime: number;
   terminalPath: WikiRaceTerminalPath = [];
   currentRound: WikiRaceRound | null;
 
@@ -39,10 +40,11 @@ export class WikiRaceTerminalPageComponent implements OnInit, OnDestroy, WikiRac
     window.removeEventListener("message", this._onMessageHandler);
   }
 
-  async startRound(round: WikiRaceRound, endTime: number): Promise<void> {
+  async startRound(round: WikiRaceRound, startTime: number, endTime: number): Promise<void> {
     console.log("Start round requested "+ round.startTerm);
     this.terminalPath = [];
     this.currentRound = round;
+    this.startTime = startTime;
     this.navigateToTerm(this.currentRound.startTerm);
   }
 
@@ -65,5 +67,9 @@ export class WikiRaceTerminalPageComponent implements OnInit, OnDestroy, WikiRac
   async backtrackToIndex(index: number) {
     this.terminalPath = await this._gameServices.notifyBacktrack(index);
     this.navigateToTerm(this.terminalPath[this.terminalPath.length-1].term);
+  }
+
+  get isPreRound(): boolean {
+    return !!this.currentRound && this.startTime > Date.now();
   }
 }

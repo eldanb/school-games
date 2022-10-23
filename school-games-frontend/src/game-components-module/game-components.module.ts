@@ -19,6 +19,7 @@ import { LessonTerminalProviderComponent } from './lesson-terminal-provider/less
 import { LessonStatusViewComponent } from './lesson-status-view/lesson-status-view.component';
 import { PoppableBaloonsComponent } from './poppable-baloons/poppable-baloons.component';
 import { FavoritesManagementButtonsComponent } from './favorites-management-buttons/favorites-management-buttons.component';
+import { CountdownTimerDisplayComponent } from './countdown-timer-display/countdown-timer-display.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { FavoritesManagementButtonsComponent } from './favorites-management-butt
     LessonStatusViewComponent,
     PoppableBaloonsComponent,
     FavoritesManagementButtonsComponent,
+    CountdownTimerDisplayComponent,
   ],
   providers: [
     FavoritesSaveLoadService,
@@ -56,7 +58,8 @@ import { FavoritesManagementButtonsComponent } from './favorites-management-butt
     LessonControllerProviderComponent,
     LessonStatusViewComponent,
     PoppableBaloonsComponent,
-    FavoritesManagementButtonsComponent
+    FavoritesManagementButtonsComponent,
+    CountdownTimerDisplayComponent
   ]
 })
 export class GameComponentsModule { }

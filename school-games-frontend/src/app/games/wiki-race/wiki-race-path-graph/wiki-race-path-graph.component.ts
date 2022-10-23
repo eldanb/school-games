@@ -64,6 +64,9 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
     this._updateGraph();
   }
 
+  @Input()
+  showTerms: boolean;
+
   private _pathGraphNodes: PathGraphNode[] = [];
   private _pathGraphTerminals: PathGraphTerminal[] = [];
 
@@ -156,7 +159,7 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
   private _updateGraphDom() {
     this._pathGraphNodes.forEach((pathNode) => {
       if(pathNode.marked) {
-        pathNode.renderNode = this._createOrUpdateNodeSvgRep(pathNode.renderNode, pathNode.coordinate, pathNode.ownerTerminal!.coordinate);
+        pathNode.renderNode = this._createOrUpdateNodeSvgRep(pathNode.renderNode, pathNode.term, pathNode.coordinate, pathNode.ownerTerminal!.coordinate);
       } else {
         if(pathNode.renderNode) {
           pathNode.renderNode.remove();
@@ -229,11 +232,13 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
 
   }
 
-  private _createOrUpdateNodeSvgRep(existingNode: SVGElement | null, x: number, y: number) {
+  private _createOrUpdateNodeSvgRep(existingNode: SVGElement | null, term: string, x: number, y: number) {
     if(!existingNode) {
       existingNode = document.createElementNS("http://www.w3.org/2000/svg", "g");
       existingNode.setAttribute('class', 'path-node')
-      existingNode.innerHTML = '<circle cx="0" cy="0" r="5"/>';
+      existingNode.innerHTML = `
+        <circle cx="0" cy="0" r="5"/>
+        <text>${term}</text>`;
       this._graphNodesParent.nativeElement.appendChild(existingNode);
     }
 

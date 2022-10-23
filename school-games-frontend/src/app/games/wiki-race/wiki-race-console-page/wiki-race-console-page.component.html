@@ -1,3 +1,4 @@
+<!-- Game setup -->
 <div *ngIf="!gameStatus?.currentRound" class="vertical-stack fill-screen">
   <div class="horizontal-stack terms-input">
     <div class="vertical-stack">
@@ -20,15 +21,14 @@
       (click)="startRound()">
       התחל משחק
   </button>
-
 </div>
 
+<!-- In-round -->
 <div *ngIf="gameStatus?.currentRound" class="horizontal-stack fill-screen">
   <div class="vertical-stack full-width">
-    <div>Timer</div>
+    <!--<div>Timer</div>-->
     <div class="vertical-stack">
       <h1>תוצאות</h1>
-
       <table class="score-board">
         <thead>
           <tr>
@@ -39,7 +39,7 @@
         <tbody>
           <tr
             *ngFor="let rankedTerminal of rankedTerminals"
-            [ngClass]="{completed: rankedTerminal[1].currentScore > 100}"
+            [ngClass]="{completed: rankedTerminal[1].reachedEndTerm}"
               >
             <td class="col-term">{{terminalInfoForTid(rankedTerminal[0])?.username}}</td>
             <td class="col-right">{{rankedTerminal[1].currentScore}}</td>
@@ -49,6 +49,10 @@
     </div>
   </div>
   <div class="graph-container">
-    <app-wiki-race-path-graph [terminals]="terminals" [gameStatus]="gameStatus"></app-wiki-race-path-graph>
+    <app-wiki-race-path-graph
+      [terminals]="terminals"
+      [gameStatus]="gameStatus"
+      [showTerms]="gameStatus?.currentRound && !(gameStatus?.roundRunning) || false">
+    </app-wiki-race-path-graph>
   </div>
 </div>

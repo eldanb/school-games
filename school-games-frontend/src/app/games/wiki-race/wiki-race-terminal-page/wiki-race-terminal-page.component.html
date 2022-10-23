@@ -15,7 +15,7 @@
   </span>
 
 
-  <div *ngIf="terminalPath.length && terminalPath[terminalPath.length-1].term != currentRound?.endTerm">
+  <div class="final-term" *ngIf="terminalPath.length && terminalPath[terminalPath.length-1].term != currentRound?.endTerm">
     &nbsp;
     &#x203a;
     &nbsp;
@@ -23,7 +23,32 @@
     &nbsp;
     &#x203a;
     &nbsp;
-    {{currentRound.endTerm}}
+    <div>
+      &#x2691;
+      {{currentRound.endTerm}}
+    </div>
   </div>
 </div>
 <iframe #wikiFrame></iframe>
+
+<div *ngIf="isPreRound" class="pre-round-lightbox">
+  <div class="lightbox-content">
+    <p>
+      נסה/י להגיע מערך המוצא אל ערך היעד בויקיפדיה ע״י מעבר דרך הקישורים.
+    </p>
+    <div class="horizontal-stack">
+      <div class="term-box">
+        <h1>ערך מוצא</h1>
+        {{currentRound!.startTerm}}
+      </div>
+      <div class="term-spacer">&nbsp;</div>
+      <div class="term-box end-term">
+        <h1>ערך יעד</h1>
+        {{currentRound!.endTerm}}
+      </div>
+    </div>
+    <app-countdown-timer-display
+      [endTime]="startTime"
+    ></app-countdown-timer-display>
+  </div>
+</div>

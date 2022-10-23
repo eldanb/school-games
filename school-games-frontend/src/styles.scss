@@ -214,6 +214,14 @@ mat-tab-group.full-height {
   }
 }
 
+.bordered-card {
+  padding: 2rem;
+
+  background: white;
+  border-radius: 2rem;
+  box-shadow: 2px 4px 11px 0px #00000010;
+}
+
 
 @font-face {
   font-family: 'varela-round';
