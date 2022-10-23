@@ -183,7 +183,7 @@ class WikiRaceTerminalServicesImpl implements WikiRaceTerminalServices {
   }
 
   get currentTerm(): string {
-    return this._definitionHistory[this._definitionHistory.length - 1].term;
+    return this._definitionHistory[this._definitionHistory.length - 1]?.term;
   }
 
   async setListener(

@@ -26,14 +26,20 @@
 <!-- In-round -->
 <div *ngIf="gameStatus?.currentRound" class="horizontal-stack fill-screen">
   <div class="vertical-stack full-width">
-    <!--<div>Timer</div>-->
-    <div class="vertical-stack">
+    <h1>זמן לסיום</h1>
+    <app-countdown-timer-display
+        class="game-timer"
+        size="48pt"
+        [endTime]="gameStatus?.roundEndTime || 0">
+    </app-countdown-timer-display>
+    <hr>
+    <div class="vertical-stack scoreboard-container">
       <h1>תוצאות</h1>
       <table class="score-board">
         <thead>
           <tr>
             <td>משתתפ/ת</td>
-            <td class="col-right">מסלול נוכחי</td>
+            <td class="col-right">מסלול&nbsp;נוכחי</td>
           </tr>
         </thead>
         <tbody>

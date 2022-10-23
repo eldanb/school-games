@@ -2,6 +2,9 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { LessonStatusTerminalInfo, WikiRaceConsoleServices, WikiRaceGameStatus, WikiRaceTerminalStatus } from 'school-games-common';
 import { LessonControllerProviderService } from 'src/game-components-module/lesson-controller-provider/lesson-controller-provider.service';
 
+const GAME_PREROUND_TIME_SECS = 10;
+const GAME_ROUND_TIME_SECS = 60*3;
+
 @Component({
   templateUrl: './wiki-race-console-page.component.html',
   styleUrls: ['./wiki-race-console-page.component.scss']
@@ -12,6 +15,8 @@ export class WikiRaceConsolePageComponent implements OnInit {
 
   private _wikiRaceConsoleController: WikiRaceConsoleServices;
   private _refreshTimer: any;
+
+  private _rankedTerminals: [string, WikiRaceTerminalStatus][] | null;
 
   public terminals: LessonStatusTerminalInfo[];
   public gameStatus: WikiRaceGameStatus | null;
@@ -35,9 +40,12 @@ export class WikiRaceConsolePageComponent implements OnInit {
   }
 
   get rankedTerminals(): [string, WikiRaceTerminalStatus][] {
-    const ret = Object.entries(this.gameStatus!.terminalStatus);
-    ret.sort((a, b) => a[1].currentScore - b[1].currentScore);
-    return ret;
+    if(!this._rankedTerminals) {
+      this._rankedTerminals = Object.entries(this.gameStatus!.terminalStatus);
+      this._rankedTerminals.sort((a, b) => a[1].currentScore - b[1].currentScore);
+    }
+
+    return this._rankedTerminals;
   }
 
   private async refreshGameStatus() {
@@ -45,6 +53,8 @@ export class WikiRaceConsolePageComponent implements OnInit {
     this.terminals = (await terminalController.getLessonStatus()).terminalInfo;
 
     this.gameStatus = await this._wikiRaceConsoleController.getGameStatus();
+
+    this._rankedTerminals = null;
   }
 
   private async _startGame() {
@@ -54,9 +64,12 @@ export class WikiRaceConsolePageComponent implements OnInit {
   }
 
   public async startRound() {
+    const nowTime = Date.now();
     await this._wikiRaceConsoleController.startRound({
       startTerm: this.selectedStartTerm,
       endTerm: this.selectedEndTerm
-    }, new Date().getTime() + 5000, new Date().getTime() + 555000)
+    },
+    nowTime + GAME_PREROUND_TIME_SECS * 1000,
+    nowTime + (GAME_PREROUND_TIME_SECS + GAME_ROUND_TIME_SECS) * 1000)
   }
 }
