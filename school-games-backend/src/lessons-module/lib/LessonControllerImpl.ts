@@ -7,6 +7,7 @@ import {
   LessonTerminalServices,
   LiveObjectMonikerResolver,
   Terminal,
+  TerminalAvatar,
   TerminalConnectionInfo,
   TerminalConnectionResult,
   TerminalMessage,
@@ -66,6 +67,7 @@ export class LessonControllerImpl implements LessonControllerInterface {
       terminalInfo: this._terminals.map((terminal) => ({
         terminalId: terminal.id,
         username: terminal.username,
+        avatar: terminal.avatar
       })),
     };
   }
@@ -190,6 +192,7 @@ class TerminalImpl implements Terminal {
   private _transport: ZipClientTransport;
   private _pendingMessages: AsyncQueue<TerminalMessage> = new AsyncQueue();
   private _username: string;
+  private _avatar: TerminalAvatar;
 
   constructor(
     private _parent: LessonControllerImpl,
@@ -199,6 +202,7 @@ class TerminalImpl implements Terminal {
     this._lastHeartbeat = Date.now();
     this._transport = new TerminalZipcClientTransport(this);
     this._username = connectionInfo.username;
+    this._avatar = connectionInfo.avatar;
     EndpointMultiplexingZipcTransport.registerEndpoint(
       this._id,
       this._transport,
@@ -221,6 +225,10 @@ class TerminalImpl implements Terminal {
 
   get username(): string {
     return this._username;
+  }
+
+  get avatar(): TerminalAvatar {
+    return this._avatar;
   }
 
   get lastHeartbeat(): number {

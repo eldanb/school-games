@@ -1,7 +1,9 @@
-import { Component, OnDestroy, OnInit, Self, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ComponentRef, OnDestroy, OnInit, Self, ViewChild, ViewContainerRef } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
-import { TerminalMessage } from 'school-games-common';
+import { TerminalAvatar, TerminalMessage } from 'school-games-common';
+import { AvatarViewComponent } from 'src/game-components-module/avatar-view/avatar-view.component';
+import { LessonTerminalProviderComponent } from 'src/game-components-module/lesson-terminal-provider/lesson-terminal-provider.component';
 
 
 export class TerminalUiFrameworkIntegrationSupportService {
@@ -19,6 +21,7 @@ export class TerminalUiFrameworkIntegrationSupportService {
     this._component.pageTitle = v;
   }
 }
+
 @Component({
   templateUrl: './terminal-main-page.component.html',
   styleUrls: ['./terminal-main-page.component.scss'],
@@ -26,10 +29,17 @@ export class TerminalUiFrameworkIntegrationSupportService {
 })
 export class TerminalMainPageComponent implements OnInit {
 
-  lessonMoniker: string;
   lessonConnected: boolean;
   username: string;
   pageTitle: string;
+
+  suggestedAvatars: TerminalAvatar[];
+  selectedAvatarIndex: number = 0;
+
+  get selectedAvatar() { return this.suggestedAvatars[this.selectedAvatarIndex]; };
+
+  @ViewChild(LessonTerminalProviderComponent)
+  _lessonTerminalProvider: LessonTerminalProviderComponent;
 
   constructor(
     private _route: ActivatedRoute,
@@ -39,10 +49,14 @@ export class TerminalMainPageComponent implements OnInit {
 
   ngOnInit(): void {
     this._integrationServices.connectComponent(this);
+    this.suggestedAvatars = [];
+    for(let i=0; i<3; i++) {
+      this.suggestedAvatars.push(AvatarViewComponent.randomAvatar());
+    }
   }
 
   private connectToLesson(lessonMoniker: string) {
-    this.lessonMoniker = lessonMoniker;
+    this._lessonTerminalProvider.connectToLesson(lessonMoniker, this.username, this.selectedAvatar);
   }
 
   connectionStateChanged(state: boolean) {

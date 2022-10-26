@@ -6,7 +6,8 @@
 <div class="lesson-status-popup" *ngIf="showStatusPopup">
   <h2>משתתפים בשיעור</h2>
   <div class="participant-line" *ngFor="let terminalInfo of (lessonStatus?.terminalInfo || [])">
-    <div>{{terminalInfo.username}}</div>
+    <div><app-avatar-view [avatar]="terminalInfo.avatar"></app-avatar-view></div>
+    <div class="participant-name">{{terminalInfo.username}}</div>
     <mat-icon (click)="sendChatMessage(terminalInfo.terminalId)">chat</mat-icon>
   </div>
   <div class="flex-spacer"></div>

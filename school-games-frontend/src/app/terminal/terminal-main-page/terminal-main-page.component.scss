@@ -44,3 +44,12 @@ app-terminal-game-component-host {
     margin-top: 3rem;
   }
 }
+
+app-avatar-view {
+  border-radius: 100vh;
+}
+
+app-avatar-view.selected {
+  box-shadow: 2px 2px 13px 2px purple;
+  border-radius: 100vh;
+}

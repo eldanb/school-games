@@ -5,9 +5,19 @@
     }
 
     .terminal-pawn {
-      transition: cubic-bezier(1, 0, 0, 1) cx 0.5s, cubic-bezier(1, 0, 0, 1) cy 0.5s, cubic-bezier(1, 0, 0, 1) r 0.5s;
+      transition: cubic-bezier(1, 0, 0, 1) transform 0.5s;
       opacity: 1;
       fill: none;
+
+      animation: appear 0.5s;
+    }
+
+    .terminal-pawn-mount {
+      transition: cubic-bezier(1, 0, 0, 1) d 0.5s;
+      opacity: 1;
+
+      fill: none;
+      stroke: silver;
 
       animation: appear 0.5s;
     }
@@ -22,7 +32,7 @@
       opacity: 0;
 
       text-anchor: middle;
-      font-size: 9pt;
+      font-size: 7pt;
       transform: translate(0px, -11px);
     }
 

@@ -1,6 +1,4 @@
 <app-lesson-terminal-provider
-  [lessonMoniker]="lessonMoniker"
-  [username]="username"
   (connectionStateChange)="connectionStateChanged($event)"
   (terminalMessage)="handleTerminalMessage($event)"
   >
@@ -10,7 +8,13 @@
     <div class="status-bar">
       <div>{{pageTitle}}</div>
       <div class="flex-spacer"></div>
-      <div *ngIf="lessonConnected && username">
+      <div *ngIf="lessonConnected && username" class="horizontal-stack" style="gap: 0">
+        <app-avatar-view
+          *ngIf="lessonConnected && username"
+          [avatar]="selectedAvatar"
+          size="small">
+        </app-avatar-view>
+        &nbsp;
         {{username}}
       </div>
 
@@ -38,6 +42,18 @@
         <mat-label>שם</mat-label>
         <input matInput [(ngModel)]="username" value="">
       </mat-form-field>
+
+      <div class="horizontal-stack" style="width: 100%">
+        בחר/י דמות:
+        <div class="flex-spacer"></div>
+        <app-avatar-view
+          *ngFor="let avatar of suggestedAvatars; index as avIndex"
+          [avatar]="avatar"
+          [ngClass]="{ selected: selectedAvatarIndex == avIndex}"
+          (click)="selectedAvatarIndex = avIndex"
+          size="big">
+        </app-avatar-view>
+      </div>
 
       <button mat-raised-button (click)="handleConnectClicked()">התחבר</button>
 

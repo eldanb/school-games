@@ -47,7 +47,12 @@
             *ngFor="let rankedTerminal of rankedTerminals"
             [ngClass]="{completed: rankedTerminal[1].reachedEndTerm}"
               >
-            <td class="col-term">{{terminalInfoForTid(rankedTerminal[0])?.username}}</td>
+            <td class="col-term">
+              <div class="horizontal-stack">
+                <app-avatar-view [avatar]="terminalInfoForTid(rankedTerminal[0])?.avatar || null"></app-avatar-view>
+                {{terminalInfoForTid(rankedTerminal[0])?.username}}
+              </div>
+            </td>
             <td class="col-right">{{rankedTerminal[1].currentScore}}</td>
           </tr>
         </tbody>

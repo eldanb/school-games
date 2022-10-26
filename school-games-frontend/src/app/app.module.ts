@@ -52,7 +52,7 @@ import { WikiRacePathGraphComponent } from './games/wiki-race/wiki-race-path-gra
     WordPopQuestionEditorComponent,
     WikiRaceConsolePageComponent,
     WikiRaceTerminalPageComponent,
-    WikiRacePathGraphComponent
+    WikiRacePathGraphComponent,
   ],
   imports: [
     BrowserModule,

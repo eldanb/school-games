@@ -1,0 +1,38 @@
+:host {
+  display: flex;
+}
+
+svg {
+  width: 30px;
+  height: 30px;
+
+  padding: 2px;
+  border-radius: 100vh;
+}
+
+svg.small {
+  width: 14px;
+  height: 14px;
+}
+
+svg.big {
+  width: 48px;
+  height: 48px;
+}
+
+svg.avatar-color-blue {
+  background-image: linear-gradient(50deg, #0000ffff, #0000ff20);
+}
+
+svg.avatar-color-green {
+  background-image: linear-gradient(50deg, #00af00ff, #00af0020);
+}
+
+svg.avatar-color-red {
+  background-image: linear-gradient(50deg, #af0000ff, #af000020);
+}
+
+
+svg.avatar-color-cyan {
+  background-image: linear-gradient(50deg, #00afffff, #00afff20);
+}

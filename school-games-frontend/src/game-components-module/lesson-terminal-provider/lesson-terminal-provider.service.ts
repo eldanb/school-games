@@ -1,5 +1,5 @@
 import { EventEmitter, Injectable } from "@angular/core";
-import { LessonTerminalServices, MonikerWithEndpointResolver, Terminal, TerminalMessage, ZipcServer } from "school-games-common";
+import { LessonTerminalServices, MonikerWithEndpointResolver, Terminal, TerminalAvatar, TerminalMessage, ZipcServer } from "school-games-common";
 import { GameType } from "school-games-common/dist/lesson-model/games-registry";
 import { ZipcCallContext } from "school-games-common/dist/zipc/server/ZipcCallContext";
 import { ZipcClientService } from "../zipc-client-service/zipc-client.service";
@@ -31,17 +31,17 @@ export class LessonTerminalProviderService {
     return this._currentGameServices;
   }
 
-  initTerminal(lessonManagerMoniker: string, username: string) {
-    this._asyncLoadedTerminal = this.initTerminalAsync(lessonManagerMoniker, username);
+  initTerminal(lessonManagerMoniker: string, username: string, avatar: TerminalAvatar) {
+    this._asyncLoadedTerminal = this.initTerminalAsync(lessonManagerMoniker, username, avatar);
   }
 
   getTerminalInterface(): Promise<Terminal> {
     return this._asyncLoadedTerminal;
   }
 
-  private async initTerminalAsync(lessonManagerMoniker: string, username: string): Promise<Terminal> {
+  private async initTerminalAsync(lessonManagerMoniker: string, username: string, avatar: TerminalAvatar): Promise<Terminal> {
     const terminalServices = await this._zipcClientService.zipcClient.bindMoniker<LessonTerminalServices>(lessonManagerMoniker);
-    const bindResult = await terminalServices.connectTerminal({username});
+    const bindResult = await terminalServices.connectTerminal({username, avatar});
 
     (async () => {
       while(this._keepPolling) {

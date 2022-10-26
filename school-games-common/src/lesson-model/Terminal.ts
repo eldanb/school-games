@@ -1,8 +1,14 @@
 import { SelfDescribingMessage } from "../zipc/core/SelfDescribingMessage";
 import { GameType } from "./games-registry";
 
+export type TerminalAvatar = {
+  avatarName: string;
+  avatarColor: string;
+}
+
 export interface TerminalConnectionInfo {
   username: string;
+  avatar: TerminalAvatar;
 }
 
 type TerminalMessagesMap = {

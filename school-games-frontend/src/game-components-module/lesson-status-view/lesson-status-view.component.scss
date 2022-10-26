@@ -57,8 +57,9 @@
 
   height: 3rem;
 
-  div {
+  div.participant-name {
     flex-grow: 1;
+    margin: 0 1rem;
   }
 
   mat-icon {

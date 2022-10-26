@@ -114,6 +114,10 @@ export class DefaultMarshaller extends Marshaller {
     const ret = {};
 
     Object.entries(value).forEach(([k, v]) => {
+      if(k ==='$m') {
+        return;
+      }
+
       ret[k] = Marshaller.unmarshal(v, ctxt);
     });
 

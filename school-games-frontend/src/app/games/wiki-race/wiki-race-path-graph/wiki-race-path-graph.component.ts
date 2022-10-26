@@ -1,9 +1,10 @@
 import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import * as _ from 'lodash';
-import { LessonStatusTerminalInfo, WikiRaceGameStatus } from 'school-games-common';
+import { LessonStatusTerminalInfo, TerminalAvatar, WikiRaceGameStatus } from 'school-games-common';
+import { AvatarViewComponent } from 'src/game-components-module/avatar-view/avatar-view.component';
 
 
-const TERMINAL_PATH_SIZE = 30;
+const TERMINAL_PATH_SIZE = 40;
 
 type PathGraphTraverse = {
   traverseTerminal: PathGraphTerminal;
@@ -24,6 +25,7 @@ type PathGraphNode = {
 
   coordinate: number;
   renderNode: SVGElement | null;
+  renderedPawnMount: SVGElement | null;
 
   marked: boolean;
 }
@@ -33,7 +35,7 @@ type PathGraphTerminal = {
   marked: boolean;
   coordinate: number;
   lastNodeCoordinate: number;
-  color: string;
+  avatar: TerminalAvatar;
 
   terminalPawnRenderedNode: SVGElement | null;
   currentPathNode: PathGraphNode | null;
@@ -191,11 +193,27 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
       terminalsOnNode.forEach((terminal, terminalIndexOnNode) => {
         terminal.terminalPawnRenderedNode = this._createOrUpdateTerminalPawnSvgRep(
           terminal.terminalPawnRenderedNode,
-          terminal.color,
+          terminal.avatar,
           terminal.currentPathNode!.coordinate, terminal.currentPathNode!.ownerTerminal!.coordinate,
           terminalIndexOnNode, terminalsOnNode.length);
       })
     );
+
+    this._pathGraphNodes.forEach(graphNode => {
+      let terminalsOnNode = terminalsByPawnNode[graphNode.term];
+      if(terminalsOnNode?.length) {
+        graphNode.renderedPawnMount = this._createOrUpdatedPawnMount(
+          graphNode.renderedPawnMount,
+          graphNode.coordinate, graphNode.ownerTerminal!.coordinate,
+          terminalsOnNode.length
+        );
+      } else {
+        if(graphNode.renderedPawnMount) {
+          graphNode.renderedPawnMount.remove();
+          graphNode.renderedPawnMount = null;
+        }
+      }
+    })
 
     this._pathGraphTerminals
       .filter(t => !t.marked && t.terminalPawnRenderedNode)
@@ -215,7 +233,7 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
       if(!renderNode) {
         renderNode = document.createElementNS("http://www.w3.org/2000/svg", "path");
         renderNode.setAttribute('class', 'path-link');
-        renderNode.setAttribute('stroke', traverseTerminal.color);
+        renderNode.setAttribute('stroke', traverseTerminal.avatar.avatarColor);
         this._graphLinksParent.nativeElement.appendChild(renderNode);
       }
 
@@ -249,21 +267,36 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
 
   private _createOrUpdateTerminalPawnSvgRep(
     existingNode: SVGElement | null,
-    color: string,
+    avatar: TerminalAvatar,
     x: number, y: number,
     indexInNode: number, countInNode: number): SVGElement {
       if(!existingNode) {
-        existingNode = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        existingNode.setAttribute('class', 'terminal-pawn')
-        existingNode.setAttribute('stroke', color);
+        existingNode = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        existingNode.setAttribute('class', 'terminal-pawn');
+
+        existingNode.innerHTML = `<use width="16" height="16" xlink:href="${AvatarViewComponent.getSpriteRef(avatar.avatarName)}"/>`
         this._graphNodesParent.nativeElement.appendChild(existingNode);
       }
 
-      existingNode.setAttribute('cx', `${x}`);
-      existingNode.setAttribute('cy', `${y}`);
-      existingNode.setAttribute('r', `${8 + 4 * indexInNode}`);
+      existingNode.setAttribute('transform', `translate(${x - 8 + 20*indexInNode} ${y + 12})`);
 
       return existingNode;
+  }
+
+  private _createOrUpdatedPawnMount(
+    existingNode: SVGElement | null,
+    x: number, y: number,
+    countInNode: number
+  ): SVGElement {
+    if(!existingNode) {
+      existingNode = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      existingNode.setAttribute('class', 'terminal-pawn-mount');
+      this._graphNodesParent.nativeElement.appendChild(existingNode);
+    }
+
+    existingNode.setAttribute('d', `M ${x-8},${y+10} L ${x-4},${y+10} L ${x},${y+6} L ${x+4},${y+10} L ${x-8 + countInNode*20 - 4},${y+10}`);
+
+    return existingNode;
   }
 
   private _nodeForTerm(term: string, visitingTerminal: PathGraphTerminal, visitingTerminalStep: number) {
@@ -273,6 +306,7 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
         term: term,
         presentTerminals: new Set(),
         renderNode: null,
+        renderedPawnMount: null,
         coordinate: 0,
         ownerTerminal: null,
         indexInOwnerTerminal: 0,
@@ -302,7 +336,7 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
         coordinate: 0,
         lastNodeCoordinate: 0,
         terminalId: terminalId,
-        color: TERMINAL_COLORS[this._pathGraphTerminals.length],
+        avatar: this.terminals.find((terminal) => terminal.terminalId === terminalId)!.avatar,
         terminalPawnRenderedNode: null,
         currentPathNode: null
       };

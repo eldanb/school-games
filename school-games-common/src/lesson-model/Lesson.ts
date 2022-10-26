@@ -1,12 +1,12 @@
 import { UseMarshallerType } from "../zipc/core/Marshaller";
 import { SelfDescribingMessage } from "../zipc/core/SelfDescribingMessage";
 import { GameType } from "./games-registry";
-import { Terminal, TerminalConnectionInfo } from "./Terminal";
-
+import { Terminal, TerminalAvatar, TerminalConnectionInfo } from "./Terminal";
 
 export type LessonStatusTerminalInfo = {  
   terminalId: string;
   username: string;
+  avatar: TerminalAvatar;
 }
 
 export type LessonStatus = {

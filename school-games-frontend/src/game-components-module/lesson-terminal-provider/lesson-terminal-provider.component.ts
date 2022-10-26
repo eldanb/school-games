@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { TerminalMessage } from 'school-games-common';
+import { TerminalAvatar, TerminalMessage } from 'school-games-common';
 import { LessonTerminalProviderService } from './lesson-terminal-provider.service';
 
 @Component({
@@ -12,26 +12,19 @@ export class LessonTerminalProviderComponent implements OnInit, OnDestroy {
 
   private _lessonMoniker: string | null;
   private _username: string | null;
+  private _avatar: TerminalAvatar | null;
   private _terminalEventSubscription: Subscription| null;
 
-  @Input()
-  get lessonMoniker(): string | null {
-    return this._lessonMoniker;
-  }
+  public connectToLesson(lessonMoniker: string, username: string, avatar: TerminalAvatar) {
+    this._lessonMoniker = lessonMoniker;
+    this._username = username;
+    this._avatar = avatar;
 
-  set lessonMoniker(v: string | null) {
-    this._lessonMoniker = v;
-    this._connectIfNeeded();
-  }
-
-  @Input()
-  get username(): string | null {
-    return this._username;
-  }
-
-  set username(v: string | null) {
-    this._username = v;
-    this._connectIfNeeded();
+    this._lessonTerminalProviderService.initTerminal(
+      this._lessonMoniker,
+      this._username,
+      this._avatar);
+    this._lessonTerminalProviderService.getTerminalInterface().then(() => this.connectionStateChange.emit(true));
   }
 
   @Output()
@@ -51,13 +44,6 @@ export class LessonTerminalProviderComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if(this._terminalEventSubscription) {
       this._terminalEventSubscription.unsubscribe();
-    }
-  }
-
-  _connectIfNeeded() {
-    if(this._lessonMoniker && this._username) {
-      this._lessonTerminalProviderService.initTerminal(this._lessonMoniker, this._username);
-      this._lessonTerminalProviderService.getTerminalInterface().then(() => this.connectionStateChange.emit(true));
     }
   }
 }
