@@ -36,7 +36,9 @@ export class WikiRaceTerminalListenerRegistration {
 export interface WikiRaceConsoleServices {
   getGameStatus(): Promise<WikiRaceGameStatus>;
   startRound(round: WikiRaceRound, startTime: number, endTime: number): Promise<void>;
-  
+
+  generateRound(numSteps: number): Promise<WikiRaceRound>;  
+  isTerm(term: string): Promise<boolean>;
 }
 
 export interface WikiRaceTerminalServices {

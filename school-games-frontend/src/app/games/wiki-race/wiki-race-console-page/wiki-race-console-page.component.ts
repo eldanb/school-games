@@ -10,10 +10,14 @@ const GAME_ROUND_TIME_SECS = 60*3;
   styleUrls: ['./wiki-race-console-page.component.scss']
 })
 export class WikiRaceConsolePageComponent implements OnInit {
-  public selectedStartTerm: string = "נדנדה";
-  public selectedEndTerm: string = "סרפד";
+  public selectedStartTerm: string = "";
+  public startTermValid: boolean | null;
 
-  private _wikiRaceConsoleController: WikiRaceConsoleServices;
+  public selectedEndTerm: string = "";
+  public endTermValid: boolean | null;
+
+  public wikiRaceConsoleController: WikiRaceConsoleServices;
+
   private _refreshTimer: any;
 
   private _rankedTerminals: [string, WikiRaceTerminalStatus][] | null;
@@ -52,7 +56,7 @@ export class WikiRaceConsolePageComponent implements OnInit {
     const terminalController = await this._lessonControllerProviderService.getLessonController();
     this.terminals = (await terminalController.getLessonStatus()).terminalInfo;
 
-    this.gameStatus = await this._wikiRaceConsoleController.getGameStatus();
+    this.gameStatus = await this.wikiRaceConsoleController.getGameStatus();
 
     this._rankedTerminals = null;
   }
@@ -60,12 +64,20 @@ export class WikiRaceConsolePageComponent implements OnInit {
   private async _startGame() {
     const lessonControlelr = await this._lessonControllerProviderService.getLessonController();
     const result = await lessonControlelr.startGame('wiki-race');
-    this._wikiRaceConsoleController = result.gameController as WikiRaceConsoleServices;
+    this.wikiRaceConsoleController = result.gameController as WikiRaceConsoleServices;
+
+    await this._loadRandomRound();
+  }
+
+  private async _loadRandomRound() {
+    const round = await this.wikiRaceConsoleController.generateRound(6);
+    this.selectedStartTerm = round.startTerm;
+    this.selectedEndTerm = round.endTerm;
   }
 
   public async startRound() {
     const nowTime = Date.now();
-    await this._wikiRaceConsoleController.startRound({
+    await this.wikiRaceConsoleController.startRound({
       startTerm: this.selectedStartTerm,
       endTerm: this.selectedEndTerm
     },

@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+import { firstValueFrom } from 'rxjs';
 import {
   Terminal,
   WikiRaceConsoleServices,
@@ -22,6 +24,8 @@ export class WikiRaceGameState
   private _endTime: number | null;
 
   private _gameRunning: boolean;
+
+  private _logger = new Logger('WikiRaceGameState');
 
   constructor(_lessonController: LessonControllerImpl) {
     super(_lessonController);
@@ -91,11 +95,87 @@ export class WikiRaceGameState
     );
   }
 
+  async isTerm(term: string): Promise<boolean> {
+    try {
+      const response = await firstValueFrom(
+        this._lessonController.httpClient.get(
+          `https://he.wikipedia.org/wiki/${encodeURIComponent(term)}`,
+        ),
+      );
+
+      if (response.status != 200) {
+        throw new Error('Term not found');
+      }
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   async endRound() {
     this._gameRunning = false;
     await Promise.all(
       Object.values(this._terminalServices).map((ts) => ts.endRound()),
     );
+  }
+
+  async generateRound(numSteps: number): Promise<WikiRaceRound> {
+    const terms = await this.generateRandomTerms(2);
+
+    const firstTerm = terms[0];
+    this._logger.debug(`First random term: ${firstTerm}`);
+
+    const endTerm =
+      numSteps <= 0
+        ? terms[1]
+        : await this.suggestTargetTerm(firstTerm, numSteps);
+
+    return {
+      startTerm: firstTerm,
+      endTerm: endTerm,
+    };
+  }
+
+  private async generateRandomTerms(numTerms: number): Promise<string[]> {
+    const randomTermQuery = await firstValueFrom(
+      this._lessonController.httpClient.get(
+        `https://he.wikipedia.org/w/api.php?action=query&list=random&format=json&rnnamespace=0&rnlimit=${numTerms}`,
+      ),
+    );
+
+    return (randomTermQuery.data.query.random as any[]).map((r) => r.title);
+  }
+
+  private async suggestTargetTerm(
+    sourceTerm: string,
+    numSteps: number,
+  ): Promise<string> {
+    let currentTerm = sourceTerm;
+    while (numSteps--) {
+      const linkQuery = await firstValueFrom(
+        this._lessonController.httpClient.get(
+          `https://he.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(
+            currentTerm,
+          )}&prop=links&pllimit=max&format=json`,
+        ),
+      );
+
+      const links: { ns: string; title: string }[] = (
+        Object.values(linkQuery.data.query.pages)[0] as any
+      ).links?.filter((l) => l.ns == 0);
+
+      if (!links?.length) {
+        break;
+      }
+
+      const nextLink = links[Math.floor(Math.random() * links.length)];
+      currentTerm = nextLink.title;
+
+      this._logger.debug(`Traverse to term: ${JSON.stringify(nextLink)}`);
+    }
+
+    return currentTerm;
   }
 
   get gameRunning(): boolean {

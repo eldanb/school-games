@@ -2,7 +2,7 @@ import { Terminal } from 'school-games-common';
 import { LessonControllerImpl } from './LessonControllerImpl';
 
 export abstract class GameState {
-  constructor(private _lessonController: LessonControllerImpl) {}
+  constructor(protected _lessonController: LessonControllerImpl) {}
 
   abstract getConsoleServices(): object;
 

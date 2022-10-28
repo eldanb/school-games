@@ -15,12 +15,13 @@ import {
   ZipClientTransport,
 } from 'school-games-common';
 import * as QRCode from 'qrcode';
-import { Logger } from '@nestjs/common';
+import { HttpServer, Logger } from '@nestjs/common';
 import { GameType } from 'school-games-common/dist/lesson-model/games-registry';
 import { GameState } from './GamesState';
 import { createLessonState } from './GameStatesRegistry';
 import { randomUUID } from 'crypto';
 import { EndpointMultiplexingZipcTransport } from 'src/zipc-module/ZipcApiController';
+import { HttpService } from '@nestjs/axios';
 
 export class LessonControllerImpl implements LessonControllerInterface {
   private _terminalConnectionService: LessonTerminalServices;
@@ -34,7 +35,10 @@ export class LessonControllerImpl implements LessonControllerInterface {
 
   private heartbeatTimeout: number;
 
-  constructor(private _configService: ConfigService) {
+  constructor(
+    private _configService: ConfigService,
+    private _httpClient: HttpService,
+  ) {
     this._terminalConnectionService = new LessonTerminalServicesImpl(this);
     this.heartbeatTimeout =
       this._configService.get('TERMINAL_HEARTBEAT_TIMEOUT_SEC', 120) * 1000;
@@ -67,7 +71,7 @@ export class LessonControllerImpl implements LessonControllerInterface {
       terminalInfo: this._terminals.map((terminal) => ({
         terminalId: terminal.id,
         username: terminal.username,
-        avatar: terminal.avatar
+        avatar: terminal.avatar,
       })),
     };
   }
@@ -165,6 +169,10 @@ export class LessonControllerImpl implements LessonControllerInterface {
         ? WeakObjectMonikerResolver.registerObject(terminalGameState)
         : null,
     });
+  }
+
+  get httpClient() {
+    return this._httpClient;
   }
 }
 

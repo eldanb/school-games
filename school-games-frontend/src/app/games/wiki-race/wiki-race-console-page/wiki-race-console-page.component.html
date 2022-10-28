@@ -3,21 +3,28 @@
   <div class="horizontal-stack terms-input">
     <div class="vertical-stack">
       <h1>ערך מוצא</h1>
-      <mat-form-field class="form-field-rtl">
-        <input matInput placeholder="הכנס ערך ויקיפדיה" [(ngModel)]="selectedStartTerm">
-      </mat-form-field>
+      <app-wiki-term-selector
+        [gameController]="wikiRaceConsoleController"
+        [(term)]="selectedStartTerm"
+        (validationStateChanged)="startTermValid = $event"
+        >
+      </app-wiki-term-selector>
     </div>
 
     <div class="vertical-stack">
       <h1>ערך יעד</h1>
-      <mat-form-field class="form-field-rtl">
-        <input matInput placeholder="הכנס ערך ויקיפדיה" [(ngModel)]="selectedEndTerm">
-      </mat-form-field>
+      <app-wiki-term-selector
+        [gameController]="wikiRaceConsoleController"
+        [(term)]="selectedEndTerm"
+        (validationStateChanged)="endTermValid = $event"
+        >
+      </app-wiki-term-selector>
     </div>
   </div>
 
   <button mat-raised-button
       color="primary"
+      [disabled]="!startTermValid || !endTermValid"
       (click)="startRound()">
       התחל משחק
   </button>
@@ -25,11 +32,23 @@
 
 <!-- In-round -->
 <div *ngIf="gameStatus?.currentRound" class="horizontal-stack fill-screen">
-  <div class="vertical-stack full-width">
+  <div class="vertical-stack full-width round-display">
+    <div class="horizontal-stack round-terms-display">
+      <div class="term-box">
+        <h1>ערך מוצא</h1>
+        {{selectedStartTerm}}
+      </div>
+      <div class="flex-spacer">&nbsp;</div>
+      <div class="term-box end-term">
+        <h1>ערך יעד</h1>
+        {{selectedEndTerm}}
+      </div>
+    </div>
+    <hr>
     <h1>זמן לסיום</h1>
     <app-countdown-timer-display
         class="game-timer"
-        size="48pt"
+        size="30pt"
         [endTime]="gameStatus?.roundEndTime || 0">
     </app-countdown-timer-display>
     <hr>

@@ -5,6 +5,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { GameComponentsModule } from 'src/game-components-module/game-components.module';
 
@@ -32,6 +33,7 @@ import { WordPopQuestionEditorComponent } from './games/word-pop/word-pop-questi
 import { WikiRaceConsolePageComponent } from './games/wiki-race/wiki-race-console-page/wiki-race-console-page.component';
 import { WikiRaceTerminalPageComponent } from './games/wiki-race/wiki-race-terminal-page/wiki-race-terminal-page.component';
 import { WikiRacePathGraphComponent } from './games/wiki-race/wiki-race-path-graph/wiki-race-path-graph.component';
+import { WikiTermSelectorComponent } from './games/wiki-race/wiki-term-selector/wiki-term-selector.component';
 
 @NgModule({
   declarations: [
@@ -53,6 +55,7 @@ import { WikiRacePathGraphComponent } from './games/wiki-race/wiki-race-path-gra
     WikiRaceConsolePageComponent,
     WikiRaceTerminalPageComponent,
     WikiRacePathGraphComponent,
+    WikiTermSelectorComponent,
   ],
   imports: [
     BrowserModule,
@@ -68,7 +71,8 @@ import { WikiRacePathGraphComponent } from './games/wiki-race/wiki-race-path-gra
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatProgressSpinnerModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

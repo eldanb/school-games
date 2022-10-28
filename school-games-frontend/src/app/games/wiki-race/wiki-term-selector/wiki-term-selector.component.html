@@ -1,0 +1,14 @@
+<mat-form-field class="form-field-rtl" [ngClass]="{error: validationResult == false}">
+  <input matInput placeholder="הכנס ערך ויקיפדיה" [(ngModel)]="editedTerm">
+</mat-form-field>
+
+<button mat-icon-button (click)="randomizeTerm()">
+  <mat-icon>casino</mat-icon>
+</button>
+
+<mat-progress-spinner
+  [ngStyle]="{ visibility: spinnerEnabled ? 'visible' : 'hidden' }"
+  mode="indeterminate"
+  diameter="15">
+
+</mat-progress-spinner>

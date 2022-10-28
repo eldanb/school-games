@@ -1,8 +1,9 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { LessonsController } from './lessons.controller';
 
 @Module({
-  imports: [],
+  imports: [HttpModule],
   controllers: [LessonsController],
   providers: [],
 })

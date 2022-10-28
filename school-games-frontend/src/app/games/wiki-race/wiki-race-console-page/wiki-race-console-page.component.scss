@@ -37,8 +37,31 @@
 }
 
 
-hr {
-  width: 70%;
-  border: 0;
-  border-top: solid 1px lightgray;
+.round-display {
+
+  h1 {
+    color: silver;
+    font-size: 12pt;
+  }
+
+  hr {
+    width: 70%;
+    border: 0;
+    border-top: solid 1px lightgray;
+  }
+
+  .term-box {
+
+    font-size: 18pt;
+
+    &.end-term {
+      text-align: end;
+    }
+  }
+
+  .round-terms-display {
+    width: 75%;
+  }
 }
+
+
