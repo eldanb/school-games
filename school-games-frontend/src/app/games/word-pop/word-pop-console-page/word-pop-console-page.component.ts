@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { LessonStatusTerminalInfo, PoppedWordGameboard, PoppedWordGameStatus, WordPopConsoleInterface } from 'school-games-common';
+import { PoppedWordGameboard, PoppedWordGameStatus, PoppedWordTerminalStatus, WordPopConsoleInterface } from 'school-games-common';
 import { ConsoleUiFrameworkIntegrationSupportService } from 'src/app/main-console/console-ui-framework/console-ui-framework.component';
 import { LessonControllerProviderService } from 'src/game-components-module/lesson-controller-provider/lesson-controller-provider.service';
 import { WordPopQuestionDefinition } from '../word-pop-question-editor/word-pop-question-editor.component';
@@ -55,9 +55,8 @@ export class WordPopConsolePageComponent implements OnInit, OnDestroy, AfterView
 
   editing: boolean = false;
 
-  gameStatus: PoppedWordGameStatus;
+  gameStatus: PoppedWordGameStatus = { gameState: 'not-started', terminalStatus: {}, endTime: null };
   sampleBoard: PoppedWordGameboard;
-  terminals: LessonStatusTerminalInfo[];
 
   get hasMoreQuestions() {
     return this._runningQuestionIndex < this.gameQuestionDefs.length-1;
@@ -69,7 +68,7 @@ export class WordPopConsolePageComponent implements OnInit, OnDestroy, AfterView
   }
 
   constructor(
-    private _lessonControllerService: LessonControllerProviderService,
+    public lessonControllerService: LessonControllerProviderService,
     private _consoleUiFramework: ConsoleUiFrameworkIntegrationSupportService) { }
 
   ngOnInit(): void {
@@ -93,15 +92,12 @@ export class WordPopConsolePageComponent implements OnInit, OnDestroy, AfterView
   }
 
   private async setupGame() {
-    const lessonController = await this._lessonControllerService.getLessonController();
+    const lessonController = await this.lessonControllerService.getLessonController();
     const startResult = await lessonController.startGame("word-pop");
     this._wordpopGameController = startResult.gameController as WordPopConsoleInterface;
   }
 
   private async refreshStatus() {
-    const terminalController = await this._lessonControllerService.getLessonController();
-    this.terminals = (await terminalController.getLessonStatus()).terminalInfo;
-
     const prevGameState = this.gameStatus?.gameState;
 
     this.gameStatus = await this._wordpopGameController.getGameStatus();
@@ -130,10 +126,6 @@ export class WordPopConsolePageComponent implements OnInit, OnDestroy, AfterView
         numWrong++;
       }
     });
-  }
-
-  public terminalInfoForTid(tid: string): LessonStatusTerminalInfo | null {
-    return this.terminals.find((t) => t.terminalId == tid) || null;
   }
 
   public async startGame() {
@@ -171,5 +163,9 @@ export class WordPopConsolePageComponent implements OnInit, OnDestroy, AfterView
       invalidWords: [],
       validWords: []
     })
+  }
+
+  get rankedTerminals(): PoppedWordTerminalStatus[] {
+    return Object.values(this.gameStatus.terminalStatus);
   }
 }

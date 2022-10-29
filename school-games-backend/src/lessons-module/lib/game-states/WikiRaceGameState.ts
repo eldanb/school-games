@@ -12,6 +12,7 @@ import {
 } from 'school-games-common';
 import { GameState } from '../GamesState';
 import { LessonControllerImpl } from '../LessonControllerImpl';
+import * as _ from 'lodash';
 
 export class WikiRaceGameState
   extends GameState
@@ -40,8 +41,15 @@ export class WikiRaceGameState
 
     this._updateGameRunningByTime();
 
+    const terminalsFromLessonStatus = _.keyBy(
+      (await this._lessonController.getLessonStatus()).terminalInfo,
+      (ti) => ti.terminalId,
+    );
+
     Object.entries(this._terminalServices).forEach(([terminalId, terminal]) => {
       terminalStatus[terminalId] = {
+        avatar: terminalsFromLessonStatus[terminalId].avatar,
+        username: terminalsFromLessonStatus[terminalId].username,
         termHistory: terminal.definitionHistory,
         currentScore: terminal.definitionHistory.reduce(
           (a, h) => a + h.weight,

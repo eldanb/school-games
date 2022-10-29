@@ -43,11 +43,11 @@
 
   <button mat-raised-button
     color="primary"
-    [disabled]="!terminals?.length"
+    [disabled]="!lessonControllerService.lessonStatus?.terminalInfo?.length"
     (click)="startGame()">
     התחל משחק
   </button>
-  <div *ngIf="!terminals?.length">משחק זה דורש לפחות משתתף אחד בשיעור.</div>
+  <div *ngIf="!lessonControllerService.lessonStatus?.terminalInfo?.length">משחק זה דורש לפחות משתתף אחד בשיעור.</div>
 </div>
 
 <!-- game running -->
@@ -84,12 +84,12 @@
           </thead>
           <tbody>
             <tr
-              *ngFor="let tid of terminalIds"
-              [ngClass]="{completed: gameStatus.terminalStatus[tid].playerCompleted}"
+              *ngFor="let terminal of rankedTerminals"
+              [ngClass]="{completed: terminal.playerCompleted}"
                 >
-              <td class="col-term">{{terminalInfoForTid(tid)?.username}}</td>
-              <td class="col-right">{{gameStatus.terminalStatus[tid].goodPops}}</td>
-              <td class="col-wrong">{{gameStatus.terminalStatus[tid].badPops}}</td>
+              <td class="col-term">{{terminal.username}}</td>
+              <td class="col-right">{{terminal.goodPops}}</td>
+              <td class="col-wrong">{{terminal.badPops}}</td>
             </tr>
           </tbody>
         </table>

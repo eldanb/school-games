@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import {
   PoppedWordGameboard,
   PoppedWordGameStatus,
@@ -118,8 +119,15 @@ export class WordPopGameState
         : 'all-done',
     };
 
+    const terminalsFromLessonStatus = _.keyBy(
+      (await this._lessonController.getLessonStatus()).terminalInfo,
+      (ti) => ti.terminalId,
+    );
+
     Object.entries(this._terminalServices).forEach(([k, v]) => {
       ret.terminalStatus[k] = {
+        avatar: terminalsFromLessonStatus[k].avatar,
+        username: terminalsFromLessonStatus[k].username,
         totalWords: v.totalWords,
         goodPops: v.goodPops,
         badPops: v.badPops,

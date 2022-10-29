@@ -1,4 +1,5 @@
 import { UseMarshallerType } from "../../zipc/core/Marshaller";
+import { TerminalAvatar } from "../Terminal";
 
 export type WikiRaceTerminalPath = {
   term: string;
@@ -7,6 +8,8 @@ export type WikiRaceTerminalPath = {
 }[];
 
 export type WikiRaceTerminalStatus = {
+  avatar: TerminalAvatar;
+  username: string;
   termHistory: WikiRaceTerminalPath;
   currentScore: number;
   reachedEndTerm: boolean;

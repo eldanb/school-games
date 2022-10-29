@@ -1,3 +1,2 @@
-<svg *ngIf="avatar" [class]="'avatar-color-' + avatar.avatarColor + ' ' + size">
-  <use [attr.xlink:href]="spriteRef"/>
+<svg *ngIf="avatar" [class]="'avatar-color-' + avatar.avatarColor + ' ' + size" [innerHTML]="avatarContent">
 </svg>

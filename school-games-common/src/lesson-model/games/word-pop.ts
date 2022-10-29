@@ -1,4 +1,5 @@
 import { UseMarshallerType } from "../../zipc/core/Marshaller";
+import { TerminalAvatar } from "../Terminal";
 
 export type WordPopQuestionDefinition = {
   question: string;
@@ -7,6 +8,8 @@ export type WordPopQuestionDefinition = {
 }
 
 export type PoppedWordTerminalStatus = {
+  avatar: TerminalAvatar;
+  username: string;
   totalWords: number;
   goodPops: number;
   badPops: number;

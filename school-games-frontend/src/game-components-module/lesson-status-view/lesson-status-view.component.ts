@@ -15,11 +15,14 @@ export class LessonStatusViewComponent implements OnInit, OnDestroy {
 
   showStatusPopup: boolean = false;
   terminalCount: number = 0;
-  lessonStatus: LessonStatus;
 
   constructor(private _lessonControllerProvider: LessonControllerProviderService,
               private _matDialog: MatDialog) {
 
+  }
+
+  get lessonStatus() {
+    return this._lessonControllerProvider.lessonStatus;
   }
 
   ngOnDestroy(): void {
@@ -29,13 +32,9 @@ export class LessonStatusViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this._refreshTimer = setInterval(() => this._refreshStatus(), 5000);
-    this._refreshStatus();
   }
 
   private async _refreshStatus(): Promise<void> {
-    const lessonController = await this._lessonControllerProvider.getLessonController();
-    this.lessonStatus = await lessonController.getLessonStatus();
   }
 
   handleIconClicked() {
@@ -55,7 +54,7 @@ export class LessonStatusViewComponent implements OnInit, OnDestroy {
   }
 
   public sendChatMessage(terminalId: string) {
-    const terminalInfo = this.lessonStatus.terminalInfo.find((ti) => ti.terminalId == terminalId);
+    const terminalInfo = this.lessonStatus?.terminalInfo.find((ti) => ti.terminalId == terminalId);
     if(!terminalInfo) {
       return;
     }

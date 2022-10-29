@@ -20,9 +20,8 @@ export class WikiRaceConsolePageComponent implements OnInit {
 
   private _refreshTimer: any;
 
-  private _rankedTerminals: [string, WikiRaceTerminalStatus][] | null;
+  private _rankedTerminals: WikiRaceTerminalStatus[] | null;
 
-  public terminals: LessonStatusTerminalInfo[];
   public gameStatus: WikiRaceGameStatus | null;
 
   constructor(private _lessonControllerProviderService: LessonControllerProviderService) { }
@@ -30,7 +29,6 @@ export class WikiRaceConsolePageComponent implements OnInit {
   ngOnInit(): void {
     this._startGame();
     this._refreshTimer = setInterval(() => this.refreshGameStatus(), 1000);
-    this.refreshGameStatus();
   }
 
   ngOnDestroy(): void {
@@ -39,26 +37,20 @@ export class WikiRaceConsolePageComponent implements OnInit {
     }
   }
 
-  terminalInfoForTid(tid: string): LessonStatusTerminalInfo | null {
-    return this.terminals.find((t) => t.terminalId === tid) || null;
-  }
-
-  get rankedTerminals(): [string, WikiRaceTerminalStatus][] {
+  get rankedTerminals(): WikiRaceTerminalStatus[] {
     if(!this._rankedTerminals) {
-      this._rankedTerminals = Object.entries(this.gameStatus!.terminalStatus);
-      this._rankedTerminals.sort((a, b) => a[1].currentScore - b[1].currentScore);
+      this._rankedTerminals = Object.values(this.gameStatus!.terminalStatus);
+      this._rankedTerminals.sort((a, b) => a.currentScore - b.currentScore);
     }
 
     return this._rankedTerminals;
   }
 
   private async refreshGameStatus() {
-    const terminalController = await this._lessonControllerProviderService.getLessonController();
-    this.terminals = (await terminalController.getLessonStatus()).terminalInfo;
-
-    this.gameStatus = await this.wikiRaceConsoleController.getGameStatus();
-
-    this._rankedTerminals = null;
+    if(this.wikiRaceConsoleController) {
+      this.gameStatus = await this.wikiRaceConsoleController.getGameStatus();
+      this._rankedTerminals = null;
+    }
   }
 
   private async _startGame() {
@@ -67,6 +59,8 @@ export class WikiRaceConsolePageComponent implements OnInit {
     this.wikiRaceConsoleController = result.gameController as WikiRaceConsoleServices;
 
     await this._loadRandomRound();
+    await this.refreshGameStatus();
+
   }
 
   private async _loadRandomRound() {

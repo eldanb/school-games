@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import * as _ from 'lodash';
-import { LessonStatusTerminalInfo, TerminalAvatar, WikiRaceGameStatus } from 'school-games-common';
+import { TerminalAvatar, WikiRaceGameStatus, WikiRaceTerminalStatus } from 'school-games-common';
 import { AvatarViewComponent } from 'src/game-components-module/avatar-view/avatar-view.component';
 
 
@@ -51,9 +51,6 @@ const TERMINAL_COLORS = [ 'red', 'blue', 'magenta', 'cyan', 'yellow' ];
 })
 export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
 
-  @Input()
-  public terminals: LessonStatusTerminalInfo[];
-
   private _gameStatus: WikiRaceGameStatus | null;
 
   @Input()
@@ -88,7 +85,7 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
   }
 
   private _updateGraph() {
-    if(!this._gameStatus || !this.terminals || !this._graphNodesParent?.nativeElement) {
+    if(!this._gameStatus || !this._graphNodesParent?.nativeElement) {
       return;
     }
 
@@ -113,7 +110,7 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
 
     // Update chart model
     Object.entries(this.gameStatus!.terminalStatus).forEach(([terminalId, terminalStatus]) => {
-      const terminalInfo = this._terminalInfoForId(terminalId);
+      const terminalInfo = this._terminalInfoForId(terminalId, terminalStatus);
       terminalInfo.marked = true;
 
       terminalStatus.termHistory?.forEach((termHistoryEntry, historyIndex, historyArray) => {
@@ -328,7 +325,7 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
     return node;
   }
 
-  private _terminalInfoForId(terminalId: string) {
+  private _terminalInfoForId(terminalId: string, terminalStatus: WikiRaceTerminalStatus) {
     let terminalInfo = this._pathGraphTerminals.find((terminal) => terminal.terminalId === terminalId);
     if(!terminalInfo) {
       terminalInfo = {
@@ -336,7 +333,7 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
         coordinate: 0,
         lastNodeCoordinate: 0,
         terminalId: terminalId,
-        avatar: this.terminals.find((terminal) => terminal.terminalId === terminalId)!.avatar,
+        avatar: terminalStatus.avatar,
         terminalPawnRenderedNode: null,
         currentPathNode: null
       };
