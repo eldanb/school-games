@@ -54,28 +54,11 @@
     <hr>
     <div class="vertical-stack scoreboard-container">
       <h1>תוצאות</h1>
-      <table class="score-board">
-        <thead>
-          <tr>
-            <td>משתתפ/ת</td>
-            <td class="col-right">מסלול&nbsp;נוכחי</td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            *ngFor="let rankedTerminal of rankedTerminals"
-            [ngClass]="{completed: rankedTerminal.reachedEndTerm}"
-              >
-            <td class="col-term">
-              <div class="horizontal-stack">
-                <app-avatar-view [avatar]="rankedTerminal.avatar || null"></app-avatar-view>
-                {{rankedTerminal.username}}
-              </div>
-            </td>
-            <td class="col-right">{{rankedTerminal.currentScore}}</td>
-          </tr>
-        </tbody>
-      </table>
+      <app-score-board-view
+        [columns]="scoreboardColumns"
+        [entries]="rankedScoreboardEntries"
+      >
+      </app-score-board-view>
     </div>
   </div>
   <div class="graph-container">

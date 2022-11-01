@@ -74,25 +74,11 @@
       <div
       class="vertical-stack">
         <h1>לוח תוצאות</h1>
-        <table class="score-board">
-          <thead>
-            <tr>
-              <td>משתתפ/ת</td>
-              <td class="col-right">נכון</td>
-              <td class="col-wrong">לא נכון</td>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              *ngFor="let terminal of rankedTerminals"
-              [ngClass]="{completed: terminal.playerCompleted}"
-                >
-              <td class="col-term">{{terminal.username}}</td>
-              <td class="col-right">{{terminal.goodPops}}</td>
-              <td class="col-wrong">{{terminal.badPops}}</td>
-            </tr>
-          </tbody>
-        </table>
+
+        <app-score-board-view
+          [entries]="scoreboardData"
+          [columns]="scoreboardCols">
+        </app-score-board-view>
       </div>
     </mat-tab>
   </mat-tab-group>

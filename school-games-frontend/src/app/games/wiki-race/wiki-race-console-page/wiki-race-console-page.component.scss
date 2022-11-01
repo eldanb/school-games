@@ -10,6 +10,12 @@
 
 .scoreboard-container {
   flex-grow: 1;
+  width: 75%;
+
+  app-score-board-view {
+    width: 100%;
+  }
+
 }
 
 .graph-container {

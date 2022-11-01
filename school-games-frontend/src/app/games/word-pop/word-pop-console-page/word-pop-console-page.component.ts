@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit, TemplateRef, ViewChild } f
 import { PoppedWordGameboard, PoppedWordGameStatus, PoppedWordTerminalStatus, WordPopConsoleInterface } from 'school-games-common';
 import { ConsoleUiFrameworkIntegrationSupportService } from 'src/app/main-console/console-ui-framework/console-ui-framework.component';
 import { LessonControllerProviderService } from 'src/game-components-module/lesson-controller-provider/lesson-controller-provider.service';
+import { ScoreBoardColumnDefinition, ScoreBoardEntry } from 'src/game-components-module/score-board-view/score-board-view.component';
 import { WordPopQuestionDefinition } from '../word-pop-question-editor/word-pop-question-editor.component';
 
 @Component({
@@ -37,6 +38,27 @@ export class WordPopConsolePageComponent implements OnInit, OnDestroy, AfterView
       validWords: [ "w2" ],
       invalidWords: [ "ww2" ],
     },
+  ];
+
+  scoreboardCols: ScoreBoardColumnDefinition[] = [
+    {
+      heading: "נכון",
+      width: "7rem",
+      class: "scoreboard-col-right"
+    },
+
+    {
+      heading: "לא נכון",
+      width: "7rem",
+      class: "scoreboard-col-wrong"
+    },
+
+    {
+      heading: "ניקוד",
+      width: "7rem",
+      class: "scoreboard-col-right"
+    },
+
   ];
 
   get gameDefinition() {
@@ -165,7 +187,16 @@ export class WordPopConsolePageComponent implements OnInit, OnDestroy, AfterView
     })
   }
 
-  get rankedTerminals(): PoppedWordTerminalStatus[] {
-    return Object.values(this.gameStatus.terminalStatus);
+  get scoreboardData(): ScoreBoardEntry[] {
+    const ret = Object.values(this.gameStatus.terminalStatus).map(ts => ({
+      terminalId: ts.username,
+      username: ts.username,
+      avatar: ts.avatar,
+      class: ts.playerCompleted ? 'scoreboard-row-completed' : '',
+      additionalFields: [ts.goodPops, ts.badPops, ts.goodPops - ts.badPops]
+    }));
+
+    ret.sort((a, b) => b.additionalFields[2] - a.additionalFields[2]);
+    return ret;
   }
 }

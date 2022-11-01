@@ -1,0 +1,24 @@
+<div class="scoreboard-container" [ngStyle]="{ height: (3.5*renderedEntries.length + 3) + 'rem' }">
+  <div class="heading row">
+      <div class="participant-cell">משתתף</div>
+      <div *ngFor="let columnDefinition of columns"
+        [ngStyle]="{width: columnDefinition.width}"
+        [class]="columnDefinition.class">
+        {{columnDefinition.heading}}
+      </div>
+  </div>
+  <div class="scoreboard-body-container">
+    <div *ngFor="let renderedEntry of renderedEntries"
+        class="row"
+        [ngStyle]="{position: 'absolute', top: renderedEntry.rank * 3.5 + 'rem'}">
+      <div [class]="'participant-cell ' + renderedEntry.entry.class">
+        <app-avatar-view [avatar]="renderedEntry.entry.avatar || null"></app-avatar-view>
+        {{renderedEntry.entry.username}}
+      </div>
+      <div *ngFor="let fieldValue of renderedEntry.entry.additionalFields; index as fieldIndex"
+        [ngStyle]="{width: columns[fieldIndex].width}" [class]="columns[fieldIndex].class + ' ' + renderedEntry.entry.class">
+        {{fieldValue}}
+      </div>
+    </div>
+  </div>
+</div>

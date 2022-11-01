@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { LessonStatusTerminalInfo, WikiRaceConsoleServices, WikiRaceGameStatus, WikiRaceTerminalStatus } from 'school-games-common';
 import { LessonControllerProviderService } from 'src/game-components-module/lesson-controller-provider/lesson-controller-provider.service';
+import { ScoreBoardColumnDefinition, ScoreBoardEntry } from 'src/game-components-module/score-board-view/score-board-view.component';
 
 const GAME_PREROUND_TIME_SECS = 10;
 const GAME_ROUND_TIME_SECS = 60*3;
@@ -20,9 +21,15 @@ export class WikiRaceConsolePageComponent implements OnInit {
 
   private _refreshTimer: any;
 
-  private _rankedTerminals: WikiRaceTerminalStatus[] | null;
+  private _rankedScoreboardEntries: ScoreBoardEntry[] | null;
 
   public gameStatus: WikiRaceGameStatus | null;
+
+  public scoreboardColumns: ScoreBoardColumnDefinition[] = [{
+    heading: "אורך",
+    width: "7rem",
+    class: "scoreboard-col-right"
+  }];
 
   constructor(private _lessonControllerProviderService: LessonControllerProviderService) { }
 
@@ -37,19 +44,26 @@ export class WikiRaceConsolePageComponent implements OnInit {
     }
   }
 
-  get rankedTerminals(): WikiRaceTerminalStatus[] {
-    if(!this._rankedTerminals) {
-      this._rankedTerminals = Object.values(this.gameStatus!.terminalStatus);
-      this._rankedTerminals.sort((a, b) => a.currentScore - b.currentScore);
+  get rankedScoreboardEntries(): ScoreBoardEntry[] {
+    if(!this._rankedScoreboardEntries) {
+      this._rankedScoreboardEntries = Object.values(this.gameStatus!.terminalStatus).map(t => ({
+        username: t.username,
+        avatar: t.avatar,
+        terminalId: t.username,
+        additionalFields: [t.currentScore],
+        class: t.reachedEndTerm ? 'scoreboard-row-completed' : ''
+      }));
+
+      this._rankedScoreboardEntries.sort((a, b) => a.additionalFields[0] - b.additionalFields[0]);
     }
 
-    return this._rankedTerminals;
+    return this._rankedScoreboardEntries;
   }
 
   private async refreshGameStatus() {
     if(this.wikiRaceConsoleController) {
       this.gameStatus = await this.wikiRaceConsoleController.getGameStatus();
-      this._rankedTerminals = null;
+      this._rankedScoreboardEntries = null;
     }
   }
 

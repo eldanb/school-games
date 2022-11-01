@@ -164,54 +164,24 @@ mat-tab-group.full-height {
   padding: 6px;
 }
 
-.score-board {
-  margin: 0rem 6rem;
-  border-spacing: 0 15px;
+.scoreboard-col-right {
+  text-align: center;
 
-  thead tr {
-    font-size: 1.5rem;
-
-    td.col-right {
-      text-align: center;
-    }
-
-    td.col-wrong {
-      text-align: center;
-    }
-
+  :not(.heading) & {
+    color: green;
   }
+}
 
-  tbody {
-    tr {
-      font-size: 1.25rem;
-      height: 3rem;
-      background: #ffffffc0;
+.scoreboard-col-wrong {
+  text-align: center;
 
-
-      td.col-term {
-        width: 30vw;
-      }
-
-      td.col-right {
-        width: 8vw;
-        color: green;
-        text-align: center;
-      }
-
-      td.col-wrong {
-        width: 8vw;
-        color: red;
-        text-align: center;
-      }
-
-      &.completed {
-        td.col-term {
-          font-weight: bold;
-          color: blue;
-        }
-      }
-    }
+  :not(.heading) & {
+    color: red;
   }
+}
+
+.scoreboard-row-completed {
+  color: blue;
 }
 
 .bordered-card {

@@ -1,0 +1,95 @@
+.scoreboard-container {
+  display: flex;
+  flex-direction: column;
+
+  align-items: stretch;
+
+  .row {
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    transition: cubic-bezier(1, 0, 0, 1) top 0.5s;
+    font-size: 1.25rem;
+    height: 3rem;
+
+    &:not(.heading) {
+      background: #ffffffc0;
+    }
+
+    &.heading div {
+      font-size: 1.5rem
+    }
+
+    .participant-cell {
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+
+  .scoreboard-body-container {
+    position: relative;
+  }
+}
+
+
+
+
+
+
+
+
+
+.score-board {
+  margin: 0rem 6rem;
+  border-spacing: 0 15px;
+
+  thead tr {
+    font-size: 1.5rem;
+
+    td.col-right {
+      text-align: center;
+    }
+
+    td.col-wrong {
+      text-align: center;
+    }
+
+  }
+
+  tbody {
+    tr {
+      font-size: 1.25rem;
+      height: 3rem;
+      background: #ffffffc0;
+
+
+      td.col-term {
+        width: 30vw;
+      }
+
+      td.col-right {
+        width: 8vw;
+        color: green;
+        text-align: center;
+      }
+
+      td.col-wrong {
+        width: 8vw;
+        color: red;
+        text-align: center;
+      }
+
+      &.completed {
+        td.col-term {
+          font-weight: bold;
+          color: blue;
+        }
+      }
+    }
+  }
+}

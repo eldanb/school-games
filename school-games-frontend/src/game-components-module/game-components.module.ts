@@ -21,6 +21,7 @@ import { PoppableBaloonsComponent } from './poppable-baloons/poppable-baloons.co
 import { FavoritesManagementButtonsComponent } from './favorites-management-buttons/favorites-management-buttons.component';
 import { CountdownTimerDisplayComponent } from './countdown-timer-display/countdown-timer-display.component';
 import { AvatarViewComponent } from 'src/game-components-module/avatar-view/avatar-view.component';
+import { ScoreBoardViewComponent } from './score-board-view/score-board-view.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { AvatarViewComponent } from 'src/game-components-module/avatar-view/avat
     PoppableBaloonsComponent,
     FavoritesManagementButtonsComponent,
     CountdownTimerDisplayComponent,
-    AvatarViewComponent
+    AvatarViewComponent,
+    ScoreBoardViewComponent,
   ],
   providers: [
     FavoritesSaveLoadService,
@@ -62,7 +64,8 @@ import { AvatarViewComponent } from 'src/game-components-module/avatar-view/avat
     PoppableBaloonsComponent,
     FavoritesManagementButtonsComponent,
     CountdownTimerDisplayComponent,
-    AvatarViewComponent
+    AvatarViewComponent,
+    ScoreBoardViewComponent,
   ]
 })
 export class GameComponentsModule { }

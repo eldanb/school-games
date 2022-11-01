@@ -6,6 +6,7 @@ import { ZipcCallContext } from "./ZipcCallContext";
 export class ZipcServer {
   private _mc = new MarshallingContext();
 
+  // TODO restrict invoked methods by decorator
   async handleRequest(request: string, callContext: ZipcCallContext): Promise<string> {
     let ret: ZipcResponse;
 
