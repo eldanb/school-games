@@ -4,7 +4,7 @@ import { LessonControllerProviderService } from 'src/game-components-module/less
 import { ScoreBoardColumnDefinition, ScoreBoardEntry } from 'src/game-components-module/score-board-view/score-board-view.component';
 
 const GAME_PREROUND_TIME_SECS = 10;
-const GAME_ROUND_TIME_SECS = 60*1;
+const GAME_ROUND_TIME_SECS = 60*5;
 
 @Component({
   templateUrl: './wiki-race-console-page.component.html',
