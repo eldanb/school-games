@@ -1,0 +1,19 @@
+<div class="lightbox-content">
+  <p>
+    נסה/י להגיע מערך המוצא אל ערך היעד בויקיפדיה ע״י מעבר דרך הקישורים.
+  </p>
+  <div class="horizontal-stack round-terms-display">
+    <div class="term-box">
+      <h1>ערך מוצא</h1>
+      {{round!.startTerm}}
+    </div>
+    <div class="term-spacer">&nbsp;</div>
+    <div class="term-box end-term">
+      <h1>ערך יעד</h1>
+      {{round!.endTerm}}
+    </div>
+  </div>
+  <app-countdown-timer-display
+    [endTime]="startTime"
+  ></app-countdown-timer-display>
+</div>

@@ -24,10 +24,14 @@
 
   <button mat-raised-button
       color="primary"
-      [disabled]="!startTermValid || !endTermValid"
+      [disabled]="!startTermValid || !endTermValid || !lessonControllerProviderService.lessonStatus?.terminalInfo?.length"
       (click)="startRound()">
       התחל משחק
   </button>
+  <div *ngIf="!lessonControllerProviderService.lessonStatus?.terminalInfo?.length">
+    משחק זה דורש לפחות משתתף אחד בשיעור.
+  </div>
+
 </div>
 
 <!-- In-round -->
@@ -68,3 +72,8 @@
     </app-wiki-race-path-graph>
   </div>
 </div>
+
+<app-wiki-race-pre-round-lightbox *ngIf="isPreRound"
+    [round]="gameStatus?.currentRound!"
+    [startTime]="gameStatus?.roundStartTime!">
+</app-wiki-race-pre-round-lightbox>

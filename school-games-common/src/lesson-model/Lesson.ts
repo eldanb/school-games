@@ -27,7 +27,7 @@ type LessonControllerMessageMap = {
 };
 
 export type LessonControllerMessage =
-  SelfDescribingMessage<LessonControllerMessageMap>;
+  SelfDescribingMessage<LessonControllerMessageMap> & { messageSeq: number };
 
 export interface LessonControllerInterface {
   getConnectionUrl(): Promise<string>;
@@ -39,7 +39,7 @@ export interface LessonControllerInterface {
   startGame(gameType: GameType): Promise<GameStartResult>;
   sendMessage(terminalId: string, message: string): Promise<void>;
 
-  hearbeat(): Promise<LessonControllerMessage[]>;
+  hearbeat(messageCursor: number, timeoutMs: number): Promise<LessonControllerMessage[]>;
 }
 
 export class TerminalConnectionResult {

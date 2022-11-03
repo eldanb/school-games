@@ -1,5 +1,4 @@
 <app-lesson-terminal-provider
-  (connectionStateChange)="connectionStateChanged($event)"
   (terminalMessage)="handleTerminalMessage($event)"
   >
 
@@ -8,9 +7,9 @@
     <div class="status-bar">
       <div>{{pageTitle}}</div>
       <div class="flex-spacer"></div>
-      <div *ngIf="lessonConnected && username" class="horizontal-stack" style="gap: 0">
+      <div *ngIf="connectionState === 'online' && username" class="horizontal-stack" style="gap: 0">
         <app-avatar-view
-          *ngIf="lessonConnected && username"
+          *ngIf="connectionState === 'online' && username"
           [avatar]="selectedAvatar"
           size="small">
         </app-avatar-view>
@@ -18,21 +17,21 @@
         {{username}}
       </div>
 
-      <div *ngIf="lessonConnected && username">
+      <div *ngIf="connectionState === 'online' && username">
         |
       </div>
 
-      <div *ngIf="lessonConnected">
+      <div *ngIf="connectionState === 'online'">
         מחובר לשיעור
       </div>
-      <div *ngIf="!lessonConnected">
+      <div *ngIf="connectionState !== 'online'">
         לא מחובר לשיעור
       </div>
     </div>
 
-    <app-terminal-game-component-host *ngIf="lessonConnected"></app-terminal-game-component-host>
+    <app-terminal-game-component-host *ngIf="connectionState !== 'nc'"></app-terminal-game-component-host>
 
-    <div class="connection-form" *ngIf="!lessonConnected">
+    <div class="connection-form" *ngIf="connectionState === 'nc'">
       <h1>היי!</h1>
       <p>
         כדי להתחבר לשיעור, אנחנו רק צריכים לדעת את השם שלך. אנא הזן אותו למטה, ולחץ על ״התחבר״.
@@ -57,6 +56,14 @@
 
       <button mat-raised-button (click)="handleConnectClicked()">התחבר</button>
 
+    </div>
+
+    <div class="connection-issue-overlay" *ngIf="connectionState === 'trouble'">
+      <div class="bordered-card">
+         <h1>בעייה בחיבור</h1>
+        <p>מנסה להתחבר מחדש...</p>
+        <mat-spinner mode="indeterminate" ></mat-spinner>
+      </div>
     </div>
   </div>
 

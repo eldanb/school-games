@@ -15,7 +15,7 @@ import {
   ZipClientTransport,
 } from 'school-games-common';
 import * as QRCode from 'qrcode';
-import { HttpServer, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { GameType } from 'school-games-common/dist/lesson-model/games-registry';
 import { GameState } from './GamesState';
 import { createLessonState } from './GameStatesRegistry';
@@ -54,14 +54,19 @@ export class LessonControllerImpl implements LessonControllerInterface {
     }
 
     termImpl.postMessage({
+      messageSeq: 0,
       type: 'chat-notification',
       from: 'console',
       text: message,
     });
   }
 
-  async hearbeat(): Promise<LessonControllerMessage[]> {
-    return await this._pendingMessages.dequeueAll(3000);
+  async hearbeat(
+    messageCursor: number,
+    timeoutMs: number,
+  ): Promise<LessonControllerMessage[]> {
+    this._pendingMessages.dequeueUntil(messageCursor);
+    return await this._pendingMessages.peekAll(timeoutMs);
   }
 
   async getLessonStatus(): Promise<LessonStatus> {
@@ -163,6 +168,7 @@ export class LessonControllerImpl implements LessonControllerInterface {
     );
 
     terminal.postMessage({
+      messageSeq: 0,
       type: 'start-game',
       gameType: this._gameType,
       gameStateMoniker: terminalGameState
@@ -217,14 +223,18 @@ class TerminalImpl implements Terminal {
     );
   }
 
-  async heartbeat(): Promise<TerminalMessage[] | null> {
+  async heartbeat(
+    messageCursor: number,
+    timeoutMs: number,
+  ): Promise<TerminalMessage[] | null> {
     this._lastHeartbeat = Date.now();
     Logger.debug(
       `Terminal ${this._id} heartbeat at ${this._lastHeartbeat}`,
       'terminal.heartbeat',
     );
 
-    return (await this._pendingMessages.dequeueAll(3000)) || [];
+    this._pendingMessages.dequeueUntil(messageCursor);
+    return (await this._pendingMessages.peekAll(timeoutMs)) || [];
   }
 
   get id(): string {
@@ -252,18 +262,64 @@ class TerminalZipcClientTransport implements ZipClientTransport {
   constructor(private _terminal: TerminalImpl) {}
 
   async transact(moniker: string, request: string): Promise<string> {
-    this._terminal.postMessage({ type: 'zipc-dispatch', zipcMessage: request });
+    this._terminal.postMessage({
+      messageSeq: 0,
+      type: 'zipc-dispatch',
+      zipcMessage: request,
+    });
     return '{"success": null}';
   }
 }
 
-class AsyncQueue<MessageType> {
+type MessageWithSeq = {
+  messageSeq: number;
+};
+
+class AsyncQueue<MessageType extends MessageWithSeq> {
   private _pendingMessages: MessageType[] = [];
 
+  private _nextSeq = 0;
   private _queueReady: Promise<void> | null = null;
   private _queueReadySignal: () => void | null;
 
+  dequeueUntil(cursor: number): MessageType[] {
+    let numToDequeue = 0;
+    while (
+      numToDequeue < this._pendingMessages.length &&
+      this._pendingMessages[numToDequeue].messageSeq <= cursor
+    ) {
+      numToDequeue++;
+    }
+
+    if (numToDequeue) {
+      return this._pendingMessages.splice(0, numToDequeue);
+    } else {
+      return null;
+    }
+  }
+
+  async peekAll(timeout: number): Promise<MessageType[] | null> {
+    await this._waitForMessages(timeout);
+    if (!this._pendingMessages.length) {
+      return null;
+    }
+
+    return this._pendingMessages;
+  }
+
   async dequeueAll(timeout: number): Promise<MessageType[] | null> {
+    await this._waitForMessages(timeout);
+    if (!this._pendingMessages.length) {
+      return null;
+    }
+
+    const ret = this._pendingMessages;
+    this._pendingMessages = [];
+
+    return ret;
+  }
+
+  private async _waitForMessages(timeout: number): Promise<void> {
     const timeoutError = {};
     let timeoutHandle: any;
 
@@ -283,16 +339,12 @@ class AsyncQueue<MessageType> {
           await Promise.race([this._queueReady, timeoutPromise]);
         } catch (e) {
           if (e == timeoutError) {
-            return null;
+            return;
           } else {
             throw e;
           }
         }
       }
-
-      const ret = this._pendingMessages;
-      this._pendingMessages = [];
-      return ret;
     } finally {
       clearTimeout(timeoutHandle);
     }
@@ -300,6 +352,7 @@ class AsyncQueue<MessageType> {
 
   postMessage(message: MessageType): void {
     this._pendingMessages.push(message);
+    message.messageSeq = this._nextSeq++;
 
     if (this._queueReadySignal) {
       const sigFn = this._queueReadySignal;

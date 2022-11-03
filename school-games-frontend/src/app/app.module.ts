@@ -34,6 +34,7 @@ import { WikiRaceConsolePageComponent } from './games/wiki-race/wiki-race-consol
 import { WikiRaceTerminalPageComponent } from './games/wiki-race/wiki-race-terminal-page/wiki-race-terminal-page.component';
 import { WikiRacePathGraphComponent } from './games/wiki-race/wiki-race-path-graph/wiki-race-path-graph.component';
 import { WikiTermSelectorComponent } from './games/wiki-race/wiki-term-selector/wiki-term-selector.component';
+import { WikiRacePreRoundLightboxComponent } from './games/wiki-race/wiki-race-pre-round-lightbox/wiki-race-pre-round-lightbox.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import { WikiTermSelectorComponent } from './games/wiki-race/wiki-term-selector/
     WikiRaceTerminalPageComponent,
     WikiRacePathGraphComponent,
     WikiTermSelectorComponent,
+    WikiRacePreRoundLightboxComponent,
   ],
   imports: [
     BrowserModule,

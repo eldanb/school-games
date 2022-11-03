@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TerminalAvatar, TerminalMessage } from 'school-games-common';
 import { AvatarViewComponent } from 'src/game-components-module/avatar-view/avatar-view.component';
 import { LessonTerminalProviderComponent } from 'src/game-components-module/lesson-terminal-provider/lesson-terminal-provider.component';
+import { TerminalConnectionState } from 'src/game-components-module/lesson-terminal-provider/lesson-terminal-provider.service';
 
 
 export class TerminalUiFrameworkIntegrationSupportService {
@@ -29,7 +30,6 @@ export class TerminalUiFrameworkIntegrationSupportService {
 })
 export class TerminalMainPageComponent implements OnInit {
 
-  lessonConnected: boolean;
   username: string;
   pageTitle: string;
 
@@ -59,10 +59,9 @@ export class TerminalMainPageComponent implements OnInit {
     this._lessonTerminalProvider.connectToLesson(lessonMoniker, this.username, this.selectedAvatar);
   }
 
-  connectionStateChanged(state: boolean) {
-    this.lessonConnected = state;
+  get connectionState() {
+    return this._lessonTerminalProvider?.connectionState || 'nc';
   }
-
 
   handleConnectClicked() {
     this.connectToLesson(this._route.snapshot.queryParams['mk']);

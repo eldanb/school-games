@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { TerminalAvatar, TerminalMessage } from 'school-games-common';
-import { LessonTerminalProviderService } from './lesson-terminal-provider.service';
+import { LessonTerminalProviderService, TerminalConnectionState } from './lesson-terminal-provider.service';
 
 @Component({
   selector: 'app-lesson-terminal-provider',
@@ -24,16 +24,16 @@ export class LessonTerminalProviderComponent implements OnInit, OnDestroy {
       this._lessonMoniker,
       this._username,
       this._avatar);
-    this._lessonTerminalProviderService.getTerminalInterface().then(() => this.connectionStateChange.emit(true));
   }
-
-  @Output()
-  connectionStateChange: EventEmitter<boolean> = new EventEmitter();
 
   @Output()
   terminalMessage: EventEmitter<TerminalMessage> = new EventEmitter();
 
   constructor(private _lessonTerminalProviderService: LessonTerminalProviderService) {
+  }
+
+  get connectionState() {
+    return this._lessonTerminalProviderService?.connectionState || 'nc';
   }
 
   ngOnInit(): void {

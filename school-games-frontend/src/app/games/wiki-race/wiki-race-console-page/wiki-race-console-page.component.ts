@@ -1,10 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { LessonStatusTerminalInfo, WikiRaceConsoleServices, WikiRaceGameStatus, WikiRaceTerminalStatus } from 'school-games-common';
+import { Component, OnInit } from '@angular/core';
+import { WikiRaceConsoleServices, WikiRaceGameStatus } from 'school-games-common';
 import { LessonControllerProviderService } from 'src/game-components-module/lesson-controller-provider/lesson-controller-provider.service';
 import { ScoreBoardColumnDefinition, ScoreBoardEntry } from 'src/game-components-module/score-board-view/score-board-view.component';
 
 const GAME_PREROUND_TIME_SECS = 10;
-const GAME_ROUND_TIME_SECS = 60*3;
+const GAME_ROUND_TIME_SECS = 60*1;
 
 @Component({
   templateUrl: './wiki-race-console-page.component.html',
@@ -31,7 +31,7 @@ export class WikiRaceConsolePageComponent implements OnInit {
     class: "scoreboard-col-right"
   }];
 
-  constructor(private _lessonControllerProviderService: LessonControllerProviderService) { }
+  constructor(public lessonControllerProviderService: LessonControllerProviderService) { }
 
   ngOnInit(): void {
     this._startGame();
@@ -68,7 +68,7 @@ export class WikiRaceConsolePageComponent implements OnInit {
   }
 
   private async _startGame() {
-    const lessonControlelr = await this._lessonControllerProviderService.getLessonController();
+    const lessonControlelr = await this.lessonControllerProviderService.getLessonController();
     const result = await lessonControlelr.startGame('wiki-race');
     this.wikiRaceConsoleController = result.gameController as WikiRaceConsoleServices;
 
@@ -91,5 +91,9 @@ export class WikiRaceConsolePageComponent implements OnInit {
     },
     nowTime + GAME_PREROUND_TIME_SECS * 1000,
     nowTime + (GAME_PREROUND_TIME_SECS + GAME_ROUND_TIME_SECS) * 1000)
+  }
+
+  get isPreRound(): boolean {
+    return Boolean(this.gameStatus?.currentRound && Date.now() < this.gameStatus?.roundStartTime);
   }
 }

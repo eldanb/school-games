@@ -27,8 +27,8 @@ type TerminalMessagesMap = {
   }
 }
 
-export type TerminalMessage = SelfDescribingMessage<TerminalMessagesMap>;
+export type TerminalMessage = SelfDescribingMessage<TerminalMessagesMap> & { messageSeq: number };
 
 export interface Terminal {
-  heartbeat(): Promise<TerminalMessage[]>;
+  heartbeat(messageCursor: number, timeoutMs: number): Promise<TerminalMessage[]>;
 }
