@@ -37,25 +37,32 @@
 <!-- In-round -->
 <div *ngIf="gameStatus?.currentRound" class="horizontal-stack fill-screen">
   <div class="vertical-stack full-width round-display">
-    <div class="horizontal-stack round-terms-display">
-      <div class="term-box">
-        <h1>ערך מוצא</h1>
-        {{selectedStartTerm}}
+    <ng-container *ngIf="!gameStatus?.roundStatus?.includes('winner')">
+      <div class="horizontal-stack round-terms-display">
+        <div class="term-box">
+          <h1>ערך מוצא</h1>
+          {{selectedStartTerm}}
+        </div>
+        <div class="flex-spacer">&nbsp;</div>
+        <div class="term-box end-term">
+          <h1>ערך יעד</h1>
+          {{selectedEndTerm}}
+        </div>
       </div>
-      <div class="flex-spacer">&nbsp;</div>
-      <div class="term-box end-term">
-        <h1>ערך יעד</h1>
-        {{selectedEndTerm}}
-      </div>
-    </div>
-    <hr>
-    <h1>זמן לסיום</h1>
-    <app-countdown-timer-display
-        class="game-timer"
-        size="30pt"
-        [endTime]="gameStatus?.roundEndTime || 0">
-    </app-countdown-timer-display>
-    <hr>
+      <hr>
+      <ng-container *ngIf="gameStatus?.roundStatus == 'running'">
+        <h1>זמן לסיום</h1>
+        <app-countdown-timer-display
+            class="game-timer"
+            size="30pt"
+            [endTime]="gameStatus?.roundEndTime || 0">
+        </app-countdown-timer-display>
+      </ng-container>
+      <ng-container *ngIf="gameStatus?.roundStatus == 'pre'">
+        <h1>מיד מתחילים...</h1>
+      </ng-container>
+      <hr>
+    </ng-container>
     <div class="vertical-stack scoreboard-container">
       <h1>תוצאות</h1>
       <app-score-board-view
@@ -68,7 +75,7 @@
   <div class="graph-container">
     <app-wiki-race-path-graph
       [gameStatus]="gameStatus"
-      [showTerms]="gameStatus?.currentRound && !(gameStatus?.roundRunning) || false">
+      [showTerms]="!!gameStatus && (gameStatus.currentRound && (gameStatus.roundStatus == 'winners' || gameStatus.roundStatus == 'no-winners'))">
     </app-wiki-race-path-graph>
   </div>
 </div>

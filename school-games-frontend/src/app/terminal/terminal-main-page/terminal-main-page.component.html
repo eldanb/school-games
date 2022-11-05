@@ -58,13 +58,13 @@
 
     </div>
 
-    <div class="connection-issue-overlay" *ngIf="connectionState === 'trouble'">
-      <div class="bordered-card">
+    <app-lightbox *ngIf="connectionState === 'trouble'">
+      <div>
          <h1>בעייה בחיבור</h1>
         <p>מנסה להתחבר מחדש...</p>
         <mat-spinner mode="indeterminate" ></mat-spinner>
       </div>
-    </div>
+    </app-lightbox>
   </div>
 
 </app-lesson-terminal-provider>

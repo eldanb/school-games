@@ -29,6 +29,7 @@
     </div>
   </div>
 </div>
+
 <iframe #wikiFrame></iframe>
 
 <app-wiki-race-pre-round-lightbox
@@ -36,3 +37,8 @@
   [round]="currentRound!"
   [startTime]="startTime">
 </app-wiki-race-pre-round-lightbox>
+
+<app-lightbox *ngIf="roundEnded">
+  <h1>המשחק הסתיים</h1>
+  <p>התוצאות מופיעות במסך הראשי</p>
+</app-lightbox>

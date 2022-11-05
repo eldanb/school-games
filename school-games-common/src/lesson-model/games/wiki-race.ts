@@ -1,6 +1,8 @@
 import { UseMarshallerType } from "../../zipc/core/Marshaller";
 import { TerminalAvatar } from "../Terminal";
 
+export type WikiRaceRoundStatus = 'pre' | 'running' | 'winners' | 'no-winners';
+
 export type WikiRaceTerminalPath = {
   term: string;
   time: number;
@@ -24,7 +26,7 @@ export type WikiRaceGameStatus = {
   currentRound: WikiRaceRound;
   roundStartTime: number;
   roundEndTime: number;
-  roundRunning: boolean;
+  roundStatus: WikiRaceRoundStatus;
 
   terminalStatus: {
     [terminalId: string]: WikiRaceTerminalStatus;

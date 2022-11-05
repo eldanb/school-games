@@ -22,6 +22,7 @@ import { FavoritesManagementButtonsComponent } from './favorites-management-butt
 import { CountdownTimerDisplayComponent } from './countdown-timer-display/countdown-timer-display.component';
 import { AvatarViewComponent } from 'src/game-components-module/avatar-view/avatar-view.component';
 import { ScoreBoardViewComponent } from './score-board-view/score-board-view.component';
+import { LightboxComponent } from './lightbox/lightbox.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { ScoreBoardViewComponent } from './score-board-view/score-board-view.com
     CountdownTimerDisplayComponent,
     AvatarViewComponent,
     ScoreBoardViewComponent,
+    LightboxComponent,
   ],
   providers: [
     FavoritesSaveLoadService,
@@ -66,6 +68,7 @@ import { ScoreBoardViewComponent } from './score-board-view/score-board-view.com
     CountdownTimerDisplayComponent,
     AvatarViewComponent,
     ScoreBoardViewComponent,
+    LightboxComponent
   ]
 })
 export class GameComponentsModule { }

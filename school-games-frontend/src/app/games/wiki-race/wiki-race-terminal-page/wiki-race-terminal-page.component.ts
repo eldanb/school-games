@@ -16,6 +16,7 @@ export class WikiRaceTerminalPageComponent implements OnInit, OnDestroy, WikiRac
   startTime: number;
   terminalPath: WikiRaceTerminalPath = [];
   currentRound: WikiRaceRound | null;
+  roundEnded: boolean;
 
   constructor(private _terminalServices: LessonTerminalProviderService) {
     this._gameServices = this._terminalServices.currentGameServices as WikiRaceTerminalServices;
@@ -45,12 +46,13 @@ export class WikiRaceTerminalPageComponent implements OnInit, OnDestroy, WikiRac
     this.terminalPath = [];
     this.currentRound = round;
     this.startTime = startTime;
+    this.roundEnded = false;
     this.navigateToTerm(this.currentRound.startTerm);
   }
 
   async endRound(): Promise<void> {
     console.log("End round requested");
-    this.currentRound = null;
+    this.roundEnded = true;
   }
 
   private navigateToTerm(term: string) {

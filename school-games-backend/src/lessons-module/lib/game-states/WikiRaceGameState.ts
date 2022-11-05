@@ -1,10 +1,13 @@
 import { Logger } from '@nestjs/common';
+import async from 'async';
+import * as _ from 'lodash';
 import { firstValueFrom } from 'rxjs';
 import {
   Terminal,
   WikiRaceConsoleServices,
   WikiRaceGameStatus,
   WikiRaceRound,
+  WikiRaceRoundStatus,
   WikiRaceTerminalListenerRegistration,
   WikiRaceTerminalPath,
   WikiRaceTerminalServices,
@@ -12,7 +15,6 @@ import {
 } from 'school-games-common';
 import { GameState } from '../GamesState';
 import { LessonControllerImpl } from '../LessonControllerImpl';
-import * as _ from 'lodash';
 
 export class WikiRaceGameState
   extends GameState
@@ -23,8 +25,9 @@ export class WikiRaceGameState
   private _currentRound: WikiRaceRound | null;
   private _startTime: number;
   private _endTime: number | null;
+  private _currentWinners: Set<WikiRaceTerminalServicesImpl> = new Set();
 
-  private _gameRunning: boolean;
+  private _roundStatus: WikiRaceRoundStatus;
 
   private _logger = new Logger('WikiRaceGameState');
 
@@ -39,7 +42,7 @@ export class WikiRaceGameState
   async getGameStatus(): Promise<WikiRaceGameStatus> {
     const terminalStatus: { [terminalId: string]: WikiRaceTerminalStatus } = {};
 
-    this._updateGameRunningByTime();
+    this._updateRoundStatus();
 
     const terminalsFromLessonStatus = _.keyBy(
       (await this._lessonController.getLessonStatus()).terminalInfo,
@@ -67,13 +70,14 @@ export class WikiRaceGameState
       currentRound: this._currentRound,
       roundEndTime: this._endTime,
       roundStartTime: this._startTime,
-      roundRunning: this._gameRunning,
+      roundStatus: this._roundStatus,
       terminalStatus: terminalStatus,
     };
   }
 
   getTerminalServices(
     terminalId: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     terminal: Terminal,
   ): WikiRaceTerminalServices {
     if (!this._terminalServices[terminalId]) {
@@ -91,10 +95,12 @@ export class WikiRaceGameState
     startTime: number,
     endTime: number,
   ): Promise<void> {
+    roundDefinition.startTerm = roundDefinition.startTerm.replace('_', ' ');
+    roundDefinition.endTerm = roundDefinition.endTerm.replace('_', ' ');
+
     this._currentRound = roundDefinition;
     this._startTime = startTime;
     this._endTime = endTime;
-    this._gameRunning = true;
 
     await Promise.all(
       Object.values(this._terminalServices).map((ts) =>
@@ -121,38 +127,106 @@ export class WikiRaceGameState
     }
   }
 
-  async endRound() {
-    this._gameRunning = false;
+  async onEndRound() {
     await Promise.all(
-      Object.values(this._terminalServices).map((ts) => ts.endRound()),
+      Object.values(this._terminalServices).map((ts) => ts.onEndRound()),
     );
   }
 
   async generateRound(numSteps: number): Promise<WikiRaceRound> {
-    const terms = await this.generateRandomTerms(2);
-
-    const firstTerm = terms[0];
-    this._logger.debug(`First random term: ${firstTerm}`);
-
-    const endTerm =
-      numSteps <= 0
-        ? terms[1]
-        : await this.suggestTargetTerm(firstTerm, numSteps);
-
-    return {
-      startTerm: firstTerm,
-      endTerm: endTerm,
+    const termPredicate = async (term: string) => {
+      return (
+        term.replace(/ \(.*\)/, '').split(' ').length < 4 &&
+        !term.includes('(פירושונים)') &&
+        term.length > 1 &&
+        term.match(/[^0-9]/) &&
+        (await this.getBacklinks(term)).length > 400
+      );
     };
+
+    if (numSteps > 0) {
+      const startTerm = await this.generateRandomTerm(50, termPredicate);
+      this._logger.debug(`Generate by forward prop; first term ${startTerm}`);
+      const endTerm = await this.suggestTargetTerm(startTerm, numSteps);
+
+      return {
+        startTerm,
+        endTerm,
+      };
+    } else if (numSteps < 0) {
+      const endTerm = await this.generateRandomTerm(50, termPredicate);
+      this._logger.debug(`Generate by back prop; end term ${endTerm}`);
+      const startTerm = await this.suggestTargetTerm(endTerm, numSteps);
+
+      return {
+        startTerm,
+        endTerm,
+      };
+    } else {
+      this._logger.debug(`Generate by 2xrandom.`);
+      const startTerm = await this.generateRandomTerm(50, termPredicate);
+      const endTerm = await this.generateRandomTerm(50, termPredicate);
+
+      return {
+        startTerm,
+        endTerm,
+      };
+    }
   }
 
-  private async generateRandomTerms(numTerms: number): Promise<string[]> {
-    const randomTermQuery = await firstValueFrom(
+  private async getLinks(term: string): Promise<string[]> {
+    const linkQuery = await firstValueFrom(
       this._lessonController.httpClient.get(
-        `https://he.wikipedia.org/w/api.php?action=query&list=random&format=json&rnnamespace=0&rnlimit=${numTerms}`,
+        `https://he.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(
+          term,
+        )}&prop=links&pllimit=max&format=json`,
       ),
     );
 
-    return (randomTermQuery.data.query.random as any[]).map((r) => r.title);
+    const links: { ns: string; title: string }[] = (
+      Object.values(linkQuery.data.query.pages)[0] as any
+    ).links?.filter((l) => l.ns == 0);
+
+    return links.map((link) => link.title);
+  }
+
+  private async getBacklinks(term: string): Promise<string[]> {
+    this._logger.debug(`Getting backlinks for term ${term}`);
+
+    const backlinksResponse = await firstValueFrom(
+      this._lessonController.httpClient.get(
+        `https://he.wikipedia.org/w/api.php?action=query&format=json&list=backlinks&bllimit=500&bltitle=${encodeURIComponent(
+          term,
+        )}`,
+      ),
+    );
+
+    const backlinks = backlinksResponse.data.query.backlinks as any[];
+
+    this._logger.debug(`${backlinks.length} backlinks for term ${term}`);
+    return backlinks.filter((l) => l.ns === 0).map((bl) => <string>bl.title);
+  }
+
+  private async generateRandomTerm(
+    batchSize: number,
+    pred: (term: string) => Promise<boolean>,
+  ): Promise<string> {
+    do {
+      const randomTermQuery = await firstValueFrom(
+        this._lessonController.httpClient.get(
+          `https://he.wikipedia.org/w/api.php?action=query&list=random&format=json&rnnamespace=0&rnlimit=${batchSize}`,
+        ),
+      );
+
+      const currentBatch = (randomTermQuery.data.query.random as any[]).map(
+        (r) => <string>r.title,
+      );
+
+      const ret = await async.detectLimit(currentBatch, 4, pred);
+      if (ret) {
+        return ret;
+      }
+    } while (true);
   }
 
   private async suggestTargetTerm(
@@ -160,66 +234,83 @@ export class WikiRaceGameState
     numSteps: number,
   ): Promise<string> {
     let currentTerm = sourceTerm;
+    const reverse = numSteps < 0;
+    if (reverse) {
+      numSteps *= -1;
+    }
+
     while (numSteps--) {
-      const linkQuery = await firstValueFrom(
-        this._lessonController.httpClient.get(
-          `https://he.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(
-            currentTerm,
-          )}&prop=links&pllimit=max&format=json`,
-        ),
-      );
+      const links = await (reverse
+        ? this.getBacklinks(currentTerm)
+        : this.getLinks(currentTerm));
 
-      const links: { ns: string; title: string }[] = (
-        Object.values(linkQuery.data.query.pages)[0] as any
-      ).links?.filter((l) => l.ns == 0);
-
-      if (!links?.length) {
+      if (!links.length) {
         break;
       }
 
-      const nextLink = links[Math.floor(Math.random() * links.length)];
-      currentTerm = nextLink.title;
+      currentTerm = links[Math.floor(Math.random() * links.length)];
 
-      this._logger.debug(`Traverse to term: ${JSON.stringify(nextLink)}`);
+      this._logger.debug(`Traverse to term: ${JSON.stringify(currentTerm)}`);
     }
 
     return currentTerm;
   }
 
-  get gameRunning(): boolean {
-    this._updateGameRunningByTime();
-    return this._gameRunning;
+  get roundStatus(): WikiRaceRoundStatus {
+    this._updateRoundStatus();
+    return this._roundStatus;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  notifyDeletedTerminal(terminalId: string, terminal: Terminal): void {
-    delete this._terminalServices[terminalId];
-  }
+  private _updateRoundStatus() {
+    const oldStatus = this._roundStatus;
+    const checkTime = new Date().getTime();
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  notifyNewTerminal(terminalId: string, terminal: Terminal): void {}
-
-  private _updateGameRunningByTime() {
-    if (this._gameRunning) {
-      const checkTime = new Date().getTime();
-      if (this._endTime && checkTime > this._endTime) {
-        this.endRound();
-      }
+    if (this._roundStatus === 'no-winners' || this._roundStatus === 'winners') {
+      return;
     }
-  }
 
-  terminalChanged(sender: WikiRaceTerminalServicesImpl) {
     if (
+      !this._currentRound ||
+      (this._startTime && checkTime < this._startTime)
+    ) {
+      this._roundStatus = 'pre';
+    } else if (
       !Object.values(this._terminalServices).find(
         (t) => t.currentTerm !== this._currentRound.endTerm,
       )
     ) {
-      this.endRound();
+      this._roundStatus = 'winners';
+    } else if (this._endTime && checkTime > this._endTime) {
+      this._roundStatus = 'no-winners';
+    } else {
+      this._roundStatus = 'running';
+    }
+
+    if (this._roundStatus != oldStatus) {
+      if (
+        this._roundStatus === 'no-winners' ||
+        this._roundStatus === 'winners'
+      ) {
+        this.onEndRound();
+      }
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  notifyDeletedTerminal(terminalId: string, terminal: Terminal): void {
+    delete this._terminalServices[terminalId];
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
+  notifyNewTerminal(terminalId: string, terminal: Terminal): void {}
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  terminalChanged(sender: WikiRaceTerminalServicesImpl) {
+    this._updateRoundStatus();
+  }
+
   get playAllowed(): boolean {
-    return this.gameRunning && Date.now() >= this._startTime;
+    return this.roundStatus === 'running';
   }
 }
 
@@ -259,8 +350,17 @@ class WikiRaceTerminalServicesImpl implements WikiRaceTerminalServices {
       throw new Error('Game not running');
     }
 
+    term = term.replace('_', ' ');
+
+    if (
+      this._definitionHistory.length > 1 &&
+      this._definitionHistory[this._definitionHistory.length - 2].term == term
+    ) {
+      return this.notifyBacktrack(this._definitionHistory.length - 2);
+    }
+
     this._definitionHistory.push({
-      term: term,
+      term,
       time: new Date().getTime(),
       weight: 1,
     });
@@ -280,7 +380,7 @@ class WikiRaceTerminalServicesImpl implements WikiRaceTerminalServices {
     this._listener = listener;
   }
 
-  async endRound() {
+  async onEndRound() {
     if (this._listener?.listener) {
       this._listener.listener.endRound();
     }

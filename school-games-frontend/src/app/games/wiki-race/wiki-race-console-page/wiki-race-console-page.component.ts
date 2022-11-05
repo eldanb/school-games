@@ -78,7 +78,7 @@ export class WikiRaceConsolePageComponent implements OnInit {
   }
 
   private async _loadRandomRound() {
-    const round = await this.wikiRaceConsoleController.generateRound(6);
+    const round = await this.wikiRaceConsoleController.generateRound(-6);
     this.selectedStartTerm = round.startTerm;
     this.selectedEndTerm = round.endTerm;
   }
