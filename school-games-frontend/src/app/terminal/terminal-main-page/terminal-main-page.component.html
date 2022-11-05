@@ -54,8 +54,11 @@
         </app-avatar-view>
       </div>
 
-      <button mat-raised-button (click)="handleConnectClicked()">התחבר</button>
-
+      <button mat-raised-button
+        [disabled]="!username"
+        (click)="handleConnectClicked()">
+        התחבר
+      </button>
     </div>
 
     <app-lightbox *ngIf="connectionState === 'trouble'">

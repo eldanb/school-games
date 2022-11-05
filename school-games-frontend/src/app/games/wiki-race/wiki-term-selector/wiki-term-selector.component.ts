@@ -15,6 +15,7 @@ export class WikiTermSelectorComponent implements OnInit {
 
   spinnerEnabled: number = 0;
 
+  randomizing: boolean = false;
 
   ngOnInit(): void {
   }
@@ -24,6 +25,9 @@ export class WikiTermSelectorComponent implements OnInit {
 
   @Output()
   validationStateChanged = new EventEmitter<boolean | null>();
+
+  @Input()
+  disabled: boolean;
 
   @Input()
   gameController: WikiRaceConsoleServices;
@@ -59,9 +63,11 @@ export class WikiTermSelectorComponent implements OnInit {
   }
 
   async randomizeTerm() {
+    this.randomizing = true;
     this.spinnerEnabled ++;
     this._editedTerm = (await this.gameController.generateRound(0)).startTerm;
     this.spinnerEnabled --;
+    this.randomizing = false;
     this.termChange.emit(this._editedTerm);
     this.validationResult = true;
   }

@@ -95,8 +95,8 @@ export class WikiRaceGameState
     startTime: number,
     endTime: number,
   ): Promise<void> {
-    roundDefinition.startTerm = roundDefinition.startTerm.replace('_', ' ');
-    roundDefinition.endTerm = roundDefinition.endTerm.replace('_', ' ');
+    roundDefinition.startTerm = roundDefinition.startTerm.replace(/_/g, ' ');
+    roundDefinition.endTerm = roundDefinition.endTerm.replace(/_/g, ' ');
 
     this._currentRound = roundDefinition;
     this._startTime = startTime;
@@ -350,7 +350,7 @@ class WikiRaceTerminalServicesImpl implements WikiRaceTerminalServices {
       throw new Error('Game not running');
     }
 
-    term = term.replace('_', ' ');
+    term = term.replace(/_/g, ' ');
 
     if (
       this._definitionHistory.length > 1 &&

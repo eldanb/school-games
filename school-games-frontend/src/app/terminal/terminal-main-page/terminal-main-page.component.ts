@@ -56,7 +56,7 @@ export class TerminalMainPageComponent implements OnInit {
   }
 
   private connectToLesson(lessonMoniker: string) {
-    this._lessonTerminalProvider.connectToLesson(lessonMoniker, this.username, this.selectedAvatar);
+    return this._lessonTerminalProvider.connectToLesson(lessonMoniker, this.username, this.selectedAvatar);
   }
 
   get connectionState() {
@@ -64,7 +64,8 @@ export class TerminalMainPageComponent implements OnInit {
   }
 
   handleConnectClicked() {
-    this.connectToLesson(this._route.snapshot.queryParams['mk']);
+    this.connectToLesson(this._route.snapshot.queryParams['mk'])
+      .catch((e) => alert(`Error connecting:\n\n${e}`));
   }
 
   handleTerminalMessage(terminalMessage: TerminalMessage) {

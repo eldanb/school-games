@@ -40,6 +40,25 @@
   div {
     flex-grow: 1;
   }
+
+  div.random-round-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
+
+    flex-grow: 0;
+    width: 4rem;
+
+    button {
+      width: 64px;
+    }
+
+    mat-icon {
+      font-size: 3rem;
+      width: 4rem;
+    }
+  }
 }
 
 

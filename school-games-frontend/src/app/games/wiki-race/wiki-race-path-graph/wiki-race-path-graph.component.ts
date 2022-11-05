@@ -156,6 +156,7 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
   }
 
   private _updateGraphDom() {
+    // Nodes and traverses
     this._pathGraphNodes.forEach((pathNode) => {
       if(pathNode.marked) {
         pathNode.renderNode = this._createOrUpdateNodeSvgRep(pathNode.renderNode, pathNode.term, pathNode.coordinate, pathNode.ownerTerminal!.coordinate);
@@ -165,6 +166,7 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
         }
       }
 
+      // Traverse
       let traverseByTarget = _.groupBy(pathNode.traversals.filter(t => t.marked), traversal => traversal.nextNode.term);
       Object.values(traverseByTarget).forEach(traversesForTarget =>
         traversesForTarget.forEach((traverse, traverseIndexWithinTarget) => {
@@ -182,6 +184,7 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
         .forEach((traverse) => traverse.renderNode?.remove());
     });
 
+    // Pawn nodes
     const terminalsByPawnNode = _.groupBy(
       this._pathGraphTerminals.filter(t => t.marked && t.currentPathNode),
       (terminal) => terminal.currentPathNode!.term);
@@ -196,6 +199,7 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
       })
     );
 
+    // Pawn mounts
     this._pathGraphNodes.forEach(graphNode => {
       let terminalsOnNode = terminalsByPawnNode[graphNode.term];
       if(terminalsOnNode?.length) {
@@ -251,9 +255,11 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
     if(!existingNode) {
       existingNode = document.createElementNS("http://www.w3.org/2000/svg", "g");
       existingNode.setAttribute('class', 'path-node')
+
       existingNode.innerHTML = `
         <circle cx="0" cy="0" r="5"/>
-        <text>${term}</text>`;
+        <title>${_.escape(term)}</title>
+        <text>${_.escape(term)}</text>`;
       this._graphNodesParent.nativeElement.appendChild(existingNode);
     }
 
@@ -271,11 +277,15 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
         existingNode = document.createElementNS("http://www.w3.org/2000/svg", "g");
         existingNode.setAttribute('class', 'terminal-pawn');
 
-        existingNode.innerHTML = `<use width="16" height="16" xlink:href="${AvatarViewComponent.getSpriteRef(avatar.avatarName)}"/>`
+        existingNode.innerHTML = `
+          <circle cx="8" cy="8" r="10" fill="${avatar.avatarColor}"/>
+          <use width="16" height="16" xlink:href="${AvatarViewComponent.getSpriteRef(avatar.avatarName)}"/>
+        `;
+
         this._graphNodesParent.nativeElement.appendChild(existingNode);
       }
 
-      existingNode.setAttribute('transform', `translate(${x - 8 + 20*indexInNode} ${y + 12})`);
+      existingNode.setAttribute('transform', `translate(${x - 8 + 24*indexInNode} ${y + 14})`);
 
       return existingNode;
   }
@@ -291,7 +301,7 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
       this._graphNodesParent.nativeElement.appendChild(existingNode);
     }
 
-    existingNode.setAttribute('d', `M ${x-8},${y+10} L ${x-4},${y+10} L ${x},${y+6} L ${x+4},${y+10} L ${x-8 + countInNode*20 - 4},${y+10}`);
+    existingNode.setAttribute('d', `M ${x-10},${y+10} L ${x-4},${y+10} L ${x},${y+6} L ${x+4},${y+10} L ${x-10 + countInNode*24 - 4},${y+10}`);
 
     return existingNode;
   }

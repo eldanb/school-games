@@ -188,6 +188,10 @@ class LessonTerminalServicesImpl implements LessonTerminalServices {
   async connectTerminal(
     terminalConnectionInfo: TerminalConnectionInfo,
   ): Promise<TerminalConnectionResult> {
+    if (!terminalConnectionInfo.username) {
+      throw new Error('Must specify a user-name to connect');
+    }
+
     const result = new TerminalConnectionResult();
 
     const terminalId = randomUUID();

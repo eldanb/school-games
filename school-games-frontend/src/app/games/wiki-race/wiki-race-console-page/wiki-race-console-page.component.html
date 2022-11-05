@@ -4,6 +4,7 @@
     <div class="vertical-stack">
       <h1>ערך מוצא</h1>
       <app-wiki-term-selector
+        [disabled]="generatingRandomRound"
         [gameController]="wikiRaceConsoleController"
         [(term)]="selectedStartTerm"
         (validationStateChanged)="startTermValid = $event"
@@ -11,9 +12,22 @@
       </app-wiki-term-selector>
     </div>
 
+    <div class="random-round-panel">
+      <button mat-icon-button *ngIf="!generatingRandomRound" (click)="generateRandomRound()">
+        <mat-icon>casino</mat-icon>
+      </button>
+
+      <mat-progress-spinner
+        [ngStyle]="{ visibility: generatingRandomRound ? 'visible' : 'hidden' }"
+        mode="indeterminate"
+        diameter="25">
+      </mat-progress-spinner>
+    </div>
+
     <div class="vertical-stack">
       <h1>ערך יעד</h1>
       <app-wiki-term-selector
+        [disabled]="generatingRandomRound"
         [gameController]="wikiRaceConsoleController"
         [(term)]="selectedEndTerm"
         (validationStateChanged)="endTermValid = $event"
@@ -80,6 +94,7 @@
   </div>
 </div>
 
+<!-- Pre-round -->
 <app-wiki-race-pre-round-lightbox *ngIf="isPreRound"
     [round]="gameStatus?.currentRound!"
     [startTime]="gameStatus?.roundStartTime!">

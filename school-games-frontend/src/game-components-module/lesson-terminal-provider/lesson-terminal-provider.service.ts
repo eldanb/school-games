@@ -60,6 +60,7 @@ export class LessonTerminalProviderService implements OnDestroy {
 
   initTerminal(lessonManagerMoniker: string, username: string, avatar: TerminalAvatar) {
     this._asyncLoadedTerminal = this.initTerminalAsync(lessonManagerMoniker, username, avatar);
+    return this._asyncLoadedTerminal;
   }
 
   getTerminalInterface(): Promise<Terminal> {

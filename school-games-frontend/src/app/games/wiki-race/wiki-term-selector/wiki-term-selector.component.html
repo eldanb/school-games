@@ -1,5 +1,5 @@
 <mat-form-field class="form-field-rtl" [ngClass]="{error: validationResult == false}">
-  <input matInput placeholder="הכנס ערך ויקיפדיה" [(ngModel)]="editedTerm">
+  <input matInput [disabled]="disabled || randomizing" placeholder="הכנס ערך ויקיפדיה" [(ngModel)]="editedTerm">
 </mat-form-field>
 
 <button mat-icon-button (click)="randomizeTerm()">

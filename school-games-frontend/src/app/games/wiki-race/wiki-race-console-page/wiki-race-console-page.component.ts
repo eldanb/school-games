@@ -17,6 +17,8 @@ export class WikiRaceConsolePageComponent implements OnInit {
   public selectedEndTerm: string = "";
   public endTermValid: boolean | null;
 
+  public generatingRandomRound = false;
+
   public wikiRaceConsoleController: WikiRaceConsoleServices;
 
   private _refreshTimer: any;
@@ -60,27 +62,12 @@ export class WikiRaceConsolePageComponent implements OnInit {
     return this._rankedScoreboardEntries;
   }
 
-  private async refreshGameStatus() {
-    if(this.wikiRaceConsoleController) {
-      this.gameStatus = await this.wikiRaceConsoleController.getGameStatus();
-      this._rankedScoreboardEntries = null;
-    }
-  }
-
-  private async _startGame() {
-    const lessonControlelr = await this.lessonControllerProviderService.getLessonController();
-    const result = await lessonControlelr.startGame('wiki-race');
-    this.wikiRaceConsoleController = result.gameController as WikiRaceConsoleServices;
-
-    await this._loadRandomRound();
-    await this.refreshGameStatus();
-
-  }
-
-  private async _loadRandomRound() {
+  public async generateRandomRound() {
+    this.generatingRandomRound = true;
     const round = await this.wikiRaceConsoleController.generateRound(-6);
     this.selectedStartTerm = round.startTerm;
     this.selectedEndTerm = round.endTerm;
+    this.generatingRandomRound = false;
   }
 
   public async startRound() {
@@ -96,4 +83,22 @@ export class WikiRaceConsolePageComponent implements OnInit {
   get isPreRound(): boolean {
     return Boolean(this.gameStatus?.currentRound && Date.now() < this.gameStatus?.roundStartTime);
   }
+  private async refreshGameStatus() {
+    if(this.wikiRaceConsoleController) {
+      this.gameStatus = await this.wikiRaceConsoleController.getGameStatus();
+      this._rankedScoreboardEntries = null;
+    }
+  }
+
+  private async _startGame() {
+    const lessonControlelr = await this.lessonControllerProviderService.getLessonController();
+    const result = await lessonControlelr.startGame('wiki-race');
+    this.wikiRaceConsoleController = result.gameController as WikiRaceConsoleServices;
+
+    await this.generateRandomRound();
+    await this.refreshGameStatus();
+
+  }
+
+
 }

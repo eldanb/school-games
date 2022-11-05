@@ -20,7 +20,7 @@ export class LessonTerminalProviderComponent implements OnInit, OnDestroy {
     this._username = username;
     this._avatar = avatar;
 
-    this._lessonTerminalProviderService.initTerminal(
+    return this._lessonTerminalProviderService.initTerminal(
       this._lessonMoniker,
       this._username,
       this._avatar);
