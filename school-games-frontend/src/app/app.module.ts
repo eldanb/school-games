@@ -6,6 +6,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatRadioModule } from '@angular/material/radio';
 
 import { GameComponentsModule } from 'src/game-components-module/game-components.module';
 
@@ -70,6 +71,7 @@ import { WikiRacePreRoundLightboxComponent } from './games/wiki-race/wiki-race-p
     MatButtonModule,
     MatSlideToggleModule,
     MatInputModule,
+    MatRadioModule,
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,

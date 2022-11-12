@@ -1,5 +1,16 @@
 <!-- Game setup -->
-<div *ngIf="!gameStatus?.currentRound" class="vertical-stack fill-screen">
+<div *ngIf="editingRound" class="vertical-stack fill-screen">
+
+  <div class="vertical-stack">
+    <h1>סוג המירוץ</h1>
+    <mat-radio-group [value]="selectedRoundType" (change)="selectedRoundType = $event.value">
+      <mat-radio-button value="shortest-path">&nbsp;הנתיב הקצר</mat-radio-button>
+      <mat-radio-button value="best-time">&nbsp;מרוץ על זמן</mat-radio-button>
+    </mat-radio-group>
+
+
+  </div>
+
   <div class="horizontal-stack terms-input">
     <div class="vertical-stack">
       <h1>ערך מוצא</h1>
@@ -38,7 +49,7 @@
 
   <button mat-raised-button
       color="primary"
-      [disabled]="!startTermValid || !endTermValid || !lessonControllerProviderService.lessonStatus?.terminalInfo?.length"
+      [disabled]="!startTermValid || !endTermValid || generatingRandomRound || !lessonControllerProviderService.lessonStatus?.terminalInfo?.length"
       (click)="startRound()">
       התחל משחק
   </button>
@@ -85,6 +96,13 @@
       >
       </app-score-board-view>
     </div>
+    <ng-container *ngIf="gameStatus?.roundStatus?.includes('winner')">
+      <button mat-raised-button
+        color="primary"
+        (click)="newRound()">
+        סיבוב נוסף
+      </button>
+    </ng-container>
   </div>
   <div class="graph-container">
     <app-wiki-race-path-graph

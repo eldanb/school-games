@@ -25,7 +25,6 @@ export class WikiRaceGameState
   private _currentRound: WikiRaceRound | null;
   private _startTime: number;
   private _endTime: number | null;
-  private _currentWinners: Set<WikiRaceTerminalServicesImpl> = new Set();
 
   private _roundStatus: WikiRaceRoundStatus;
 
@@ -58,11 +57,7 @@ export class WikiRaceGameState
           (a, h) => a + h.weight,
           0,
         ),
-        reachedEndTerm:
-          terminal.definitionHistory.length &&
-          this._currentRound &&
-          terminal.definitionHistory[terminal.definitionHistory.length - 1]
-            .term === this._currentRound.endTerm,
+        reachedEndTerm: terminal.reachedEndTermTime,
       };
     });
 
@@ -102,6 +97,8 @@ export class WikiRaceGameState
     this._startTime = startTime;
     this._endTime = endTime;
 
+    this._roundStatus = 'pre';
+
     await Promise.all(
       Object.values(this._terminalServices).map((ts) =>
         ts.startRound(roundDefinition, startTime, endTime),
@@ -134,10 +131,16 @@ export class WikiRaceGameState
   }
 
   async generateRound(numSteps: number): Promise<WikiRaceRound> {
+    const BLACKLISTED_TERM_PATTERNS = [
+      /([א-ל"]{1,3}[ _]ב((תשרי)|(חשוון)|(כסלו)|(טבת)|(שבט)|(אדר)|(ניסן)|(אייר)|(סיון)|(תמוז)|(אב)|(אלול)))/,
+      /([0-9]{1,3}[ _]ב((ינאור)|(פברואר)|(מרץ)|(אפריל)|(מאי)|(יוני)|(יולי)|(אוגוסט)|(ספטמבר)|(אוקטובר)|(נובמבר)|(דצמבר)))/,
+    ];
+
     const termPredicate = async (term: string) => {
       return (
         term.replace(/ \(.*\)/, '').split(' ').length < 4 &&
         !term.includes('(פירושונים)') &&
+        !BLACKLISTED_TERM_PATTERNS.find((pattern) => pattern.test(term)) &&
         term.length > 1 &&
         term.match(/[^0-9]/) &&
         (await this.getBacklinks(term)).length > 400
@@ -152,6 +155,7 @@ export class WikiRaceGameState
       return {
         startTerm,
         endTerm,
+        roundType: 'shortest-path',
       };
     } else if (numSteps < 0) {
       const endTerm = await this.generateRandomTerm(50, termPredicate);
@@ -161,6 +165,7 @@ export class WikiRaceGameState
       return {
         startTerm,
         endTerm,
+        roundType: 'shortest-path',
       };
     } else {
       this._logger.debug(`Generate by 2xrandom.`);
@@ -170,6 +175,7 @@ export class WikiRaceGameState
       return {
         startTerm,
         endTerm,
+        roundType: 'shortest-path',
       };
     }
   }
@@ -275,13 +281,22 @@ export class WikiRaceGameState
     ) {
       this._roundStatus = 'pre';
     } else if (
-      !Object.values(this._terminalServices).find(
-        (t) => t.currentTerm !== this._currentRound.endTerm,
-      )
+      (this._currentRound.roundType === 'shortest-path' &&
+        !Object.values(this._terminalServices).find(
+          (t) => t.reachedEndTermTime === null,
+        )) ||
+      (this._currentRound.roundType === 'best-time' &&
+        Object.values(this._terminalServices).find(
+          (t) => t.reachedEndTermTime !== null,
+        ))
     ) {
       this._roundStatus = 'winners';
     } else if (this._endTime && checkTime > this._endTime) {
-      this._roundStatus = 'no-winners';
+      this._roundStatus = Object.values(this._terminalServices).find(
+        (t) => t.reachedEndTermTime !== null,
+      )
+        ? 'winners'
+        : 'no-winners';
     } else {
       this._roundStatus = 'running';
     }
@@ -306,6 +321,17 @@ export class WikiRaceGameState
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   terminalChanged(sender: WikiRaceTerminalServicesImpl) {
+    if (
+      sender.definitionHistory.length &&
+      this._currentRound &&
+      sender.definitionHistory[sender.definitionHistory.length - 1].term ===
+        this._currentRound.endTerm
+    ) {
+      sender.reachedEndTermTime = Date.now();
+    } else {
+      sender.reachedEndTermTime = null;
+    }
+
     this._updateRoundStatus();
   }
 
@@ -317,10 +343,11 @@ export class WikiRaceGameState
 class WikiRaceTerminalServicesImpl implements WikiRaceTerminalServices {
   private _listener: WikiRaceTerminalListenerRegistration | null = null;
 
-  private _roundDefinition: WikiRaceRound = null;
   private _definitionHistory: WikiRaceTerminalPath = [];
 
   constructor(private _gs: WikiRaceGameState, private _terminalId: string) {}
+
+  public reachedEndTermTime: number | null = null;
 
   async notifyBacktrack(toNavStep: number): Promise<WikiRaceTerminalPath> {
     if (!this._gs.playAllowed) {
@@ -387,8 +414,8 @@ class WikiRaceTerminalServicesImpl implements WikiRaceTerminalServices {
   }
 
   async startRound(round: WikiRaceRound, startTime: number, endTime: number) {
-    this._roundDefinition = round;
     this._definitionHistory = [];
+    this.reachedEndTermTime = null;
 
     if (this._listener?.listener) {
       this._listener.listener.startRound(round, startTime, endTime);

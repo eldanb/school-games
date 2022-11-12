@@ -3,6 +3,8 @@ import { TerminalAvatar } from "../Terminal";
 
 export type WikiRaceRoundStatus = 'pre' | 'running' | 'winners' | 'no-winners';
 
+export type WikiRoundType = 'shortest-path' | 'best-time';
+
 export type WikiRaceTerminalPath = {
   term: string;
   time: number;
@@ -11,19 +13,23 @@ export type WikiRaceTerminalPath = {
 
 export type WikiRaceTerminalStatus = {
   avatar: TerminalAvatar;
+
   username: string;
   termHistory: WikiRaceTerminalPath;
+
   currentScore: number;
-  reachedEndTerm: boolean;
+  reachedEndTerm: number | null;
 }
 
 export type WikiRaceRound = {
   startTerm: string;
   endTerm: string;
+  roundType: WikiRoundType;
 }
 
 export type WikiRaceGameStatus = {
   currentRound: WikiRaceRound;
+  
   roundStartTime: number;
   roundEndTime: number;
   roundStatus: WikiRaceRoundStatus;

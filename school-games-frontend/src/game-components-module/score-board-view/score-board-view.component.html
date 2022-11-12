@@ -15,9 +15,9 @@
         <app-avatar-view [avatar]="renderedEntry.entry.avatar || null"></app-avatar-view>
         {{renderedEntry.entry.username}}
       </div>
-      <div *ngFor="let fieldValue of renderedEntry.entry.additionalFields; index as fieldIndex"
-        [ngStyle]="{width: columns[fieldIndex].width}" [class]="columns[fieldIndex].class + ' ' + renderedEntry.entry.class">
-        {{fieldValue}}
+      <div *ngFor="let columnDefinition of columns; index as fieldIndex"
+        [ngStyle]="{width: columnDefinition.width}" [class]="columnDefinition.class + ' ' + renderedEntry.entry.class">
+        {{renderedEntry.entry.additionalFields[fieldIndex]}}
       </div>
     </div>
   </div>

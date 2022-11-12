@@ -36,6 +36,7 @@ type PathGraphTerminal = {
   coordinate: number;
   lastNodeCoordinate: number;
   avatar: TerminalAvatar;
+  username: string;
 
   terminalPawnRenderedNode: SVGElement | null;
   currentPathNode: PathGraphNode | null;
@@ -194,6 +195,7 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
         terminal.terminalPawnRenderedNode = this._createOrUpdateTerminalPawnSvgRep(
           terminal.terminalPawnRenderedNode,
           terminal.avatar,
+          terminal.username,
           terminal.currentPathNode!.coordinate, terminal.currentPathNode!.ownerTerminal!.coordinate,
           terminalIndexOnNode, terminalsOnNode.length);
       })
@@ -271,6 +273,7 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
   private _createOrUpdateTerminalPawnSvgRep(
     existingNode: SVGElement | null,
     avatar: TerminalAvatar,
+    username: string,
     x: number, y: number,
     indexInNode: number, countInNode: number): SVGElement {
       if(!existingNode) {
@@ -280,6 +283,7 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
         existingNode.innerHTML = `
           <circle cx="8" cy="8" r="10" fill="${avatar.avatarColor}"/>
           <use width="16" height="16" xlink:href="${AvatarViewComponent.getSpriteRef(avatar.avatarName)}"/>
+          <title>${_.escape(username)}</title>
         `;
 
         this._graphNodesParent.nativeElement.appendChild(existingNode);
@@ -344,6 +348,7 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
         lastNodeCoordinate: 0,
         terminalId: terminalId,
         avatar: terminalStatus.avatar,
+        username: terminalStatus.username,
         terminalPawnRenderedNode: null,
         currentPathNode: null
       };

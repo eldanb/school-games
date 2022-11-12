@@ -70,11 +70,13 @@ export class ScoreBoardViewComponent implements OnInit {
     entries.forEach((entry, rank) => {
       let existingRendered = renderedByTerminalId[entry.terminalId];
       if(!existingRendered) {
-        this._renderedEntries.push({
+        existingRendered = {
           entry: entry,
           rank: 0,
           marked: false
-        });
+        };
+
+        this._renderedEntries.push(existingRendered);
       }
 
       existingRendered.rank = rank;

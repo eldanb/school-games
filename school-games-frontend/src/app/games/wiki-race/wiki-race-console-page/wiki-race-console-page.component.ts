@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { WikiRaceConsoleServices, WikiRaceGameStatus } from 'school-games-common';
+import { duration } from 'moment';
+import { WikiRaceConsoleServices, WikiRaceGameStatus, WikiRoundType } from 'school-games-common';
 import { LessonControllerProviderService } from 'src/game-components-module/lesson-controller-provider/lesson-controller-provider.service';
 import { ScoreBoardColumnDefinition, ScoreBoardEntry } from 'src/game-components-module/score-board-view/score-board-view.component';
 
@@ -17,6 +18,8 @@ export class WikiRaceConsolePageComponent implements OnInit {
   public selectedEndTerm: string = "";
   public endTermValid: boolean | null;
 
+  public selectedRoundType: WikiRoundType = 'shortest-path';
+
   public generatingRandomRound = false;
 
   public wikiRaceConsoleController: WikiRaceConsoleServices;
@@ -25,13 +28,25 @@ export class WikiRaceConsolePageComponent implements OnInit {
 
   private _rankedScoreboardEntries: ScoreBoardEntry[] | null;
 
+  public editingRound: boolean = true;
+
   public gameStatus: WikiRaceGameStatus | null;
 
-  public scoreboardColumns: ScoreBoardColumnDefinition[] = [{
-    heading: "אורך",
+  public scoreboardColumns: ScoreBoardColumnDefinition[] = [
+    {
+      heading: "אורך",
+      width: "7rem",
+      class: "scoreboard-col-right"
+    },
+    {
+    heading: "זמן",
     width: "7rem",
     class: "scoreboard-col-right"
-  }];
+  }
+
+  ];
+
+
 
   constructor(public lessonControllerProviderService: LessonControllerProviderService) { }
 
@@ -52,11 +67,27 @@ export class WikiRaceConsolePageComponent implements OnInit {
         username: t.username,
         avatar: t.avatar,
         terminalId: t.username,
-        additionalFields: [t.currentScore],
+        additionalFields: [
+          t.currentScore,
+          this.gameStatus && t.reachedEndTerm &&
+            duration(t.reachedEndTerm - this.gameStatus.roundStartTime, 'millisecond')
+              .format('mm:ss', { trim: false }),
+          t.currentScore - (t.reachedEndTerm !== null ? 1000 : 0),
+          t.reachedEndTerm],
         class: t.reachedEndTerm ? 'scoreboard-row-completed' : ''
       }));
 
-      this._rankedScoreboardEntries.sort((a, b) => a.additionalFields[0] - b.additionalFields[0]);
+      if(this.gameStatus?.roundStatus?.includes('winners')) {
+        this._rankedScoreboardEntries =
+          this._rankedScoreboardEntries.filter((e) => e.additionalFields[1] !== null);
+      }
+
+      const sortOrder =
+        this.selectedRoundType === 'shortest-path'
+          ? (a: ScoreBoardEntry, b: ScoreBoardEntry) => (a.additionalFields[2]  - b.additionalFields[2])
+          : (a: ScoreBoardEntry, b: ScoreBoardEntry) => (a.additionalFields[3]  - b.additionalFields[3]);
+
+      this._rankedScoreboardEntries.sort(sortOrder);
     }
 
     return this._rankedScoreboardEntries;
@@ -70,19 +101,27 @@ export class WikiRaceConsolePageComponent implements OnInit {
     this.generatingRandomRound = false;
   }
 
+  public async newRound() {
+    this.editingRound = true;
+    await this.generateRandomRound();
+  }
+
   public async startRound() {
     const nowTime = Date.now();
     await this.wikiRaceConsoleController.startRound({
       startTerm: this.selectedStartTerm,
-      endTerm: this.selectedEndTerm
+      endTerm: this.selectedEndTerm,
+      roundType: this.selectedRoundType
     },
     nowTime + GAME_PREROUND_TIME_SECS * 1000,
     nowTime + (GAME_PREROUND_TIME_SECS + GAME_ROUND_TIME_SECS) * 1000)
+    this.editingRound = false;
   }
 
   get isPreRound(): boolean {
     return Boolean(this.gameStatus?.currentRound && Date.now() < this.gameStatus?.roundStartTime);
   }
+
   private async refreshGameStatus() {
     if(this.wikiRaceConsoleController) {
       this.gameStatus = await this.wikiRaceConsoleController.getGameStatus();
