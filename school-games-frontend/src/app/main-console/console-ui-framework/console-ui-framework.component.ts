@@ -1,9 +1,5 @@
-import { AfterViewInit, Component, ComponentRef, Injectable, OnInit, Self, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
-import { ActivatedRoute, RouterOutlet } from '@angular/router';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-
-
-
+import { AfterViewInit, Component, Injectable, Self, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable()
 export class ConsoleUiFrameworkIntegrationSupportService {

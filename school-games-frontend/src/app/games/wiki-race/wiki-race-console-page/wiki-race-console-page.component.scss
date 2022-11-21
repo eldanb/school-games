@@ -28,6 +28,20 @@
   height: calc(100% - 4rem);
 
   margin: 2rem 2rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  h1 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  app-lesson-join-qr-display {
+    width: 75%;
+  }
 }
 
 .terms-input {
@@ -76,8 +90,7 @@
   }
 
   .term-box {
-
-    font-size: 18pt;
+      font-size: 18pt;
 
     &.end-term {
       text-align: end;
@@ -86,6 +99,11 @@
 
   .round-terms-display {
     width: 75%;
+  }
+
+  .timer-area {
+    height: 7rem;
+    justify-content: center;
   }
 }
 

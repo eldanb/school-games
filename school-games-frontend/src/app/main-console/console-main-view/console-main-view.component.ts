@@ -10,22 +10,17 @@ export class ConsoleMainViewComponent implements OnInit {
 
   connectionQrCodeUrl: string | null;
   connectionUrl: string | null;
+
   gameDescriptors = Object.entries(ConsoleGamesRegistry).map(([k, v]) => ({
     name: v.gameTitle,
     id: k
   }));
 
-  constructor(private _lessonControllerProvider: LessonControllerProviderService) {
+  constructor() {
 
   }
 
   ngOnInit(): void {
-    this.loadConnectionQr();
   }
 
-  private async loadConnectionQr(): Promise<void> {
-    const lessonController = await this._lessonControllerProvider.getLessonController();
-    this.connectionQrCodeUrl = await lessonController.getConnectionQrCodeUrl();
-    this.connectionUrl = await lessonController.getConnectionUrl();
-  }
 }

@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { duration } from 'moment';
-import { WikiRaceConsoleServices, WikiRaceGameStatus, WikiRoundType } from 'school-games-common';
+import { WikiRaceConsoleServices, WikiRaceGameStatus, WikiRaceRound, WikiRoundType } from 'school-games-common';
 import { LessonControllerProviderService } from 'src/game-components-module/lesson-controller-provider/lesson-controller-provider.service';
 import { ScoreBoardColumnDefinition, ScoreBoardEntry } from 'src/game-components-module/score-board-view/score-board-view.component';
 
 const GAME_PREROUND_TIME_SECS = 10;
-const GAME_ROUND_TIME_SECS = 60*5;
+const GAME_ROUND_TIME_SECS = 20; //60*5;
 
 @Component({
   templateUrl: './wiki-race-console-page.component.html',
@@ -28,7 +28,8 @@ export class WikiRaceConsolePageComponent implements OnInit {
 
   private _rankedScoreboardEntries: ScoreBoardEntry[] | null;
 
-  public editingRound: boolean = true;
+  public consoleState: "edit" | "wait_to_start_game" | "wait_for_round" | "in_round" | "wait_for_next_round" | "end" = "wait_to_start_game";
+  private _loadNextRoundPromise: Promise<WikiRaceRound>;
 
   public gameStatus: WikiRaceGameStatus | null;
 
@@ -39,20 +40,17 @@ export class WikiRaceConsolePageComponent implements OnInit {
       class: "scoreboard-col-right"
     },
     {
-    heading: "זמן",
-    width: "7rem",
-    class: "scoreboard-col-right"
-  }
-
+      heading: "זמן",
+      width: "7rem",
+      class: "scoreboard-col-right"
+    }
   ];
-
-
 
   constructor(public lessonControllerProviderService: LessonControllerProviderService) { }
 
   ngOnInit(): void {
     this._startGame();
-    this._refreshTimer = setInterval(() => this.refreshGameStatus(), 1000);
+    this._refreshTimer = setInterval(() => this._refreshGameStatus(), 1000);
   }
 
   ngOnDestroy(): void {
@@ -68,7 +66,7 @@ export class WikiRaceConsolePageComponent implements OnInit {
         avatar: t.avatar,
         terminalId: t.username,
         additionalFields: [
-          t.currentScore,
+          this.consoleState !== 'wait_to_start_game' ? t.currentScore : '',
           this.gameStatus && t.reachedEndTerm &&
             duration(t.reachedEndTerm - this.gameStatus.roundStartTime, 'millisecond')
               .format('mm:ss', { trim: false }),
@@ -77,10 +75,10 @@ export class WikiRaceConsolePageComponent implements OnInit {
         class: t.reachedEndTerm ? 'scoreboard-row-completed' : ''
       }));
 
-      if(this.gameStatus?.roundStatus?.includes('winners')) {
+      /*if(this.gameStatus?.roundStatus?.includes('winners')) {
         this._rankedScoreboardEntries =
           this._rankedScoreboardEntries.filter((e) => e.additionalFields[1] !== null);
-      }
+      }*/
 
       const sortOrder =
         this.selectedRoundType === 'shortest-path'
@@ -93,40 +91,57 @@ export class WikiRaceConsolePageComponent implements OnInit {
     return this._rankedScoreboardEntries;
   }
 
+  get isPreRoundTime(): boolean {
+    return Boolean(this.gameStatus?.currentRound && Date.now() < this.gameStatus?.roundStartTime);
+  }
+
   public async generateRandomRound() {
     this.generatingRandomRound = true;
     const round = await this.wikiRaceConsoleController.generateRound(-6);
     this.selectedStartTerm = round.startTerm;
     this.selectedEndTerm = round.endTerm;
     this.generatingRandomRound = false;
-  }
 
-  public async newRound() {
-    this.editingRound = true;
-    await this.generateRandomRound();
+    return round;
   }
 
   public async startRound() {
+    this.consoleState = "wait_for_round";
+    const nextRound = await this._loadNextRoundPromise;
+
     const nowTime = Date.now();
-    await this.wikiRaceConsoleController.startRound({
-      startTerm: this.selectedStartTerm,
-      endTerm: this.selectedEndTerm,
-      roundType: this.selectedRoundType
-    },
-    nowTime + GAME_PREROUND_TIME_SECS * 1000,
-    nowTime + (GAME_PREROUND_TIME_SECS + GAME_ROUND_TIME_SECS) * 1000)
-    this.editingRound = false;
+
+    await this.wikiRaceConsoleController.startRound(
+      nextRound,
+      nowTime + GAME_PREROUND_TIME_SECS * 1000,
+      nowTime + (GAME_PREROUND_TIME_SECS + GAME_ROUND_TIME_SECS) * 1000)
+    await this._refreshGameStatus();
+
+    this.consoleState = "in_round";
   }
 
-  get isPreRound(): boolean {
-    return Boolean(this.gameStatus?.currentRound && Date.now() < this.gameStatus?.roundStartTime);
-  }
-
-  private async refreshGameStatus() {
+  private async _refreshGameStatus() {
     if(this.wikiRaceConsoleController) {
       this.gameStatus = await this.wikiRaceConsoleController.getGameStatus();
       this._rankedScoreboardEntries = null;
+
+      if(this.consoleState == 'in_round' &&
+         this.gameStatus.roundStatus == 'no-winners' || this.gameStatus.roundStatus == 'winners') {
+        this._endCurrentRound();
+      }
     }
+  }
+
+  private _endCurrentRound() {
+    // TODO or just fetch next round.
+    this._loadNextRoundPromise = this._prepareNextRound();
+
+    // TODO or consoleState = end 'end'
+    this.consoleState = 'wait_for_next_round';
+  }
+
+  private async _prepareNextRound(): Promise<WikiRaceRound> {
+    return this.wikiRaceConsoleController.generateRound(-6);
   }
 
   private async _startGame() {
@@ -134,9 +149,10 @@ export class WikiRaceConsolePageComponent implements OnInit {
     const result = await lessonControlelr.startGame('wiki-race');
     this.wikiRaceConsoleController = result.gameController as WikiRaceConsoleServices;
 
-    await this.generateRandomRound();
-    await this.refreshGameStatus();
+    this._loadNextRoundPromise = this._prepareNextRound();
+    await this._refreshGameStatus();
 
+    this.consoleState = "wait_to_start_game";
   }
 
 

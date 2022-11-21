@@ -7,12 +7,9 @@
     </a>
   </div>
   <div class="lesson-join-pane">
-    <div class="lesson-join-window" *ngIf="connectionQrCodeUrl">
+    <div class="lesson-join-window">
       <h1>סרקו להצטרפות לשיעור</h1>
-
-      <a *ngIf="connectionUrl" [href]="connectionUrl">
-        <img [src]="connectionQrCodeUrl"/>
-      </a>
+      <app-lesson-join-qr-display></app-lesson-join-qr-display>
     </div>
   </div>
 

@@ -6,3 +6,10 @@
 mat-form-field.error * {
   color:red;
 }
+
+.auxiliary-view {
+  display: flex;
+  justify-content: center;
+
+  width: 2.5rem;
+}

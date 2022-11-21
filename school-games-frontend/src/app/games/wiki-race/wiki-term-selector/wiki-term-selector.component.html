@@ -1,14 +1,16 @@
-<mat-form-field class="form-field-rtl" [ngClass]="{error: validationResult == false}">
+<mat-form-field class="form-field-rtl" [ngClass]="{error: validationResult == false}" floatLabel="never">
   <input matInput [disabled]="disabled || randomizing" placeholder="הכנס ערך ויקיפדיה" [(ngModel)]="editedTerm">
 </mat-form-field>
 
-<button mat-icon-button (click)="randomizeTerm()">
-  <mat-icon>casino</mat-icon>
-</button>
+<div class="auxiliary-view">
+  <button mat-icon-button *ngIf="!spinnerEnabled" (click)="randomizeTerm()">
+    <mat-icon>casino</mat-icon>
+  </button>
 
-<mat-progress-spinner
-  [ngStyle]="{ visibility: spinnerEnabled ? 'visible' : 'hidden' }"
-  mode="indeterminate"
-  diameter="15">
+  <mat-progress-spinner
+    *ngIf="spinnerEnabled"
+    mode="indeterminate"
+    diameter="15">
 
-</mat-progress-spinner>
+  </mat-progress-spinner>
+</div>

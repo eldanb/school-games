@@ -28,6 +28,7 @@ export class CountdownTimerDisplayComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this._refreshTime();
     this._intervalHandle = setInterval(() => this._refreshTime(), 100);
   }
 
