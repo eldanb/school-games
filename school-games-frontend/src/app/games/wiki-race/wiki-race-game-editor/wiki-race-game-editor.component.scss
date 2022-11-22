@@ -1,0 +1,90 @@
+@import '../../../../styles.scss';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-content: flex-end;
+  height: 100%;
+
+  gap: 1.5rem;
+}
+
+h1 {
+  font-size: 16pt;
+}
+
+mat-radio-group {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}
+
+mat-slider {
+  flex-grow: 1
+}
+
+.round-list {
+  flex-grow: 1;
+  overflow-y: scroll;
+  padding: 0.5rem;
+}
+
+.round-container {
+  position: relative;
+  display: flex;
+
+  flex-direction: row;
+  justify-items: stretch;
+  align-items: center;
+
+  background: rgba(240, 240, 255, 0.6);
+  border-radius: 0.5rem;
+
+  padding: 1rem 3rem;
+  margin: 0.5rem 0;
+
+  h1 {
+    color: silver;
+    font-size: 12pt;
+    margin: 0;
+  }
+
+
+  &.selected {
+    box-shadow: rgba(0, 0, 0, 0.2) 3px 3px 4px 0px;
+  }
+
+  .control-box {
+    @extend .fade-in-placeholder;
+
+    display: flex;
+    flex-direction: column;
+    width: 3rem;
+    align-items: center;
+
+    position: absolute;
+    right: 0;
+  }
+
+  .start-term {
+    flex-grow: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    margin-left: 1rem;
+  }
+
+  .end-term {
+    flex-grow: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  &:hover .control-box {
+    @extend .display;
+  }
+}

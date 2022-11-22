@@ -98,6 +98,10 @@ body * {
   flex-direction: row;
   gap: 0.75rem;
   align-items: center;
+
+  &.centered {
+    justify-content: center;
+  }
 }
 
 .vertical-stack {
@@ -130,6 +134,23 @@ body * {
 mat-tab-group.full-height {
   .mat-tab-body-wrapper {
     flex-grow: 1;
+  }
+}
+
+.mat-icon.small {
+  height:20px !important;
+  width:20px !important;
+  font-size:20px !important;
+}
+
+.mat-icon-button.small {
+  height:24px !important;
+  width:24px !important;
+  font-size:20px !important;
+  line-height: 20px !important;
+
+  .mat-icon {
+    font-size:20px !important;
   }
 }
 

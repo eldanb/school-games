@@ -100,10 +100,8 @@
   </div>
 </div>
 
-<ng-template #statusBarExtensionControls>
+<app-status-bar-extension-controls>
   <div class="mode-toggle" *ngIf="gameStatus.gameState ==='not-started'">
     ערוך &nbsp; <mat-slide-toggle [(ngModel)]="editing"></mat-slide-toggle> &nbsp; שחק
    </div>
-</ng-template>
-
-
+</app-status-bar-extension-controls>

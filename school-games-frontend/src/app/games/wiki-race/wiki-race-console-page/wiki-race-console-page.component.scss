@@ -1,23 +1,84 @@
 @import '../../../../styles.scss';
 
-.vertical-stack h1 {
-  flex-grow: 0;
+.fading-display {
+
+  transition: opacity .3s linear, height .3s linear;
+  overflow: hidden;
+
+  &.hide {
+    opacity: 0;
+    height: 0 !important;
+  }
 }
 
-.game-timer {
-  flex-grow: 1;
+.edit-action-bar {
+  width: 100%;
 }
 
-.scoreboard-container {
+.pane-splitter {
+  box-sizing: border-box;
   flex-grow: 1;
-  width: 75%;
+  width: 100%;
+}
 
-  app-score-board-view {
-    width: 100%;
+.right-pane {
+  height: 100%;
+  justify-content: center;
+
+  h1 {
+    flex-grow: 0;
   }
 
-}
+  .game-timer {
+    flex-grow: 1;
+  }
 
+  .scoreboard-container {
+    flex-grow: 1;
+    width: 75%;
+
+    app-score-board-view {
+      width: 100%;
+    }
+
+  }
+
+  .round-display {
+
+    h1 {
+      color: silver;
+      font-size: 12pt;
+    }
+
+    hr {
+      width: 70%;
+      border: 0;
+      border-top: solid 1px lightgray;
+    }
+
+    .term-box {
+        font-size: 18pt;
+
+      &.end-term {
+        text-align: end;
+      }
+    }
+
+    .round-terms-display {
+      width: 75%;
+    }
+
+    .timer-area {
+      height: 7rem;
+      justify-content: center;
+    }
+  }
+
+  .editor-display {
+    width: 70%;
+    height: 100%;
+  }
+}
 .graph-container {
   @extend .bordered-card;
   box-sizing: border-box;
@@ -74,37 +135,4 @@
     }
   }
 }
-
-
-.round-display {
-
-  h1 {
-    color: silver;
-    font-size: 12pt;
-  }
-
-  hr {
-    width: 70%;
-    border: 0;
-    border-top: solid 1px lightgray;
-  }
-
-  .term-box {
-      font-size: 18pt;
-
-    &.end-term {
-      text-align: end;
-    }
-  }
-
-  .round-terms-display {
-    width: 75%;
-  }
-
-  .timer-area {
-    height: 7rem;
-    justify-content: center;
-  }
-}
-
 

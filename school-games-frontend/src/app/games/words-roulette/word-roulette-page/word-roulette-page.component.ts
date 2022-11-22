@@ -1,7 +1,5 @@
-import { Template } from '@angular/compiler/src/render3/r3_ast';
 import { AfterViewInit, Component, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
 import { WordRouletteConsoleInterface } from 'school-games-common';
-import { ConsoleUiFrameworkIntegrationSupportService } from 'src/app/main-console/console-ui-framework/console-ui-framework.component';
 import { FavoritesSaveLoadService } from 'src/game-components-module/favorites-save-load-dialog/favorites-save-load.service';
 import { LessonControllerProviderService } from 'src/game-components-module/lesson-controller-provider/lesson-controller-provider.service';
 import { WordRouletteGameDefinition, WordRouletteWheelDefinition } from '../word-roulette-game-settings';
@@ -12,10 +10,7 @@ import { WordsRouletteRouletteComponent } from '../words-roulette-roulette/words
   templateUrl: './word-roulette-page.component.html',
   styleUrls: ['./word-roulette-page.component.scss']
 })
-export class WordRoulettePageComponent implements OnInit, AfterViewInit {
-  @ViewChild("statusBarExtensionControls", { read: TemplateRef })
-  _statusBarExtensionControls: TemplateRef<any>;
-
+export class WordRoulettePageComponent implements OnInit {
   gameDefinition: WordRouletteGameDefinition = {
     wheelDefinitions: [
       {
@@ -45,15 +40,10 @@ export class WordRoulettePageComponent implements OnInit, AfterViewInit {
 
   constructor(
     private _favService: FavoritesSaveLoadService,
-    private _lessonControllerProviderService: LessonControllerProviderService,
-    private _consoleUiServce: ConsoleUiFrameworkIntegrationSupportService) { }
+    private _lessonControllerProviderService: LessonControllerProviderService) { }
 
   ngOnInit(): void {
     this._startGame();
-  }
-
-  ngAfterViewInit(): void {
-    this._consoleUiServce.statusBarExtensionControlsContainer.subscribe((cr) => cr?.createEmbeddedView(this._statusBarExtensionControls))
   }
 
   private async _startGame() {

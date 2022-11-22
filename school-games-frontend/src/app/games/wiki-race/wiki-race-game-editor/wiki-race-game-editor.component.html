@@ -1,0 +1,126 @@
+<section>
+  <h1>סוג המירוץ</h1>
+  <mat-radio-group
+      [value]="observedGameDefinition.raceType"
+      (change)="observedGameDefinition.raceType = $event.value">
+    <mat-radio-button value="shortest-path">&nbsp;הנתיב הקצר</mat-radio-button>
+    <mat-radio-button value="best-time">&nbsp;מרוץ על זמן</mat-radio-button>
+  </mat-radio-group>
+</section>
+
+<section>
+  <h1>מגבלת זמן</h1>
+  <div class="horizontal-stack full-width">
+    <mat-slider
+        min="1" max="10" step="0.5" tickInterval="0.5"
+        [(value)]="observedGameDefinition.raceTimeInMinutes">
+      <input matSliderThumb>
+    </mat-slider>
+    <div>{{observedGameDefinition.raceTimeInMinutes}} דקות</div>
+  </div>
+</section>
+
+<section>
+<h1>סיבובים</h1>
+<mat-radio-group
+    [value]="observedGameDefinition.useRandomRounds"
+    (change)="observedGameDefinition.useRandomRounds = $event.value">
+  <mat-radio-button [value]="true">&nbsp;סיבובים אקראיים</mat-radio-button>
+  <mat-radio-button [value]="false">&nbsp;סיבובים מוכנים מראש</mat-radio-button>
+</mat-radio-group>
+</section>
+
+<section *ngIf="observedGameDefinition.useRandomRounds">
+  <h1>רמת קושי</h1>
+  <div class="horizontal-stack full-width">
+    <mat-slider
+        min="1" max="4" step="1" tickInterval="0.5"
+        [(value)]="observedGameDefinition.randomRoundsDifficultyLevel">
+      <input matSliderThumb>
+    </mat-slider>
+    <div>{{observedGameDefinition.randomRoundsDifficultyLevel}}</div>
+  </div>
+</section>
+
+<section *ngIf="!observedGameDefinition.useRandomRounds" class="round-list">
+  <div
+    class="round-container"
+    [ngClass]="{selected: roundIndex == selectedRoundIndex}"
+    *ngFor="let round of observedGameDefinition.rounds; index as roundIndex"
+    (click)="selectedRoundIndex = roundIndex">
+    <div class="control-box">
+      <button mat-icon-button class="small"
+          [disabled]="observedGameDefinition.rounds.length == 1"
+          (click)="deleteRound(roundIndex)">
+        <mat-icon >delete</mat-icon>
+      </button>
+      <button mat-icon-button class="small"
+          [disabled]="roundIndex == 0"
+          (click)="exchangeRounds(roundIndex, roundIndex-1)">
+        <mat-icon >arrow_upward</mat-icon>
+      </button>
+      <button mat-icon-button class="small"
+          [disabled]="roundIndex == observedGameDefinition.rounds.length-1"
+          (click)="exchangeRounds(roundIndex, roundIndex+1)">
+        <mat-icon >arrow_downward</mat-icon>
+      </button>
+    </div>
+    <div class="start-term">
+      <h1>ערך מוצא</h1>
+      <app-wiki-term-selector
+            [gameController]="gameController"
+            [term]="round.startTerm"
+            (termChange)="round.startTerm = $event"
+            >
+      </app-wiki-term-selector>
+    </div>
+
+    <div class="end-term">
+      <h1>ערך יעד</h1>
+      <app-wiki-term-selector
+            [gameController]="gameController"
+            [term]="round.endTerm"
+            (termChange)="round.endTerm = $event"
+            >
+      </app-wiki-term-selector>
+    </div>
+  </div>
+
+  <div class="horizontal-stack centered">
+    <button (click)="addRound()" mat-raised-button>הוסף סיבוב</button>
+  </div>
+</section>
+<!--
+  public selectedRoundType: WikiRoundType = 'shortest-path';
+  public generatingRandomRound = false;
+
+    public selectedStartTerm: string = "";
+  public startTermValid: boolean | null;
+  public selectedEndTerm: string = "";
+  public endTermValid: boolean | null;
+
+    public async generateRandomRound() {
+    this.generatingRandomRound = true;
+    const round = await this.wikiRaceConsoleController.generateRound(-6);
+    this.selectedStartTerm = round.startTerm;
+    this.selectedEndTerm = round.endTerm;
+    this.generatingRandomRound = false;
+
+    return round;
+  }
+
+
+
+
+  <div class="random-round-panel" *ngIf="false">
+            <button mat-icon-button *ngIf="!generatingRandomRound" (click)="generateRandomRound()">
+              <mat-icon>casino</mat-icon>
+            </button>
+
+            <mat-progress-spinner
+              [ngStyle]="{ visibility: generatingRandomRound ? 'visible' : 'hidden' }"
+              mode="indeterminate"
+              diameter="25">
+            </mat-progress-spinner>
+          </div>
+-->

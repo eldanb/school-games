@@ -7,6 +7,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatSliderModule } from '@angular/material/slider';
 
 import { GameComponentsModule } from 'src/game-components-module/game-components.module';
 
@@ -37,6 +38,7 @@ import { WikiRacePathGraphComponent } from './games/wiki-race/wiki-race-path-gra
 import { WikiTermSelectorComponent } from './games/wiki-race/wiki-term-selector/wiki-term-selector.component';
 import { WikiRacePreRoundLightboxComponent } from './games/wiki-race/wiki-race-pre-round-lightbox/wiki-race-pre-round-lightbox.component';
 import { LessonJoinQrDisplayComponent } from './lesson-join-qr-display/lesson-join-qr-display.component';
+import { WikiRaceGameEditorComponent } from './games/wiki-race/wiki-race-game-editor/wiki-race-game-editor.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +63,7 @@ import { LessonJoinQrDisplayComponent } from './lesson-join-qr-display/lesson-jo
     WikiTermSelectorComponent,
     WikiRacePreRoundLightboxComponent,
     LessonJoinQrDisplayComponent,
+    WikiRaceGameEditorComponent,
   ],
   imports: [
     BrowserModule,
@@ -79,6 +82,7 @@ import { LessonJoinQrDisplayComponent } from './lesson-join-qr-display/lesson-jo
     MatDialogModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
+    MatSliderModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

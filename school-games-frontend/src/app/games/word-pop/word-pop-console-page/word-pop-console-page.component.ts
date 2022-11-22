@@ -1,6 +1,5 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { PoppedWordGameboard, PoppedWordGameStatus, PoppedWordTerminalStatus, WordPopConsoleInterface } from 'school-games-common';
-import { ConsoleUiFrameworkIntegrationSupportService } from 'src/app/main-console/console-ui-framework/console-ui-framework.component';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { PoppedWordGameboard, PoppedWordGameStatus, WordPopConsoleInterface } from 'school-games-common';
 import { LessonControllerProviderService } from 'src/game-components-module/lesson-controller-provider/lesson-controller-provider.service';
 import { ScoreBoardColumnDefinition, ScoreBoardEntry } from 'src/game-components-module/score-board-view/score-board-view.component';
 import { WordPopQuestionDefinition } from '../word-pop-question-editor/word-pop-question-editor.component';
@@ -9,12 +8,9 @@ import { WordPopQuestionDefinition } from '../word-pop-question-editor/word-pop-
   templateUrl: './word-pop-console-page.component.html',
   styleUrls: ['./word-pop-console-page.component.scss']
 })
-export class WordPopConsolePageComponent implements OnInit, OnDestroy, AfterViewInit {
+export class WordPopConsolePageComponent implements OnInit, OnDestroy {
   private _wordpopGameController: WordPopConsoleInterface;
   private _refreshInterval: any = null;
-
-  @ViewChild("statusBarExtensionControls", { read: TemplateRef })
-  private _statusBarExtensionControls: TemplateRef<any>;
 
   gameTitle: string = "שורשים";
   gameQuestionDefs: WordPopQuestionDefinition[] = [
@@ -90,8 +86,7 @@ export class WordPopConsolePageComponent implements OnInit, OnDestroy, AfterView
   }
 
   constructor(
-    public lessonControllerService: LessonControllerProviderService,
-    private _consoleUiFramework: ConsoleUiFrameworkIntegrationSupportService) { }
+    public lessonControllerService: LessonControllerProviderService) { }
 
   ngOnInit(): void {
     this.setupGame();
@@ -103,10 +98,6 @@ export class WordPopConsolePageComponent implements OnInit, OnDestroy, AfterView
       clearInterval(this._refreshInterval);
       this._refreshInterval = null;
     }
-  }
-
-  ngAfterViewInit(): void {
-    this._consoleUiFramework.statusBarExtensionControlsContainer.subscribe((cr) => cr?.createEmbeddedView(this._statusBarExtensionControls))
   }
 
   get terminalIds() {

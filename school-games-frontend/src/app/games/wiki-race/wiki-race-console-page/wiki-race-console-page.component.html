@@ -1,145 +1,138 @@
-<!-- Game setup -->
-<!--
-  <div *ngIf="editingRound" class="vertical-stack fill-screen">
 
-  <div class="vertical-stack">
-    <h1>סוג המירוץ</h1>
-    <mat-radio-group [value]="selectedRoundType" (change)="selectedRoundType = $event.value">
-      <mat-radio-button value="shortest-path">&nbsp;הנתיב הקצר</mat-radio-button>
-      <mat-radio-button value="best-time">&nbsp;מרוץ על זמן</mat-radio-button>
-    </mat-radio-group>
-
-
+<div class="vertical-stack fill-screen">
+  <div class="edit-action-bar" [ngClass]="{editing: editing}">
+    <div class="separator"></div>
+    <app-favorites-management-buttons
+        gameName="wiki-race"
+        [(gameDefinition)]="gameDefinition">
+      </app-favorites-management-buttons>
   </div>
 
+  <div class="horizontal-stack pane-splitter">
+    <!-- Right pane: -->
+    <div class="vertical-stack full-width right-pane">
 
-
-
-</div>
--->
-<div class="horizontal-stack fill-screen main-stack">
-  <div class="vertical-stack full-width round-display">
-    <div *ngIf="gameStatus?.currentRound" class="horizontal-stack round-terms-display">
-      <div class="term-box">
-        <h1>ערך מוצא</h1>
-        <app-wiki-term-selector
-          *ngIf="false"
-          [disabled]="generatingRandomRound"
-          [gameController]="wikiRaceConsoleController"
-          [(term)]="selectedStartTerm"
-          (validationStateChanged)="startTermValid = $event"
-          >
-        </app-wiki-term-selector>
-        <span>
-          {{gameStatus?.currentRound?.startTerm}}
-        </span>
+      <!-- Editor -->
+      <div class="editor-display fading-display" [ngClass]="{ hide: !editing }">
+        <app-wiki-race-game-editor
+            [(gameDefinition)]="gameDefinition"
+            [gameController]="wikiRaceConsoleController">
+        </app-wiki-race-game-editor>
       </div>
 
-      <div class="flex-spacer">
-        <div class="random-round-panel" *ngIf="false">
-          <button mat-icon-button *ngIf="!generatingRandomRound" (click)="generateRandomRound()">
-            <mat-icon>casino</mat-icon>
-          </button>
+      <!-- Game status -->
+      <div class="vertical-stack full-width round-display fading-display" [ngClass]="{ hide: editing }">
+        <!-- Round start and goal -->
+        <div *ngIf="gameStatus?.currentRound" class="horizontal-stack round-terms-display">
+          <div class="term-box">
+            <h1>ערך מוצא</h1>
+            <span>
+              {{gameStatus?.currentRound?.startTerm}}
+            </span>
+          </div>
 
-          <mat-progress-spinner
-            [ngStyle]="{ visibility: generatingRandomRound ? 'visible' : 'hidden' }"
-            mode="indeterminate"
-            diameter="25">
-          </mat-progress-spinner>
+          <div class="flex-spacer">
+          </div>
+
+          <div class="term-box end-term">
+            <h1>ערך יעד</h1>
+            <span>
+              {{gameStatus?.currentRound?.endTerm}}
+            </span>
+          </div>
         </div>
-      </div>
 
-      <div class="term-box end-term">
-        <h1>ערך יעד</h1>
-        <app-wiki-term-selector
-          *ngIf="false"
-          [disabled]="generatingRandomRound"
-          [gameController]="wikiRaceConsoleController"
-          [(term)]="selectedEndTerm"
-          (validationStateChanged)="endTermValid = $event"
-          >
-        </app-wiki-term-selector>
-        <span>
-          {{gameStatus?.currentRound?.endTerm}}
-        </span>
-      </div>
-    </div>
+        <hr>
 
-    <hr>
+        <!-- Timer area -->
+        <div class="vertical-stack timer-area">
+          <!-- Start button -->
+          <ng-container *ngIf="consoleState === 'wait_to_start_game'">
+            <button mat-raised-button
+                color="primary"
+                [disabled]="!lessonControllerProviderService.lessonStatus?.terminalInfo?.length"
+                (click)="startRound()">
+                התחל משחק
+            </button>
 
-    <div class="vertical-stack timer-area">
-      <ng-container *ngIf="consoleState === 'wait_to_start_game'">
-        <button mat-raised-button
-            color="primary"
-            [disabled]="!lessonControllerProviderService.lessonStatus?.terminalInfo?.length"
-            (click)="startRound()">
-            התחל משחק
-        </button>
-
-        <div *ngIf="!lessonControllerProviderService.lessonStatus?.terminalInfo?.length">
-          משחק זה דורש לפחות משתתף אחד בשיעור.
-        </div>
-      </ng-container>
-
-      <ng-container *ngIf="consoleState === 'in_round'">
-          <ng-container *ngIf="gameStatus!.roundStatus == 'running'">
-            <h1>זמן לסיום</h1>
-            <app-countdown-timer-display
-                class="game-timer"
-                size="30pt"
-                [endTime]="gameStatus?.roundEndTime || 0">
-            </app-countdown-timer-display>
+            <div *ngIf="!lessonControllerProviderService.lessonStatus?.terminalInfo?.length">
+              משחק זה דורש לפחות משתתף אחד בשיעור.
+            </div>
           </ng-container>
 
-          <ng-container *ngIf="gameStatus!.roundStatus == 'pre'">
+          <!-- Next round button -->
+          <ng-container *ngIf="consoleState === 'wait_for_next_round'">
+            <button mat-raised-button
+              color="primary"
+              (click)="startRound()">
+              סיבוב נוסף
+            </button>
+          </ng-container>
+
+          <!-- Wait for round -->
+          <ng-container *ngIf="consoleState === 'wait_for_round'">
             <h1>מיד מתחילים...</h1>
           </ng-container>
-      </ng-container>
 
-      <ng-container *ngIf="consoleState === 'wait_for_next_round'">
-          <button mat-raised-button
-            color="primary"
-            (click)="startRound()">
-            סיבוב נוסף
-          </button>
-      </ng-container>
 
-      <ng-container *ngIf="consoleState === 'wait_for_round'">
-        <h1>מיד מתחילים...</h1>
-      </ng-container>
+          <!-- Timer -->
+          <ng-container *ngIf="consoleState === 'in_round'">
+              <ng-container *ngIf="gameStatus!.roundStatus == 'running'">
+                <h1>זמן לסיום</h1>
+                <app-countdown-timer-display
+                    class="game-timer"
+                    size="30pt"
+                    [endTime]="gameStatus?.roundEndTime || 0">
+                </app-countdown-timer-display>
+              </ng-container>
+
+              <ng-container *ngIf="gameStatus!.roundStatus == 'pre'">
+                <h1>מיד מתחילים...</h1>
+              </ng-container>
+          </ng-container>
+        </div>
+
+        <hr>
+
+        <!-- Score board -->
+        <div *ngIf="lessonControllerProviderService.lessonStatus?.terminalInfo?.length"
+              class="vertical-stack scoreboard-container">
+          <h1>תוצאות</h1>
+          <app-score-board-view
+            [columns]="scoreboardColumns"
+            [entries]="rankedScoreboardEntries"
+          >
+          </app-score-board-view>
+        </div>
+      </div>
     </div>
 
-    <hr>
+    <!-- Left pane -->
+    <div class="graph-container">
+      <app-wiki-race-path-graph
+        *ngIf="consoleState !== 'wait_to_start_game'"
+        [gameStatus]="gameStatus"
+        [showTerms]="!!gameStatus && (gameStatus.currentRound && (gameStatus.roundStatus == 'winners' || gameStatus.roundStatus == 'no-winners'))">
+      </app-wiki-race-path-graph>
 
-    <div *ngIf="lessonControllerProviderService.lessonStatus?.terminalInfo?.length"
-          class="vertical-stack scoreboard-container">
-      <h1>תוצאות</h1>
-      <app-score-board-view
-        [columns]="scoreboardColumns"
-        [entries]="rankedScoreboardEntries"
-      >
-      </app-score-board-view>
+      <ng-container *ngIf="consoleState === 'wait_to_start_game'">
+        <h1> סרקו להצטרפות לשיעור </h1>
+        <app-lesson-join-qr-display>
+        </app-lesson-join-qr-display>
+      </ng-container>
     </div>
-
-  </div>
-
-  <div class="graph-container">
-    <app-wiki-race-path-graph
-      *ngIf="consoleState !== 'wait_to_start_game'"
-      [gameStatus]="gameStatus"
-      [showTerms]="!!gameStatus && (gameStatus.currentRound && (gameStatus.roundStatus == 'winners' || gameStatus.roundStatus == 'no-winners'))">
-    </app-wiki-race-path-graph>
-
-    <ng-container *ngIf="consoleState === 'wait_to_start_game'">
-      <h1> סרקו להצטרפות לשיעור </h1>
-      <app-lesson-join-qr-display>
-      </app-lesson-join-qr-display>
-    </ng-container>
   </div>
 </div>
-
 <!-- Pre-round -->
 <app-wiki-race-pre-round-lightbox *ngIf="consoleState === 'in_round' && gameStatus?.roundStatus === 'pre'"
     [round]="gameStatus?.currentRound!"
     [startTime]="gameStatus?.roundStartTime!">
 </app-wiki-race-pre-round-lightbox>
+
+<!-- Status extension controls -->
+<app-status-bar-extension-controls>
+  <div class="mode-toggle" *ngIf="consoleState === 'wait_to_start_game'">
+    ערוך &nbsp; <mat-slide-toggle [(ngModel)]="editing"></mat-slide-toggle> &nbsp; שחק
+   </div>
+</app-status-bar-extension-controls>
+

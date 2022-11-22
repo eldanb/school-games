@@ -3,6 +3,10 @@
   align-items: baseline;
 }
 
+::ng-deep .mat-form-field-infix {
+  width: auto !important;
+}
+
 mat-form-field.error * {
   color:red;
 }

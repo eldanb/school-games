@@ -23,6 +23,7 @@ import { CountdownTimerDisplayComponent } from './countdown-timer-display/countd
 import { AvatarViewComponent } from 'src/game-components-module/avatar-view/avatar-view.component';
 import { ScoreBoardViewComponent } from './score-board-view/score-board-view.component';
 import { LightboxComponent } from './lightbox/lightbox.component';
+import { StatusBarExtensionControlsComponent } from './status-bar-extension-controls/status-bar-extension-controls.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { LightboxComponent } from './lightbox/lightbox.component';
     AvatarViewComponent,
     ScoreBoardViewComponent,
     LightboxComponent,
+    StatusBarExtensionControlsComponent,
   ],
   providers: [
     FavoritesSaveLoadService,
@@ -68,7 +70,8 @@ import { LightboxComponent } from './lightbox/lightbox.component';
     CountdownTimerDisplayComponent,
     AvatarViewComponent,
     ScoreBoardViewComponent,
-    LightboxComponent
+    LightboxComponent,
+    StatusBarExtensionControlsComponent
   ]
 })
 export class GameComponentsModule { }
