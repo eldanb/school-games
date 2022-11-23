@@ -107,6 +107,7 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
     this._pathGraphTerminals.forEach((pathTerminal) => {
       pathTerminal.marked = false;
       pathTerminal.lastNodeCoordinate = 0;
+      pathTerminal.currentPathNode = null;
     });
 
     // Update chart model
@@ -201,6 +202,13 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
       })
     );
 
+    this._pathGraphTerminals
+      .filter(t => (!t.marked || !t.currentPathNode) && t.terminalPawnRenderedNode)
+      .forEach(t => {
+        t.terminalPawnRenderedNode?.remove();
+        t.terminalPawnRenderedNode = null;
+      });
+
     // Pawn mounts
     this._pathGraphNodes.forEach(graphNode => {
       let terminalsOnNode = terminalsByPawnNode[graphNode.term];
@@ -217,10 +225,6 @@ export class WikiRacePathGraphComponent implements OnInit, AfterViewInit {
         }
       }
     })
-
-    this._pathGraphTerminals
-      .filter(t => !t.marked && t.terminalPawnRenderedNode)
-      .forEach(t => t.terminalPawnRenderedNode?.remove());
   }
 
   private _pruneStaleNodes() {
