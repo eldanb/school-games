@@ -10,12 +10,15 @@
     </span>
   </div>
 
-  <span *ngIf="terminalPath.length">
-    {{terminalPath[terminalPath.length-1].term}}
-  </span>
+  <div
+    *ngIf="terminalPath.length"
+    [ngClass]="{onEndTerm: isOnEndTerm}">
+    <span>
+      {{terminalPath[terminalPath.length-1].term}}
+    </span>
+  </div>
 
-
-  <div class="final-term" *ngIf="terminalPath.length && terminalPath[terminalPath.length-1].term != currentRound?.endTerm">
+  <div class="final-term" *ngIf="terminalPath.length && !isOnEndTerm">
     &nbsp;
     &#x203a;
     &nbsp;
@@ -38,7 +41,11 @@
   [startTime]="startTime">
 </app-wiki-race-pre-round-lightbox>
 
-<app-lightbox *ngIf="roundEnded">
+<app-lightbox *ngIf="roundResultsScoreboardEntries">
   <h1>המשחק הסתיים</h1>
-  <p>התוצאות מופיעות במסך הראשי</p>
+  <app-score-board-view
+    [columns]="scoreboardColumns"
+    [entries]="roundResultsScoreboardEntries"
+  >
+  </app-score-board-view>
 </app-lightbox>

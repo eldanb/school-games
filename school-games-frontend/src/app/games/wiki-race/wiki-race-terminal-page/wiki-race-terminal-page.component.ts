@@ -1,6 +1,8 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { WikiRaceRound, WikiRaceTerminalListener, WikiRaceTerminalListenerRegistration, WikiRaceTerminalPath, WikiRaceTerminalServices } from 'school-games-common';
+import { duration } from 'moment';
+import { WikiRaceRound, WikiRaceRoundResults, WikiRaceTerminalListener, WikiRaceTerminalListenerRegistration, WikiRaceTerminalPath, WikiRaceTerminalServices } from 'school-games-common';
 import { LessonTerminalProviderService } from 'src/game-components-module/lesson-terminal-provider/lesson-terminal-provider.service';
+import { ScoreBoardColumnDefinition, ScoreBoardEntry } from 'src/game-components-module/score-board-view/score-board-view.component';
 
 @Component({
   templateUrl: './wiki-race-terminal-page.component.html',
@@ -16,7 +18,20 @@ export class WikiRaceTerminalPageComponent implements OnInit, OnDestroy, WikiRac
   startTime: number;
   terminalPath: WikiRaceTerminalPath = [];
   currentRound: WikiRaceRound | null;
-  roundEnded: boolean;
+  roundResultsScoreboardEntries: ScoreBoardEntry[] | null;
+
+  public scoreboardColumns: ScoreBoardColumnDefinition[] = [
+    {
+      heading: "אורך",
+      width: "7rem",
+      class: "scoreboard-col-right"
+    },
+    {
+      heading: "זמן",
+      width: "7rem",
+      class: "scoreboard-col-right"
+    }
+  ];
 
   constructor(private _terminalServices: LessonTerminalProviderService) {
     this._gameServices = this._terminalServices.currentGameServices as WikiRaceTerminalServices;
@@ -46,13 +61,26 @@ export class WikiRaceTerminalPageComponent implements OnInit, OnDestroy, WikiRac
     this.terminalPath = [];
     this.currentRound = round;
     this.startTime = startTime;
-    this.roundEnded = false;
+    this.roundResultsScoreboardEntries = null;
     this.navigateToTerm(this.currentRound.startTerm);
   }
 
-  async endRound(): Promise<void> {
+  async endRound(roundResults: WikiRaceRoundResults): Promise<void> {
     console.log("End round requested");
-    this.roundEnded = true;
+    this.roundResultsScoreboardEntries = roundResults.rankedTerminalStatus.map((rankedTerminal, rankIndex) => {
+      return {
+        username: rankedTerminal.username,
+        avatar: rankedTerminal.avatar,
+        terminalId: rankedTerminal.username,
+        additionalFields: [
+          rankedTerminal.currentScore,
+          rankedTerminal.reachedEndTerm && duration(rankedTerminal.reachedEndTerm - this.startTime, 'millisecond')
+              .format('mm:ss', { trim: false })
+        ],
+        class: [rankedTerminal.reachedEndTerm ? 'scoreboard-row-completed' : '',
+                rankIndex === roundResults.userRank ? 'scoreboard-row-current-user': ''].join(' ')
+      }
+    });
   }
 
   private navigateToTerm(term: string) {
@@ -73,5 +101,9 @@ export class WikiRaceTerminalPageComponent implements OnInit, OnDestroy, WikiRac
 
   get isPreRound(): boolean {
     return !!this.currentRound && this.startTime > Date.now();
+  }
+
+  get isOnEndTerm(): boolean {
+    return this.terminalPath[this.terminalPath.length-1].term === this.currentRound?.endTerm;
   }
 }

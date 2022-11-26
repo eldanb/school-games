@@ -125,6 +125,7 @@ export class LessonTerminalProviderService implements OnDestroy {
         zipcServer.handleRequest(terminalMessage.zipcMessage, new ZipcCallContext('terminal', {}, this._zipcClientService.zipcClient));
         break;
 
+      // TODO make this a zipc call
       case 'start-game':
         this._currentGameType = terminalMessage.gameType;
         this._currentGameServices =

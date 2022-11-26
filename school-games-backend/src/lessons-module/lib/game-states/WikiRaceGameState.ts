@@ -16,6 +16,16 @@ import {
 import { GameState } from '../GamesState';
 import { LessonControllerImpl } from '../LessonControllerImpl';
 
+type RankedTerminal = { terminalId: string; status: WikiRaceTerminalStatus };
+
+const RankTerminalsByTime = (a: RankedTerminal, b: RankedTerminal) =>
+  (a.status.reachedEndTerm || Date.now() + 3600) - (b.status.reachedEndTerm || Date.now() + 3600);
+
+const RankTerminalsByPathLength = (a: RankedTerminal, b: RankedTerminal) =>
+  a.status.currentScore -
+  (a.status.reachedEndTerm !== null ? 1000 : 0) -
+  (b.status.currentScore - (b.status.reachedEndTerm !== null ? 1000 : 0));
+
 export class WikiRaceGameState
   extends GameState
   implements WikiRaceConsoleServices
@@ -39,34 +49,47 @@ export class WikiRaceGameState
   }
 
   async getGameStatus(): Promise<WikiRaceGameStatus> {
-    const terminalStatus: { [terminalId: string]: WikiRaceTerminalStatus } = {};
-
-    this._updateRoundStatus();
+    await this._updateRoundStatus();
 
     const terminalsFromLessonStatus = _.keyBy(
       (await this._lessonController.getLessonStatus()).terminalInfo,
       (ti) => ti.terminalId,
     );
 
-    Object.entries(this._terminalServices).forEach(([terminalId, terminal]) => {
-      terminalStatus[terminalId] = {
-        avatar: terminalsFromLessonStatus[terminalId].avatar,
-        username: terminalsFromLessonStatus[terminalId].username,
-        termHistory: terminal.definitionHistory,
-        currentScore: terminal.definitionHistory.reduce(
-          (a, h) => a + h.weight,
-          0,
-        ),
-        reachedEndTerm: terminal.reachedEndTermTime,
-      };
-    });
+    const rankedTerminalStatus = Object.entries(this._terminalServices).map(
+      ([terminalId, terminal]) => ({
+        terminalId: terminalId,
+        status: {
+          avatar: terminalsFromLessonStatus[terminalId].avatar,
+          username: terminalsFromLessonStatus[terminalId].username,
+          termHistory: terminal.definitionHistory,
+          currentScore: terminal.definitionHistory.reduce(
+            (a, h) => a + h.weight,
+            0,
+          ),
+          reachedEndTerm: terminal.reachedEndTermTime,
+        },
+      }),
+    );
+
+    if (this._currentRound) {
+      rankedTerminalStatus.sort(
+        this._currentRound.roundType === 'shortest-path'
+          ? RankTerminalsByPathLength
+          : RankTerminalsByTime,
+      );
+    }
 
     return {
       currentRound: this._currentRound,
       roundEndTime: this._endTime,
       roundStartTime: this._startTime,
       roundStatus: this._roundStatus,
-      terminalStatus: terminalStatus,
+      terminalStatus: _.mapValues(
+        _.keyBy(rankedTerminalStatus, (s) => s.terminalId),
+        (v) => v.status,
+      ),
+      rankedTerminals: rankedTerminalStatus.map((v) => v.terminalId),
     };
   }
 
@@ -124,9 +147,11 @@ export class WikiRaceGameState
     }
   }
 
-  async onEndRound() {
+  async onEndRound(gameStatus: WikiRaceGameStatus) {
     await Promise.all(
-      Object.values(this._terminalServices).map((ts) => ts.onEndRound()),
+      Object.values(this._terminalServices).map((ts) =>
+        ts.onEndRound(gameStatus),
+      ),
     );
   }
 
@@ -267,7 +292,7 @@ export class WikiRaceGameState
     return this._roundStatus;
   }
 
-  private _updateRoundStatus() {
+  private async _updateRoundStatus() {
     const oldStatus = this._roundStatus;
     const checkTime = new Date().getTime();
 
@@ -306,7 +331,8 @@ export class WikiRaceGameState
         this._roundStatus === 'no-winners' ||
         this._roundStatus === 'winners'
       ) {
-        this.onEndRound();
+        const gameStatus = await this.getGameStatus();
+        this.onEndRound(gameStatus);
       }
     }
   }
@@ -319,8 +345,7 @@ export class WikiRaceGameState
   // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
   notifyNewTerminal(terminalId: string, terminal: Terminal): void {}
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  terminalChanged(sender: WikiRaceTerminalServicesImpl) {
+  async terminalChanged(sender: WikiRaceTerminalServicesImpl) {
     if (
       sender.definitionHistory.length &&
       this._currentRound &&
@@ -332,7 +357,7 @@ export class WikiRaceGameState
       sender.reachedEndTermTime = null;
     }
 
-    this._updateRoundStatus();
+    await this._updateRoundStatus();
   }
 
   get playAllowed(): boolean {
@@ -363,7 +388,7 @@ class WikiRaceTerminalServicesImpl implements WikiRaceTerminalServices {
       this._definitionHistory.length,
     );
 
-    this._gs.terminalChanged(this);
+    await this._gs.terminalChanged(this);
 
     return this._definitionHistory;
   }
@@ -392,7 +417,7 @@ class WikiRaceTerminalServicesImpl implements WikiRaceTerminalServices {
       weight: 1,
     });
 
-    this._gs.terminalChanged(this);
+    await this._gs.terminalChanged(this);
 
     return this._definitionHistory;
   }
@@ -407,9 +432,14 @@ class WikiRaceTerminalServicesImpl implements WikiRaceTerminalServices {
     this._listener = listener;
   }
 
-  async onEndRound() {
+  async onEndRound(gameStatus: WikiRaceGameStatus) {
     if (this._listener?.listener) {
-      this._listener.listener.endRound();
+      this._listener.listener.endRound({
+        rankedTerminalStatus: gameStatus.rankedTerminals.map(
+          (tid) => gameStatus.terminalStatus[tid],
+        ),
+        userRank: gameStatus.rankedTerminals.indexOf(this._terminalId),
+      });
     }
   }
 

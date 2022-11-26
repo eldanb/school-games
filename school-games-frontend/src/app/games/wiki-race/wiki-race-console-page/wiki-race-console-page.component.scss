@@ -2,12 +2,13 @@
 
 .fading-display {
 
-  transition: opacity .3s linear, height .3s linear;
+  transition: opacity .3s linear, height .3s linear, scale .1s linear;
   overflow: hidden;
 
   &.hide {
     opacity: 0;
-    height: 0 !important;
+    scale: 0;
+    position:absolute;
   }
 }
 
@@ -23,7 +24,7 @@
 
 .right-pane {
   height: 100%;
-  justify-content: center;
+  position: relative;
 
   h1 {
     flex-grow: 0;
@@ -34,16 +35,19 @@
   }
 
   .scoreboard-container {
-    flex-grow: 1;
     width: 75%;
+    overflow: hidden;
 
     app-score-board-view {
       width: 100%;
+      overflow: hidden;
     }
 
   }
 
   .round-display {
+    justify-content: center;
+    height: 100%;
 
     h1 {
       color: silver;

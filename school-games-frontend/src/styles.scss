@@ -162,6 +162,7 @@ mat-tab-group.full-height {
   flex-direction: row;
   justify-content: flex-end;
   justify-items: flex-end;
+  flex-shrink: 0;
   padding: 4px 16px;
 
   gap: 16px;
@@ -203,6 +204,10 @@ mat-tab-group.full-height {
 
 .scoreboard-row-completed {
   color: blue;
+}
+
+.scoreboard-row-current-user {
+  background-color: yellow !important;
 }
 
 .bordered-card {

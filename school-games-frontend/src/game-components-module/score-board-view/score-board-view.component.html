@@ -9,7 +9,7 @@
   </div>
   <div class="scoreboard-body-container">
     <div *ngFor="let renderedEntry of renderedEntries"
-        class="row"
+        [class]="'row ' + renderedEntry.entry.class"
         [ngStyle]="{position: 'absolute', top: renderedEntry.rank * 3.5 + 'rem'}">
       <div [class]="'participant-cell ' + renderedEntry.entry.class">
         <app-avatar-view [avatar]="renderedEntry.entry.avatar || null"></app-avatar-view>

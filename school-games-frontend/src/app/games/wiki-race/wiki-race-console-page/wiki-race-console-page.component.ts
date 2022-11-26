@@ -74,31 +74,21 @@ export class WikiRaceConsolePageComponent implements OnInit {
 
   get rankedScoreboardEntries(): ScoreBoardEntry[] {
     if(!this._rankedScoreboardEntries) {
-      this._rankedScoreboardEntries = Object.values(this.gameStatus!.terminalStatus).map(t => ({
-        username: t.username,
-        avatar: t.avatar,
-        terminalId: t.username,
-        additionalFields: [
-          this.consoleState !== 'wait_to_start_game' ? t.currentScore : '',
-          this.gameStatus && t.reachedEndTerm &&
-            duration(t.reachedEndTerm - this.gameStatus.roundStartTime, 'millisecond')
-              .format('mm:ss', { trim: false }),
-          t.currentScore - (t.reachedEndTerm !== null ? 1000 : 0),
-          t.reachedEndTerm],
-        class: t.reachedEndTerm ? 'scoreboard-row-completed' : ''
-      }));
-
-      /*if(this.gameStatus?.roundStatus?.includes('winners')) {
-        this._rankedScoreboardEntries =
-          this._rankedScoreboardEntries.filter((e) => e.additionalFields[1] !== null);
-      }*/
-
-      const sortOrder =
-        this.gameDefinition.raceType === 'shortest-path'
-          ? (a: ScoreBoardEntry, b: ScoreBoardEntry) => (a.additionalFields[2]  - b.additionalFields[2])
-          : (a: ScoreBoardEntry, b: ScoreBoardEntry) => (a.additionalFields[3]  - b.additionalFields[3]);
-
-      this._rankedScoreboardEntries.sort(sortOrder);
+      this._rankedScoreboardEntries = this.gameStatus!.rankedTerminals.map(terminalId => {
+        const rankedTerminal = this.gameStatus!.terminalStatus[terminalId];
+        return {
+          username: rankedTerminal.username,
+          avatar: rankedTerminal.avatar,
+          terminalId: rankedTerminal.username,
+          additionalFields: [
+            this.consoleState !== 'wait_to_start_game' ? rankedTerminal.currentScore : '',
+            this.gameStatus && rankedTerminal.reachedEndTerm &&
+              duration(rankedTerminal.reachedEndTerm - this.gameStatus.roundStartTime, 'millisecond')
+                .format('mm:ss', { trim: false })
+          ],
+          class: rankedTerminal.reachedEndTerm ? 'scoreboard-row-completed' : ''
+        }
+      })
     }
 
     return this._rankedScoreboardEntries;

@@ -21,6 +21,19 @@ div.nav {
 
   div {
     flex-shrink: 0;
+
+    &.onEndTerm {
+      font-weight: bold;
+
+      animation: .5s 2 alternate end-term-animation;
+
+      @keyframes end-term-animation {
+        100% {
+          scale: 3;
+          opacity: 0.3;
+        }
+      }
+    }
   }
 
   a:hover {

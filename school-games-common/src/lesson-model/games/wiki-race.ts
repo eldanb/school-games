@@ -37,6 +37,13 @@ export type WikiRaceGameStatus = {
   terminalStatus: {
     [terminalId: string]: WikiRaceTerminalStatus;
   }
+
+  rankedTerminals: string[];
+}
+
+export type WikiRaceRoundResults = {
+  rankedTerminalStatus: WikiRaceTerminalStatus[];
+  userRank: number;
 }
 
 export class WikiRaceTerminalListenerRegistration {
@@ -60,5 +67,5 @@ export interface WikiRaceTerminalServices {
 
 export interface WikiRaceTerminalListener {
   startRound(round: WikiRaceRound, startTime: number, endTime: number): Promise<void>;
-  endRound(): Promise<void>;
+  endRound(roundResults: WikiRaceRoundResults): Promise<void>;
 }
