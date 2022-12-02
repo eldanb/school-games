@@ -1,4 +1,3 @@
-@import '../../../../styles.scss';
 
 :host {
   display: flex;
@@ -48,14 +47,11 @@ mat-slider {
     margin: 0;
   }
 
-
   &.selected {
     box-shadow: rgba(0, 0, 0, 0.2) 3px 3px 4px 0px;
   }
 
   .control-box {
-    @extend .fade-in-placeholder;
-
     display: flex;
     flex-direction: column;
     width: 3rem;
@@ -65,25 +61,19 @@ mat-slider {
     right: 0;
   }
 
-  .start-term {
+  .start-term, .end-term {
     flex-grow: 1;
 
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+  }
 
+  .start-term {
     margin-left: 1rem;
   }
 
-  .end-term {
-    flex-grow: 1;
-
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-  }
-
   &:hover .control-box {
-    @extend .display;
+    opacity: 1;
   }
 }

@@ -48,7 +48,7 @@
     [ngClass]="{selected: roundIndex == selectedRoundIndex}"
     *ngFor="let round of observedGameDefinition.rounds; index as roundIndex"
     (click)="selectedRoundIndex = roundIndex">
-    <div class="control-box">
+    <div class="control-box fade-in-out-placeholder">
       <button mat-icon-button class="small"
           [disabled]="observedGameDefinition.rounds.length == 1"
           (click)="deleteRound(roundIndex)">

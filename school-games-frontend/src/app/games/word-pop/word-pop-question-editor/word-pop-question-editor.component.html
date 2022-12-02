@@ -7,7 +7,7 @@
     <mat-label>שאלה</mat-label>
     <input matInput [(ngModel)]="questionDefinition.question" (focus)="focusOnQuestion.emit()">
   </mat-form-field>
-  <div class="fade-in-placeholder question-action-buttons">
+  <div class="fade-in-out-placeholder question-action-buttons">
     <button mat-icon-button (click)="handleDeleteClicked()"><mat-icon>delete</mat-icon></button>
   </div>
 </div>
