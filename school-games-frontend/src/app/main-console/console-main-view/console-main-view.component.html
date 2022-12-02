@@ -1,16 +1,14 @@
-<div class="main-menu-container fill-screen">
-  <div class="menu-items-container">
+<div class="console-split-screen fill-screen">
+  <div class="borderless-pane menu-items-container">
     <a class="menu-item" *ngFor="let gameDescriptor of gameDescriptors" [routerLink]="'/c/g/' + gameDescriptor.id">
       <div  class="label">
         {{gameDescriptor.name}}
       </div>
     </a>
   </div>
-  <div class="lesson-join-pane">
-    <div class="lesson-join-window">
+  <div class="bordered-pane">
       <h1>סרקו להצטרפות לשיעור</h1>
       <app-lesson-join-qr-display></app-lesson-join-qr-display>
-    </div>
   </div>
 
 </div>

@@ -8,9 +8,9 @@
       </app-favorites-management-buttons>
   </div>
 
-  <div class="horizontal-stack pane-splitter">
+  <div class="console-split-screen">
     <!-- Right pane: -->
-    <div class="vertical-stack full-width right-pane">
+    <div class="vertical-stack borderless-pane">
 
       <!-- Editor -->
       <div class="editor-display fading-display" [ngClass]="{ hide: !editing }">
@@ -55,7 +55,8 @@
                 התחל משחק
             </button>
 
-            <div *ngIf="!lessonControllerProviderService.lessonStatus?.terminalInfo?.length">
+            <div
+              *ngIf="!lessonControllerProviderService.lessonStatus?.terminalInfo?.length">
               משחק זה דורש לפחות משתתף אחד בשיעור.
             </div>
           </ng-container>
@@ -108,7 +109,7 @@
     </div>
 
     <!-- Left pane -->
-    <div class="graph-container">
+    <div class="bordered-pane">
       <app-wiki-race-path-graph
         *ngIf="consoleState !== 'wait_to_start_game'"
         [gameStatus]="gameStatus"

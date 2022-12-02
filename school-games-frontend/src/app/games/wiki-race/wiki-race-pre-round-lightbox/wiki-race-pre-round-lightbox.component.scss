@@ -7,10 +7,10 @@
   .term-box {
     h1 {
       color: silver;
-      font-size: 12pt;
+      font-size: var(--font-size-small);
     }
 
-    font-size: 18pt;
+    font-size: var(--font-size-big);
 
     &.end-term {
       text-align: end;

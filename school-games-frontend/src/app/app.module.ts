@@ -37,7 +37,6 @@ import { WikiRaceTerminalPageComponent } from './games/wiki-race/wiki-race-termi
 import { WikiRacePathGraphComponent } from './games/wiki-race/wiki-race-path-graph/wiki-race-path-graph.component';
 import { WikiTermSelectorComponent } from './games/wiki-race/wiki-term-selector/wiki-term-selector.component';
 import { WikiRacePreRoundLightboxComponent } from './games/wiki-race/wiki-race-pre-round-lightbox/wiki-race-pre-round-lightbox.component';
-import { LessonJoinQrDisplayComponent } from './lesson-join-qr-display/lesson-join-qr-display.component';
 import { WikiRaceGameEditorComponent } from './games/wiki-race/wiki-race-game-editor/wiki-race-game-editor.component';
 
 @NgModule({
@@ -62,7 +61,6 @@ import { WikiRaceGameEditorComponent } from './games/wiki-race/wiki-race-game-ed
     WikiRacePathGraphComponent,
     WikiTermSelectorComponent,
     WikiRacePreRoundLightboxComponent,
-    LessonJoinQrDisplayComponent,
     WikiRaceGameEditorComponent,
   ],
   imports: [

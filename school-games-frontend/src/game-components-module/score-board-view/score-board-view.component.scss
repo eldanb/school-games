@@ -12,7 +12,7 @@
     align-items: center;
 
     transition: cubic-bezier(1, 0, 0, 1) top 0.5s;
-    font-size: 1.25rem;
+    font-size: var(--font-size-medium);
     height: 3rem;
 
     &:not(.heading) {
@@ -20,7 +20,7 @@
     }
 
     &.heading div {
-      font-size: 1.5rem
+      font-size: var(--font-size-big);
     }
 
     .participant-cell {
@@ -49,7 +49,7 @@
   border-spacing: 0 15px;
 
   thead tr {
-    font-size: 1.5rem;
+    font-size: var(--font-size-big);
 
     td.col-right {
       text-align: center;

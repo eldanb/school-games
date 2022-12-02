@@ -90,37 +90,3 @@
     <button (click)="addRound()" mat-raised-button>הוסף סיבוב</button>
   </div>
 </section>
-<!--
-  public selectedRoundType: WikiRoundType = 'shortest-path';
-  public generatingRandomRound = false;
-
-    public selectedStartTerm: string = "";
-  public startTermValid: boolean | null;
-  public selectedEndTerm: string = "";
-  public endTermValid: boolean | null;
-
-    public async generateRandomRound() {
-    this.generatingRandomRound = true;
-    const round = await this.wikiRaceConsoleController.generateRound(-6);
-    this.selectedStartTerm = round.startTerm;
-    this.selectedEndTerm = round.endTerm;
-    this.generatingRandomRound = false;
-
-    return round;
-  }
-
-
-
-
-  <div class="random-round-panel" *ngIf="false">
-            <button mat-icon-button *ngIf="!generatingRandomRound" (click)="generateRandomRound()">
-              <mat-icon>casino</mat-icon>
-            </button>
-
-            <mat-progress-spinner
-              [ngStyle]="{ visibility: generatingRandomRound ? 'visible' : 'hidden' }"
-              mode="indeterminate"
-              diameter="25">
-            </mat-progress-spinner>
-          </div>
--->

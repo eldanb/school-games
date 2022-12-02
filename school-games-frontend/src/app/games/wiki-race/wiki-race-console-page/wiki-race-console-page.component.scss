@@ -1,9 +1,11 @@
 @import '../../../../styles.scss';
+:host > .vertical-stack {
+  gap: 0;
+}
 
 .fading-display {
 
   transition: opacity .3s linear, height .3s linear, scale .1s linear;
-  overflow: hidden;
 
   &.hide {
     opacity: 0;
@@ -16,16 +18,11 @@
   width: 100%;
 }
 
-.pane-splitter {
-  box-sizing: border-box;
+.console-split-screen {
   flex-grow: 1;
-  width: 100%;
 }
 
-.right-pane {
-  height: 100%;
-  position: relative;
-
+.borderless-pane {
   h1 {
     flex-grow: 0;
   }
@@ -42,16 +39,15 @@
       width: 100%;
       overflow: hidden;
     }
-
   }
+
 
   .round-display {
     justify-content: center;
-    height: 100%;
 
     h1 {
       color: silver;
-      font-size: 12pt;
+      font-size: var(--font-size-small);
     }
 
     hr {
@@ -61,7 +57,7 @@
     }
 
     .term-box {
-        font-size: 18pt;
+        font-size: var(--font-size-big);
 
       &.end-term {
         text-align: end;
@@ -75,68 +71,21 @@
     .timer-area {
       height: 7rem;
       justify-content: center;
+
+      div {
+        width: 75%;
+        text-align: center;
+      }
     }
   }
 
   .editor-display {
-    width: 70%;
+    width: 90%;
     height: 100%;
   }
 }
-.graph-container {
-  @extend .bordered-card;
-  box-sizing: border-box;
 
-  flex-grow: 1;
 
-  width: 100%;
-  height: calc(100% - 4rem);
 
-  margin: 2rem 2rem;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-
-  h1 {
-    font-size: 1.5rem;
-    text-align: center;
-  }
-
-  app-lesson-join-qr-display {
-    width: 75%;
-  }
-}
-
-.terms-input {
-  width: 100%;
-  justify-items: stretch;
-
-  margin-top: 5rem;
-  margin-bottom: 5rem;
-
-  div {
-    flex-grow: 1;
-  }
-
-  div.random-round-panel {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-items: center;
-
-    flex-grow: 0;
-    width: 4rem;
-
-    button {
-      width: 64px;
-    }
-
-    mat-icon {
-      font-size: 3rem;
-      width: 4rem;
-    }
-  }
-}
 

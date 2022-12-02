@@ -1,12 +1,20 @@
 <app-lesson-controller-provider>
-  <div class="status-bar">
-    <div>{{pageTitle}}</div>
-    <div class="flex-spacer"></div>
-    <div #statusBarExtensionControlsHost></div>
-    <app-lesson-status-view></app-lesson-status-view>
-    <a routerLink="/c/menu" routerLinkActive="active-glow">
-      <mat-icon>home</mat-icon>
-    </a>
+  <div class="show-on-landscape">
+    <div class="status-bar">
+      <div>{{pageTitle}}</div>
+      <div class="flex-spacer"></div>
+      <div #statusBarExtensionControlsHost></div>
+      <app-lesson-status-view></app-lesson-status-view>
+      <a routerLink="/c/menu" routerLinkActive="active-glow">
+        <mat-icon>home</mat-icon>
+      </a>
+    </div>
+    <router-outlet (activate)="onActivateComponent($event)" (deactivate)="onDeactivateComponent($event)"></router-outlet>
   </div>
-  <router-outlet (activate)="onActivateComponent($event)" (deactivate)="onDeactivateComponent($event)"></router-outlet>
+
+  <div class="request-landscape show-on-portrait">
+    <h1>
+      אנא סובב את המסך
+    </h1>
+  </div>
 </app-lesson-controller-provider>

@@ -1,3 +1,22 @@
 :host {
   direction: rtl;
 }
+
+@media (orientation: landscape) {
+  .show-on-portrait {
+    display: none !important;
+  }
+}
+
+@media (orientation: portrait) {
+  .show-on-landscape {
+    display: none !important;
+  }
+}
+
+.request-landscape {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}

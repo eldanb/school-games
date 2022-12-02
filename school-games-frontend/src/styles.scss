@@ -83,7 +83,7 @@ body * {
 }
 
 .expand-down-on-display {
-  transition: height 0.5s, max-height 0.5s, opacity 0.5s linear;
+  transition: height 0.5s, max-height 0.5s, opacity 0.5s, padding-top 0.5s, padding-bottom 0.5s linear;
   opacity: 0;
   height: 0;
 
@@ -163,7 +163,7 @@ mat-tab-group.full-height {
   justify-content: flex-end;
   justify-items: flex-end;
   flex-shrink: 0;
-  padding: 4px 16px;
+  padding: 0 16px;
 
   gap: 16px;
   box-sizing: border-box;
@@ -176,6 +176,7 @@ mat-tab-group.full-height {
     @extend .display;
 
     height: 48px;
+    padding: 4px 16px;
   }
 }
 
@@ -218,7 +219,51 @@ mat-tab-group.full-height {
   box-shadow: 2px 4px 11px 0px #00000010;
 }
 
+.console-split-screen {
+  @extend .horizontal-stack;
 
+  box-sizing: border-box;
+  overflow: hidden;
+  width: 100%;
+  padding: 1rem;
+
+  & .borderless-pane {
+    box-sizing: border-box;
+
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
+    flex-basis: 64px;
+    position: relative;
+    overflow-y: scroll;
+  }
+
+  & .bordered-pane {
+    @extend .bordered-card;
+    box-sizing: border-box;
+
+    flex-grow: 1;
+
+    width: 100%;
+    height: calc(100% - 4rem);
+    flex-basis: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    h1 {
+      font-size: var(--font-size-medium);
+      text-align: center;
+    }
+
+    app-lesson-join-qr-display {
+      width: 75%;
+      height: 75%;
+    }
+  }
+}
 @font-face {
   font-family: 'varela-round';
   src: url('assets/VarelaRound-Regular.ttf');
@@ -257,3 +302,22 @@ mat-tab-group.full-height {
   font-style: italic;
 }
 
+:root {
+  --font-size-timer: 30pt;
+  --font-size-big: 18pt;
+  --font-size-medium: 14pt;
+  --font-size-small: 12pt;
+}
+
+@media (max-width: 800px) {
+  .bordered-card {
+    padding: 1rem;
+  }
+
+  :root {
+    --font-size-timer: 18pt;
+    --font-size-big: 14pt;
+    --font-size-medium: 12pt;
+    --font-size-small: 10pt;
+  }
+}

@@ -24,6 +24,7 @@ import { AvatarViewComponent } from 'src/game-components-module/avatar-view/avat
 import { ScoreBoardViewComponent } from './score-board-view/score-board-view.component';
 import { LightboxComponent } from './lightbox/lightbox.component';
 import { StatusBarExtensionControlsComponent } from './status-bar-extension-controls/status-bar-extension-controls.component';
+import { LessonJoinQrDisplayComponent } from './lesson-join-qr-display/lesson-join-qr-display.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { StatusBarExtensionControlsComponent } from './status-bar-extension-cont
     ScoreBoardViewComponent,
     LightboxComponent,
     StatusBarExtensionControlsComponent,
+    LessonJoinQrDisplayComponent
   ],
   providers: [
     FavoritesSaveLoadService,
@@ -71,7 +73,8 @@ import { StatusBarExtensionControlsComponent } from './status-bar-extension-cont
     AvatarViewComponent,
     ScoreBoardViewComponent,
     LightboxComponent,
-    StatusBarExtensionControlsComponent
+    StatusBarExtensionControlsComponent,
+    LessonJoinQrDisplayComponent,
   ]
 })
 export class GameComponentsModule { }
